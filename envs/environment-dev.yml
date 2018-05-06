@@ -1,0 +1,15 @@
+name: idact-dev
+channels:
+  - defaults
+dependencies:
+  - python=3.6
+  - setuptools
+  - pip
+  - "sphinx>=1.7.4"
+  - "pytest-cov>=2.5.1"
+  - "click>=6.7"
+  - "pytest>=3.5.1"
+  - pip:
+    - "pytest-flake8>=1.0.1"
+    - "pytest-pylint>=0.9.0"
+    - "recommonmark>=0.4.0"
