@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Builds sphinx docs and opens index in browser."""
+"""Builds sphinx docs and opens index in browser
+   unless --no-show option is set."""
 
 import os
 import subprocess as sub
@@ -19,8 +20,10 @@ DOCS_INDEX_PATH = '{}/_build/html/index.html'.format(DOCS_ROOT)
 WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
 
 
-def main():
+def main(argv):
     try:
+        no_show = len(argv) == 2 and argv[1] == '--no-show'
+
         os.chdir(WORKING_DIR)
 
         for api_doc in API_DOCS:
@@ -42,13 +45,11 @@ def main():
 
         os.chdir(WORKING_DIR)
 
-        print("Opening docs...")
+        if not no_show:
+            print("Opening docs...")
+            webbrowser.open(
+                "file://{}".format(os.path.realpath("./" + DOCS_INDEX_PATH)))
 
-        print(DOCS_INDEX_PATH)
-        print(os.getcwd())
-        print("file://{}".format(os.path.realpath("./" + DOCS_INDEX_PATH)))
-        webbrowser.open(
-            "file://{}".format(os.path.realpath("./" + DOCS_INDEX_PATH)))
         return 0
     except Exception as e:  # pylint: disable=broad-except
         print(e)
@@ -56,4 +57,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))

@@ -6,7 +6,8 @@ services:
 sudo: required
 matrix:
   include:
-    - env: CENTOS_VERSION=7 SLURM_VERSION=17.02.10 SSH_AUTH_OPTS="-e AUTH_MECHANISM=noAuth"
+    - python: 3.6
+      env: CENTOS_VERSION=7 SLURM_VERSION=17.02.10 SSH_AUTH_OPTS="-e AUTH_MECHANISM=noAuth"
 before_install:
   - sudo apt-get update
   - SLURM_IMAGE=giovtorres/docker-centos${CENTOS_VERSION}-slurm:${SLURM_VERSION}
@@ -31,3 +32,7 @@ script:
   - sleep 10
   - docker exec $SLURM_CONTAINER squeue
   - ssh -o "StrictHostKeyChecking no" -p 2222 localhost bash -c "squeue"
+  - pip install -r requirements_dev.txt
+  - python scripts/run_tests.py
+  - python scripts/build_docs.py --no-show
+  - python scripts/view_coverage.py --no-show
