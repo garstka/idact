@@ -1,0 +1,33 @@
+# Config file for automatic testing at travis-ci.org
+
+language: python
+services:
+  - docker
+sudo: required
+matrix:
+  include:
+    - env: CENTOS_VERSION=7 SLURM_VERSION=17.02.10 SSH_AUTH_OPTS="-e AUTH_MECHANISM=noAuth"
+before_install:
+  - sudo apt-get update
+  - SLURM_IMAGE=giovtorres/docker-centos${CENTOS_VERSION}-slurm:${SLURM_VERSION}
+  - SLURM_CONTAINER=slurm-docker
+  - docker pull $SLURM_IMAGE
+install:
+  - printenv | sort
+  - docker run -d -it -h ernie --name $SLURM_CONTAINER $SLURM_IMAGE
+  - sleep 10
+  - docker exec $SLURM_CONTAINER supervisorctl restart slurmctld
+  - docker exec $SLURM_CONTAINER supervisorctl status
+  - docker run -d -p 2222:22 -v /var/run/docker.sock:/var/run/docker.sock -e FILTERS={\"name\":[\"^/${SLURM_CONTAINER}$\"]} ${SSH_AUTH_OPTS} jeroenpeeters/docker-ssh
+  - sleep 15
+  - docker ps
+script:
+  - docker exec $SLURM_CONTAINER sinfo
+  - docker exec $SLURM_CONTAINER scontrol show partition
+  - docker exec $SLURM_CONTAINER sbatch --wrap="sleep 10"
+  - docker exec $SLURM_CONTAINER squeue
+  - sleep 5
+  - docker exec $SLURM_CONTAINER squeue
+  - sleep 10
+  - docker exec $SLURM_CONTAINER squeue
+  - ssh -o "StrictHostKeyChecking no" -p 2222 localhost bash -c "squeue"
