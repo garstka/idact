@@ -7,6 +7,7 @@ Welcome to idact!
 
    readme
    modules
+   testing_setup
    license
 
 Indices and tables

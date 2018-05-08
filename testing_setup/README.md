@@ -1,6 +1,6 @@
 # Testing setup
 
-This directory contains scripts for running a testing container with SLURM and
+The `testing_setup` directory contains scripts for running a testing container with SLURM and
 access via ssh.
 
 ## Requirements
@@ -37,3 +37,41 @@ Password corresponds to user number, in this case: pass-1
 ssh-keygen -t rsa
 ssh-copy-id -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa.pub -p $SLURM_SSH_PORT user-1@localhost
 ```
+
+## How to run tests on Windows
+
+For now, you will need to setup an ssh tunnel to the Linux OS with the testing
+container.
+
+### VirtualBox
+
+Go into:
+ 1. Devices
+ 2. Network
+ 3. Network Settings
+ 4. Adapter 1
+ 5. Advanced
+ 6. Port Forwarding
+ 7. (plus icon)
+
+Set up a new rule:
+
+| Name          | Protocol | Host IP   | Host Port | Guest IP | Guest Port |
+|:-------------:|:--------:|:---------:|:---------:|:--------:|:----------:|
+| Testing Setup | TCP      | 127.0.0.1 | 2222      |          | 2222       |
+
+Test the connection, e.g.:
+
+```
+putty -P 2222 user-1@localhost
+```
+
+Click "No" to skip caching the server key fingerprint, in order to avoid
+the problem below.
+
+### Possible problem
+
+ - When using port forwarding for testing, the key fingerprint of the server
+  may need to be manually removed from `known_hosts` (or the equivalent)
+  after a setup-teardown cycle.
+ - On Linux, this was taken care of by the setup script.
