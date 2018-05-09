@@ -10,6 +10,7 @@ dependencies:
   - "click>=6.7"
   - "pytest>=3.5.1"
   - pip:
+    - "fabric3>=1.14"
     - "pytest-flake8>=1.0.1"
     - "pytest-pylint>=0.9.0"
     - "m2r>=0.1.14"
