@@ -11,16 +11,23 @@ Docker on Linux, Internet access.
 
 ```
 source container_defaults.sh
-source prepare_container_envs.sh
-python container_setup.py
+source container_prepare_envs.sh
+python full_setup.py
 (...)
-python container_teardown.py
+python full_teardown.py
 ```
 
 ## Attach root console
 
 ```
 docker attach slurm-docker
+```
+
+## Submit basic SLURM job
+
+```
+sbatch --wrap="sleep 10"
+squeue
 ```
 
 ## Ssh as user

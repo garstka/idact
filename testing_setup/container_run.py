@@ -19,6 +19,10 @@ RESTART_COMMAND = "docker exec {SLURM_CONTAINER} " \
 
 STATUS_COMMAND = "docker exec {SLURM_CONTAINER} supervisorctl status"
 
+UPDATE_HOSTS_COMMAND = ('docker exec {SLURM_CONTAINER} bash -c "'
+                        'echo 127.0.0.1 c1 c2 c3 c4 c5 c6 c7 c8 c9 c10'
+                        ' >> /etc/hosts"')
+
 
 def main():
     try:
@@ -36,6 +40,9 @@ def main():
             SLURM_CONTAINER=os.environ['SLURM_CONTAINER']), shell=True)
 
         sub.check_call(STATUS_COMMAND.format(
+            SLURM_CONTAINER=os.environ['SLURM_CONTAINER']), shell=True)
+
+        sub.check_call(UPDATE_HOSTS_COMMAND.format(
             SLURM_CONTAINER=os.environ['SLURM_CONTAINER']), shell=True)
 
         return 0

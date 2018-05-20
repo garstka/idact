@@ -9,8 +9,8 @@ import webbrowser
 
 DOCS_ROOT = 'docs'
 
-COMMAND_GENERATE_API_DOCS = "sphinx-apidoc -o {}/ idact".format(DOCS_ROOT)
-API_DOCS = [DOCS_ROOT + '/modules.rst', DOCS_ROOT + '/idact.rst']
+COMMAND_GENERATE_API_DOCS = "sphinx-apidoc --force -o {}/ idact".format(
+    DOCS_ROOT)
 
 COMMAND_CLEAN_DOCS = 'make clean'
 COMMAND_BUILD_DOCS = 'make html'
@@ -25,11 +25,6 @@ def main(argv):
         no_show = len(argv) == 2 and argv[1] == '--no-show'
 
         os.chdir(WORKING_DIR)
-
-        for api_doc in API_DOCS:
-            if os.path.isfile(api_doc):
-                print("Removing '{}'...".format(api_doc))
-                os.remove(api_doc)
 
         print("Generating API docs with command '{}'...".format(
             COMMAND_GENERATE_API_DOCS))

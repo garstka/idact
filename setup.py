@@ -7,7 +7,10 @@ from setuptools import setup, find_packages
 with open('README.rst') as readme_file:
     README = readme_file.read()
 
-REQUIREMENTS = ['click>=6.7']
+REQUIREMENTS = ['click>=6.7',
+                'fabric3>=1.14',
+                'bitmath>=1.3.1.2',
+                'python-dateutil>=2.7.2']
 
 setup(
     author="Matt Garstka",
