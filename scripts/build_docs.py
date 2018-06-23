@@ -9,15 +9,34 @@ import webbrowser
 
 DOCS_ROOT = 'docs'
 
-COMMAND_GENERATE_API_DOCS = "sphinx-apidoc --force -o {}/ idact".format(
-    DOCS_ROOT)
+WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
+
+
+def run_apidoc(module: str):
+    import better_apidoc
+    sys.path.append(WORKING_DIR)
+    better_apidoc.main(
+        ["better-apidoc",
+         "--force",
+         "--module-first",
+         "--separate",
+         "--templates",
+         "{docs_root}/_templates".format(docs_root=DOCS_ROOT),
+         "-o",
+         "{docs_root}/api".format(docs_root=DOCS_ROOT),
+         "{working_dir}/{module}".format(working_dir=WORKING_DIR,
+                                         module=module)])
+
 
 COMMAND_CLEAN_DOCS = 'make clean'
 COMMAND_BUILD_DOCS = 'make html'
 
 DOCS_INDEX_PATH = '{}/_build/html/index.html'.format(DOCS_ROOT)
 
-WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
+MODULES_TO_APIDOC = ['idact',
+                     'tests',
+                     'scripts',
+                     'testing_setup']
 
 
 def main(argv):
@@ -26,9 +45,9 @@ def main(argv):
 
         os.chdir(WORKING_DIR)
 
-        print("Generating API docs with command '{}'...".format(
-            COMMAND_GENERATE_API_DOCS))
-        sub.check_call(COMMAND_GENERATE_API_DOCS, shell=True)
+        print("Generating API docs...")
+        for module in MODULES_TO_APIDOC:
+            run_apidoc(module)
 
         os.chdir(DOCS_ROOT)
 

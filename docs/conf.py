@@ -42,7 +42,9 @@ add_module_names = False
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx_autodoc_typehints',
-              'm2r']
+              'm2r',
+              'sphinxcontrib.fulltoc',
+              'sphinx.ext.autosummary']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

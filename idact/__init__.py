@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 
-"""Top-level package for Interactive Data Analysis Convenience Tools."""
+"""
+idact package
+=============
+
+Top-level package for Interactive Data Analysis Convenience Tools.
+"""
+
 from idact.core.auth import AuthMethod
 from idact.core.environment import load_environment, save_environment
 from idact.core.nodes import Nodes, Node
