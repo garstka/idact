@@ -11,6 +11,7 @@ For internals see :py:mod:`idact.detail`.
 
    readme
    modules
+   diagrams
    testing_setup
    license
 

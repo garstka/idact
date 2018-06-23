@@ -10,6 +10,7 @@ dependencies:
   - "click>=6.7"
   - "pytest>=3.5.1"
   - "python-dateutil>=2.7.2"
+  - "graphviz>=2.38.0"
   - pip:
     - "fabric3>=1.14"
     - "pytest-flake8>=1.0.1"

@@ -8,6 +8,7 @@ addons:
   apt:
     packages:
      - sshpass
+     - graphviz
 matrix:
   include:
     - python: 3.6
@@ -30,6 +31,7 @@ script:
   - sshpass -p pass-50 ssh -o "StrictHostKeyChecking no" -p 2222 user-50@localhost bash -c "squeue"
   - pip install -r requirements_dev.txt
   - python scripts/run_tests.py
+  - python scripts/generate_diagrams.py
   - python scripts/build_docs.py --no-show
   - python scripts/view_coverage.py --no-show
 after_success:
