@@ -7,9 +7,12 @@ import subprocess as sub
 import sys
 import webbrowser
 
-COMMANDS_COVERAGE = ['coverage run --source idact -m pytest',
-                     'coverage report -m',
-                     'coverage html']
+COVERAGE = "{python} -m coverage".format(python=sys.executable)
+
+COMMANDS_COVERAGE = [
+    '{coverage} run --source idact -m pytest'.format(coverage=COVERAGE),
+    '{coverage} report -m'.format(coverage=COVERAGE),
+    '{coverage} html'.format(coverage=COVERAGE)]
 
 COVERAGE_INDEX_PATH = 'htmlcov/index.html'
 

@@ -6,13 +6,17 @@ import pathlib
 import subprocess as sub
 import sys
 
-COMMAND_GENERATE_DIAGRAM = ("pyreverse"
+PYREVERSE = ('{python} -c'
+             ' "from pylint import run_pyreverse;'
+             ' run_pyreverse()"').format(python=sys.executable)
+
+COMMAND_GENERATE_DIAGRAM = ("{pyreverse}"
                             " --output dot"
                             " --project idact"
                             " --show-ancestors 2"
                             " --all-associated"
                             " --filter-mode SPECIAL"
-                            " {path}")
+                            " {{path}}".format(pyreverse=PYREVERSE))
 
 COMMAND_CONVERT_TO_PNG = ("dot"
                           " -Tpng"

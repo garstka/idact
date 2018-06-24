@@ -10,9 +10,11 @@ import traceback
 
 WORKING_DIR = os.path.realpath(os.path.dirname(__file__))
 
+PYTHON = sys.executable
+
 COMMANDS = ["docker stop {SLURM_CONTAINER}",
             "docker rm {SLURM_CONTAINER}",
-            "python ssh_clear_fingerprint.py"]
+            "{python} ssh_clear_fingerprint.py".format(python=sys.executable)]
 
 
 def main():

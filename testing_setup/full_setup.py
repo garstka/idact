@@ -10,12 +10,15 @@ import traceback
 
 WORKING_DIR = os.path.realpath(os.path.dirname(__file__))
 
-COMMANDS = ['python container_pull.py',
-            'python container_run.py',
-            'python ssh_install.py',
-            'python ssh_generate_host_keys.py',
-            'python ssh_add_users.py',
-            'python ssh_run.py']
+PYTHON = sys.executable
+
+COMMANDS = [i.format(python=PYTHON) for i in
+            ['{python} container_pull.py',
+             '{python} container_run.py',
+             '{python} ssh_install.py',
+             '{python} ssh_generate_host_keys.py',
+             '{python} ssh_add_users.py',
+             '{python} ssh_run.py']]
 
 
 def main():

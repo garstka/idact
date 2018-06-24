@@ -32,8 +32,13 @@ def run_apidoc(module: str):
                                          module=module)])
 
 
-COMMAND_CLEAN_DOCS = 'make clean'
-COMMAND_BUILD_DOCS = 'make html'
+SPHINXBUILD = "{python} -msphinx".format(python=sys.executable)
+
+# SPHINXBUILD parameter is for Linux make.
+COMMAND_CLEAN_DOCS = 'make clean SPHINXBUILD="{sphinxbuild}"'.format(
+    sphinxbuild=SPHINXBUILD)
+COMMAND_BUILD_DOCS = 'make html SPHINXBUILD="{sphinxbuild}"'.format(
+    sphinxbuild=SPHINXBUILD)
 
 DOCS_INDEX_PATH = '{}/_build/html/index.html'.format(DOCS_ROOT)
 
@@ -59,6 +64,8 @@ def main(argv):
         sub.check_call(COMMAND_CLEAN_DOCS, shell=True)
 
         print("Building docs with '{}':".format(COMMAND_BUILD_DOCS))
+        # SPHINXBUILD environment variable is for Windows make.bat
+        os.environ['SPHINXBUILD'] = SPHINXBUILD
         sub.check_call(COMMAND_BUILD_DOCS, shell=True)
 
         os.chdir(WORKING_DIR)

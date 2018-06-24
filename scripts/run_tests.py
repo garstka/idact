@@ -8,9 +8,12 @@ import sys
 
 WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
 
-TESTS_TO_RUN = ['pytest -v --cache-clear --cov=idact tests',
-                'pytest -v --flake8 -m flake8',
-                'pytest -v --pylint -m pylint']
+PYTEST = "{python} -mpytest -v".format(python=sys.executable)
+
+TESTS_TO_RUN = [
+    '{pytest} --cache-clear --cov=idact tests'.format(pytest=PYTEST),
+    '{pytest} --flake8 -m flake8'.format(pytest=PYTEST),
+    '{pytest} --pylint -m pylint'.format(pytest=PYTEST)]
 
 
 def run(command):
