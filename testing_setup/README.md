@@ -82,3 +82,58 @@ the problem below.
   may need to be manually removed from `known_hosts` (or the equivalent)
   after a setup-teardown cycle.
  - On Linux, this was taken care of by the setup script.
+
+## Software installed on top of base image
+
+### Python 3.6
+
+```
+python3.6
+pip3.6
+```
+
+### Jupyter
+
+Some Jupyter software is installed for manual testing.
+
+#### Jupyter Notebook
+
+To run Jupyter Notebook:
+
+```
+jupyter notebook --ip 127.0.0.1 --port 8080
+```
+
+On host machine:
+
+```
+putty -N -L 8080:localhost:8080 user-1@localhost -P 2222
+```
+
+#### Jupyter Hub
+
+To run Jupyter Hub:
+
+```
+jupyterhub
+```
+
+On host machine:
+
+```
+putty -N -L 8000:localhost:8000 user-1@localhost -P 2222
+```
+
+#### Jupyter Lab
+
+To run Jupyter Lab:
+
+```
+jupyter lab --ip 127.0.0.1 --port 8090
+```
+
+On host machine:
+
+```
+putty -N -L 8090:localhost:8090 user-1@localhost -P 2222
+```
