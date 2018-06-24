@@ -14,7 +14,10 @@ TESTS_TO_RUN = ['pytest -v --cache-clear --cov=idact tests',
 
 
 def run(command):
-    """Runs a test command and returns the return code."""
+    """Runs a test command and returns the return code.
+
+        :param command: Command to run.
+    """
     print("Running '{}':".format(command))
     rc = subprocess.call(command, shell=True)
     print("'{command}' returned {rc}.".format(command=command,
@@ -23,7 +26,6 @@ def run(command):
 
 
 def main():
-    """Runs all test commands."""
     os.chdir(WORKING_DIR)
 
     codes = [(command, run(command))

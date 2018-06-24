@@ -1,3 +1,9 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :class:`.Walltime`.
+"""
+
 import re
 
 

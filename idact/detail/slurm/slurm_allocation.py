@@ -11,16 +11,15 @@ from idact.detail.slurm.run_squeue import run_squeue
 
 
 class SlurmAllocation(Allocation):
-    """Corresponds to a SLURM job.
+    """Corresponds to a Slurm job.
 
-        :param job_id: SLURM job ID.
+        :param job_id: Slurm job ID.
 
-        :param access_node: Access node for the cluter on which the job
+        :param access_node: Access node for the cluster on which the job
                             was requested.
 
         :param nodes: Nodes to update with information after the job state
                       changes to RUNNING.
-
     """
 
     def __init__(self,

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pull the container for testing."""
+"""Pulls the container used for testing."""
 
 import os
 import subprocess as sub

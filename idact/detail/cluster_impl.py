@@ -15,7 +15,8 @@ from idact.detail.slurm.sbatch_arguments import SbatchArguments
 class ClusterImpl(Cluster):
     """Implementation of the Cluster interface.
 
-       :param client_config: Client-side cluster config."""
+       :param client_config: Client-side cluster config.
+    """
 
     def __init__(self,
                  client_config: ClientClusterConfig):

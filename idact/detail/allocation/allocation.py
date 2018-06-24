@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class Allocation(ABC):
-    """Corresponds to a resource allocation request, e.g. a SLURM job."""
+    """Corresponds to a resource allocation request, e.g. a Slurm job."""
 
     @abstractmethod
     def wait(self,

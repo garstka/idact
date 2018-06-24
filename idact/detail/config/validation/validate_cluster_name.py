@@ -14,7 +14,10 @@ __COMPILED = re.compile(pattern=VALID_CLUSTER_NAME_REGEX)
 def validate_cluster_name(cluster_name) -> str:
     """Valid cluster name is a string matching VALID_CLUSTER_NAME_REGEX.
        If cluster_name is invalid, raises a ValueError or TypeError.
-       Otherwise, returns cluster_name."""
+       Otherwise, returns cluster_name.
+
+        :param cluster_name: Object to validate.
+    """
     if not __COMPILED.match(cluster_name):
         raise ValueError(validation_error_message(
             label='cluster name',

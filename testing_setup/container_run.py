@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Runs the container for testing."""
+"""Runs the container used for testing."""
 
 import os
 import subprocess as sub

@@ -6,7 +6,10 @@ from idact.detail.environment.environment_serialization import \
 
 
 class EnvironmentProvider:
-    """Creates and stores the global environment."""
+    """Creates and stores the global environment.
+
+        :param initial_environment: Use this environment instead of loading
+                                    from a file on first access."""
 
     _state = {}
 
@@ -20,7 +23,8 @@ class EnvironmentProvider:
     @property
     def environment(self) -> Environment:
         """Returns the current environment.
-           Tries to load it if there is none."""
+           Tries to load it from file if there is none.
+        """
         if self._environment is None:
             self.environment = deserialize_environment_from_file()
         return self._environment

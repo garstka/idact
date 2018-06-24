@@ -16,7 +16,7 @@ def serialize_environment_to_file(environment: Environment,
         :param environment: Environment to save.
 
         :param path:        Output file path. Default: ~/.idact.conf
-        """
+    """
     if path is None:
         path = DEFAULT_ENVIRONMENT_PATH
 
@@ -32,7 +32,8 @@ def deserialize_environment_from_file(path: Optional[str] = None,
        :param path:             Environment file path. Default: ~/.idact.conf
 
        :param raise_if_missing: Raise ValueError if the file is missing.
-                                Default: False"""
+                                Default: False
+    """
     if path is None:
         path = DEFAULT_ENVIRONMENT_PATH
 

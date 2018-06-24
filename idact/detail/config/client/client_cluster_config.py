@@ -14,7 +14,6 @@ class ClientClusterConfig:
        :param user: Cluster user to log in and run commands as.
 
        :param auth: Authentication method.
-
     """
 
     def __init__(self,

@@ -4,6 +4,7 @@ from idact.core.walltime import Walltime
 
 
 def test_walltime_values():
+    """Basic walltime values."""
     walltime = Walltime(days=1, hours=2, minutes=3, seconds=4)
     assert walltime.days == 1
     assert walltime.hours == 2
@@ -12,17 +13,20 @@ def test_walltime_values():
 
 
 def test_walltime_must_not_be_zero():
+    """Zero walltime is not allowed."""
     with pytest.raises(ValueError):
         Walltime()
 
 
 def test_walltime_days():
+    """Values for days parameter."""
     with pytest.raises(ValueError):
         Walltime(days=-1)
     assert Walltime(days=10).days == 10
 
 
 def test_walltime_hours():
+    """Values for hours parameter."""
     with pytest.raises(ValueError):
         Walltime(hours=-1)
     assert Walltime(hours=10).hours == 10
@@ -31,6 +35,7 @@ def test_walltime_hours():
 
 
 def test_walltime_minutes():
+    """Values for minutes parameter."""
     with pytest.raises(ValueError):
         Walltime(minutes=-1)
     assert Walltime(minutes=10).minutes == 10
@@ -39,6 +44,7 @@ def test_walltime_minutes():
 
 
 def test_walltime_seconds():
+    """Values for seconds parameter."""
     with pytest.raises(ValueError):
         Walltime(seconds=-1)
     assert Walltime(seconds=10).seconds == 10
@@ -47,6 +53,7 @@ def test_walltime_seconds():
 
 
 def test_walltime_from_string():
+    """Values for walltime conversion from string."""
     walltime_1 = Walltime.from_string('1:02:03')
     assert walltime_1.days == 0
     assert walltime_1.hours == 1

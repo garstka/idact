@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Adds $SLURM_USERS users to the container:
-   (user-0, pass-0), (user-1, pass-1), ..."""
+   (user-0, pass-0), (user-1, pass-1), ...
+"""
 
 import os
 import subprocess as sub

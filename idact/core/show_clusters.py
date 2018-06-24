@@ -1,3 +1,9 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :func:`.show_clusters`, :func:`.show_cluster`.
+"""
+
 from typing import Dict
 
 from idact.core.cluster import Cluster
@@ -13,6 +19,7 @@ def show_clusters() -> Dict[str, Cluster]:
 def show_cluster(name: str) -> Cluster:
     """Returns the cluster with this name.
 
-        :param name: Cluster name."""
+        :param name: Cluster name.
+    """
     environment = EnvironmentProvider().environment
     return environment.clusters[name]

@@ -1,3 +1,9 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :func:`.load_environment`, :func:`.save_environment`.
+"""
+
 from typing import Optional
 
 from idact.detail.environment.environment_provider import EnvironmentProvider

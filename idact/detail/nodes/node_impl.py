@@ -20,7 +20,6 @@ class NodeImpl(Node):
 
         :param access_node: Main cluster node that does not require allocation,
                             or None if this node is an access node.
-
     """
 
     def __init__(self,
@@ -32,7 +31,8 @@ class NodeImpl(Node):
     def run(self, command: str) -> str:
         """Runs a command on the node and returns the output.
 
-            :param command: Command to run."""
+            :param command: Command to run.
+        """
 
         if self._allocated_until and self._allocated_until < utc_now():
             message = ("Cannot run '{command}'. "

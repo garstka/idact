@@ -2,16 +2,18 @@ from contextlib import contextmanager
 
 
 class PasswordCache:
+    """Caches a host password."""
     _password = None
 
     @property
     def password(self):
+        """Current cached password."""
         return self._password
 
 
 @contextmanager
 def set_password(password: str):
-    """Sets the host password in the context manager block.
+    """Sets the host password for the context manager block.
 
         :param password: Password to use.
     """

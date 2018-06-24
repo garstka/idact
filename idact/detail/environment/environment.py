@@ -26,16 +26,17 @@ class Environment:
 
     @property
     def clusters(self) -> Dict[str, Cluster]:
-        """All Cluster objects corresponding to config."""
+        """All :class:`.Cluster` objects defined by configuration."""
         return self._clusters
 
     def add_cluster(self,
                     name: str,
                     client_config: ClientClusterConfig) -> Cluster:
         """Adds a cluster to config and cluster list.
-           Returns the added Cluster.
+           Returns the added :class:`.Cluster`.
 
             :param name:          Cluster name.
+
             :param client_config: Client-side cluster config.
         """
 

@@ -1,3 +1,9 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :class:`.Node`, :class:`.Nodes`.
+"""
+
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 
@@ -9,7 +15,9 @@ class Node(ABC):
 
     @abstractmethod
     def run(self, command: str) -> str:
-        """Runs a command on the node. Returns the result as string."""
+        """Runs a command on the node. Returns the result as string.
+
+            :param command: Command to run."""
         pass
 
 
@@ -27,7 +35,6 @@ class Nodes(Sequence):
             :raises RuntimeException: On error.
 
             :raises TimeoutException: On timeout.
-
         """
         pass
 

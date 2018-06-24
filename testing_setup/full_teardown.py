@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Performs full testing environment teardown."""
+"""Performs full testing environment teardown: Stops and removes the container,
+   clears ssh keys saved to known_hosts.
+"""
 
 import os
 import subprocess as sub

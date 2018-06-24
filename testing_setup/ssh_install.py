@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install the ssh daemon in the container."""
+"""Installs the ssh daemon in the container."""
 
 import os
 import subprocess as sub

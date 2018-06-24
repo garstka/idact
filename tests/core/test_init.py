@@ -9,6 +9,9 @@ from idact import _IMPORTED
 
 
 def test_aliases():
+    """Tests classes and functions imported from the core package
+       to the top level package.
+    """
     assert len(_IMPORTED) == 10
     from idact import add_cluster as add_cluster2
     from idact import show_cluster as show_cluster2

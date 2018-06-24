@@ -9,7 +9,8 @@ def get_access_node(config: ClientClusterConfig) -> NodeImpl:
 
        An access node is expected to be available without allocation.
 
-       :param config: Client cluster config."""
+       :param config: Client cluster config.
+    """
     node = NodeImpl(config=config)
     node.make_allocated(host=config.host,
                         allocated_until=None)

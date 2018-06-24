@@ -5,6 +5,10 @@ from idact.detail.slurm.sbatch_arguments import SbatchArguments
 
 
 def format_sbatch_allocation_request(args: SbatchArguments) -> str:
+    """Formats sbatch command from arguments.
+
+        :param args: Arguments to append.
+    """
     argument_list = []
     for key, value in sorted(args.args.items()):
         argument_list.append(key)
@@ -23,7 +27,12 @@ def format_sbatch_allocation_request(args: SbatchArguments) -> str:
 
 def run_sbatch(args: SbatchArguments,
                node: Node) -> int:
-    """Runs sbatch on the given node. Returns the job id."""
+    """Runs sbatch on the given node. Returns the job id.
+
+        :param args: Arguments to use for allocation.
+
+        :param node: Node to run sbatch on.
+    """
 
     request = format_sbatch_allocation_request(args=args)
     output = node.run(request)

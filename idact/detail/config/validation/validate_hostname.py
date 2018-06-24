@@ -12,7 +12,10 @@ __COMPILED = re.compile(pattern=VALID_HOSTNAME_REGEX)
 def validate_hostname(hostname):
     """Valid cluster name is a string matching VALID_HOSTNAME_REGEX.
        If hostname is invalid, raises a ValueError or TypeError.
-       Otherwise, returns hostname."""
+       Otherwise, returns hostname.
+
+        :param hostname: Object to validate.
+    """
     if not __COMPILED.match(hostname):
         raise ValueError(validation_error_message(
             label='hostname',

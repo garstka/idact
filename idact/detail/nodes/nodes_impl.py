@@ -6,7 +6,12 @@ from idact.detail.nodes.node_impl import NodeImpl
 
 
 class NodesImpl(Nodes):  # pylint: disable=too-many-ancestors
-    """Implementation of a collection of nodes."""
+    """Implementation of a collection of nodes.
+
+        :param nodes: Nodes to be part of the collection.
+
+        :param allocation: Allocation request for the nodes.
+    """
 
     def __init__(self,
                  nodes: List[NodeImpl],

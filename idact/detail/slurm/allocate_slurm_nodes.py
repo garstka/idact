@@ -15,7 +15,12 @@ from idact.detail.slurm.slurm_allocation import SlurmAllocation
 
 def allocate_slurm_nodes(args: SbatchArguments,
                          config: ClientClusterConfig) -> Nodes:
-    """Tries to allocate"""
+    """Tries to allocate nodes using Slurm.
+
+       :param args:   sbatch arguments.
+
+       :param config: Config for the cluster to allocate nodes on.
+    """
 
     access_node = get_access_node(config=config)
 

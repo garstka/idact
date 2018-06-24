@@ -21,7 +21,7 @@ class ClientConfig:
 
     @property
     def clusters(self) -> Dict[str, ClientClusterConfig]:
-        """All clusters."""
+        """Cluster config by name."""
         return self._clusters
 
     def add_cluster(self,

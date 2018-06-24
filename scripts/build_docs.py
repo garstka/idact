@@ -13,6 +13,10 @@ WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
 
 
 def run_apidoc(module: str):
+    """Runs apidoc, generating rst files from code.
+
+        :param module: Module to run apidoc for.
+    """
     import better_apidoc
     sys.path.append(WORKING_DIR)
     better_apidoc.main(
