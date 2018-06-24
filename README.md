@@ -5,6 +5,15 @@
 
 Tools taking care of the tedious aspects of working with big data on a cluster.
 
+## Requirements
+
+Python 3.5+ is required.
+
+If this is not the default installation, use the proper executables,
+e.g. pip3 and python3 instead of pip and python for each command
+in this README.
+
+You can also use the absolute paths to pip and python executables.
 
 ## Install
 
@@ -34,18 +43,19 @@ pip install -r requirements_dev.txt
 
 ## Run tests with coverage, flake8 and Pylint
 
+Functional tests require the testing container to be up and running,
+see testing_setup/README.md.
+
 ```
 python scripts/run_tests.py
 ```
 
-## Build docs and view in browser
+## Build docs and coverage
 
 ```
 python scripts/build_docs.py
-```
-
-## Build coverage and view in browser
-
-```
 python scripts/view_coverage.py
 ```
+
+Each script will open the generated html page in the default browser, unless
+`--no-show` parameter is passed.
