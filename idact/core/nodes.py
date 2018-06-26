@@ -9,6 +9,8 @@ from collections.abc import Sequence
 
 from typing import Optional
 
+from idact.core.tunnel import Tunnel
+
 
 class Node(ABC):
     """Cluster node interface."""
@@ -18,6 +20,18 @@ class Node(ABC):
         """Runs a command on the node. Returns the result as string.
 
             :param command: Command to run."""
+        pass
+
+    @abstractmethod
+    def tunnel(self,
+               there: int,
+               here: Optional[int] = None) -> Tunnel:
+        """Creates an SSH tunnel from node to localhost.
+
+            :param there: Remote port to tunnel.
+
+            :param here: Local port, or None for any port.
+        """
         pass
 
 

@@ -14,6 +14,7 @@ Core classes
  - :py:class:`.Cluster`
  - :py:class:`.Node`
  - :py:class:`.Nodes`
+ - :py:class:`.Tunnel`
  - :py:class:`.Walltime`
 
 Core implementation classes
@@ -65,6 +66,9 @@ Other detail classes
     :figclass: align-center
 
 Other detail classes:
+ - :py:class:`.Binding`
  - :py:class:`.Environment`
  - :py:class:`.EnvironmentProvider`
+ - :py:class:`.FirstHopTunnel`
+ - :py:class:`.MultiHopTunnel`
  - :py:class:`.PasswordCache`

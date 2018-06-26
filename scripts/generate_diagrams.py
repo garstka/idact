@@ -32,6 +32,7 @@ DIAGRAMS_TO_GENERATE = {"core": "idact/core",
                         "detail-other": "idact/detail/auth"
                                         " idact/detail/environment"
                                         " idact/detail/helper"
+                                        " idact/detail/tunnel"
                                         " idact/cli.py"}
 
 WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))

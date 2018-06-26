@@ -11,6 +11,14 @@ from idact.detail.environment.environment_provider import EnvironmentProvider
 TEST_CLUSTER = 'test'
 
 
+def get_testing_host():
+    return 'localhost'
+
+
+def get_testing_port():
+    return os.environ.get('SLURM_PORT', 2222)
+
+
 @contextmanager
 def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
     # pylint: disable=protected-access
@@ -18,8 +26,8 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
     EnvironmentProvider._state = None
 
     cluster = ClientClusterConfig(
-        host='localhost',
-        port=os.environ.get('SLURM_PORT', 2222),
+        host=get_testing_host(),
+        port=get_testing_port(),
         user=user,
         auth=auth)
     EnvironmentProvider(

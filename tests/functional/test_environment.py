@@ -5,14 +5,14 @@ from idact import show_clusters, show_cluster, add_cluster, \
 from idact.detail.auth.set_password import set_password
 from tests.helpers.clear_environment import clear_environment
 from tests.helpers.reset_environment import TEST_CLUSTER
-from tests.helpers.test_users import USER_2, get_password
+from tests.helpers.test_users import USER_2, get_test_user_password
 
 
 def test_environment():
     user = USER_2
     test_environment_file = './idact.test.conf'
     with clear_environment():
-        with set_password(get_password(user)):
+        with set_password(get_test_user_password(user)):
             clusters = show_clusters()
             assert clusters == {}
 

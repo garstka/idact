@@ -6,11 +6,11 @@ idact package
 
 Top-level package for Interactive Data Analysis Convenience Tools.
 """
-
 from idact.core.auth import AuthMethod
 from idact.core.environment import load_environment, save_environment
 from idact.core.nodes import Nodes, Node
 from idact.core.show_clusters import show_cluster, show_clusters
+from idact.core.tunnel import Tunnel
 from idact.core.walltime import Walltime
 from idact.core.add_cluster import add_cluster
 from idact.core.cluster import Cluster
@@ -28,7 +28,8 @@ _IMPORTED = {add_cluster,
              Cluster,
              Walltime,
              Node,
-             Nodes}
+             Nodes,
+             Tunnel}
 """List of the public API members imported into the top level package
    for convenience."""
 

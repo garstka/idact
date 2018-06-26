@@ -1,32 +1,29 @@
 from contextlib import contextmanager
-from getpass import getpass
 
 from fabric.state import env
 
 from idact.core.auth import AuthMethod
-from idact.detail.auth.set_password import PasswordCache
+from idact.detail.auth.get_host_string import get_host_string
+from idact.detail.auth.get_password import get_password
 from idact.detail.config.client.client_cluster_config \
     import ClientClusterConfig
 
 
-def get_host_string(user: str, host: str, port: int):
-    """Returns a host string for Fabric."""
-    return "{user}@{host}:{port}".format(user=user,
-                                         host=host,
-                                         port=port)
-
-
 @contextmanager
 def authenticate(host: str, config: ClientClusterConfig):
+    """Authenticates the user in Fabric.
+
+        :param host: SSH host.
+
+        :param config: Cluster config.
+    """
     if config.auth != AuthMethod.ASK:
         raise ValueError("Authentication method not implemented: '{}'.".format(
             config.auth))
 
     host_is_gateway = host == config.host
 
-    gateway = get_host_string(user=config.user,
-                              host=config.host,
-                              port=config.port)
+    gateway = get_host_string(config=config)
 
     previous_host = env.host_string
     previous_gateway = None
@@ -39,12 +36,7 @@ def authenticate(host: str, config: ClientClusterConfig):
         env.host_string = "{user}@{host}".format(user=config.user,
                                                  host=host)
 
-    if PasswordCache().password is not None:
-        env.password = PasswordCache().password
-    else:
-        env.password = getpass("Password for {user}@{host}: ".format(
-            user=env.user,
-            host=env.host))
+    env.password = get_password(config=config)
     yield
     env.host_string = previous_host
     if not host_is_gateway:
