@@ -8,6 +8,7 @@ Top-level package for Interactive Data Analysis Convenience Tools.
 """
 from idact.core.auth import AuthMethod
 from idact.core.environment import load_environment, save_environment
+from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Nodes, Node
 from idact.core.show_clusters import show_cluster, show_clusters
 from idact.core.tunnel import Tunnel
@@ -29,7 +30,8 @@ _IMPORTED = {add_cluster,
              Walltime,
              Node,
              Nodes,
-             Tunnel}
+             Tunnel,
+             JupyterDeployment}
 """List of the public API members imported into the top level package
    for convenience."""
 

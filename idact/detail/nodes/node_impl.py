@@ -6,6 +6,7 @@ import fabric.tasks
 import fabric.decorators
 from fabric.exceptions import CommandTimeout
 
+from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Node
 from idact.detail.auth.authenticate import authenticate
 from idact.detail.auth.get_password import get_password
@@ -14,6 +15,7 @@ from idact.detail.config.client.client_cluster_config \
 from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.utc_now import utc_now
+from idact.detail.jupyter.deploy_jupyter import deploy_jupyter
 from idact.detail.tunnel.binding import Binding
 from idact.detail.tunnel.build_tunnel import build_tunnel
 
@@ -124,3 +126,7 @@ class NodeImpl(Node):
                 "Unable to tunnel {there} on node '{host}'.".format(
                     there=there,
                     host=self._host)) from e
+
+    def deploy_notebook(self, local_port: int = 8080) -> JupyterDeployment:
+        return deploy_jupyter(node=self,
+                              local_port=local_port)

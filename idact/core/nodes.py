@@ -9,6 +9,7 @@ from collections.abc import Sequence
 
 from typing import Optional
 
+from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.tunnel import Tunnel
 
 
@@ -34,6 +35,15 @@ class Node(ABC):
             :param there: Remote port to tunnel.
 
             :param here: Local port, or None for any port.
+        """
+        pass
+
+    @abstractmethod
+    def deploy_notebook(self,
+                        local_port: int = 8080) -> JupyterDeployment:
+        """Deploys a Jupyter notebook on the node..
+
+            :param here: Local notebook access port.
         """
         pass
 
