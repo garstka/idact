@@ -1,5 +1,4 @@
 from contextlib import ExitStack
-from threading import Thread
 
 import pytest
 import requests
@@ -9,7 +8,7 @@ from idact import show_cluster, Walltime
 from idact.detail.auth.set_password import set_password
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment, TEST_CLUSTER
-from tests.helpers.run_dummy_server import run_dummy_server
+from tests.helpers.run_dummy_server import start_dummy_server_thread
 from tests.helpers.test_users import get_test_user_password, USER_5
 
 
@@ -35,9 +34,7 @@ def test_node_tunnel():
 
             there = 8000
             here = 2223
-            timeout = 1
-            server = Thread(target=run_dummy_server, args=(there, timeout))
-            server.start()
+            server = start_dummy_server_thread(server_port=there)
 
             tunnel = node.tunnel(there=there, here=here)
             print(tunnel)
