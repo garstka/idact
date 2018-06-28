@@ -16,10 +16,13 @@ class Node(ABC):
     """Cluster node interface."""
 
     @abstractmethod
-    def run(self, command: str) -> str:
+    def run(self, command: str, timeout: Optional[int] = None) -> str:
         """Runs a command on the node. Returns the result as string.
 
-            :param command: Command to run."""
+            :param command: Command to run.
+
+            :param timeout: Execution timeout.
+        """
         pass
 
     @abstractmethod

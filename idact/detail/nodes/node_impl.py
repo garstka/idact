@@ -4,6 +4,7 @@ from typing import Optional
 import fabric.operations
 import fabric.tasks
 import fabric.decorators
+from fabric.exceptions import CommandTimeout
 
 from idact.core.nodes import Node
 from idact.detail.auth.authenticate import authenticate
@@ -46,13 +47,15 @@ class NodeImpl(Node):
                 node=self._host,
                 timestamp=self._allocated_until.isoformat()))
 
-    def run(self, command: str) -> str:
+    def run(self, command: str, timeout: Optional[int] = None) -> str:
         try:
             self._ensure_allocated()
 
             @fabric.decorators.task
             def task():
-                return fabric.operations.run(command)
+                return fabric.operations.run(command,
+                                             pty=False,
+                                             timeout=timeout)
 
             with raise_on_remote_fail(exception=RuntimeError):
                 with authenticate(host=self._host, config=self._config):
@@ -61,6 +64,9 @@ class NodeImpl(Node):
             output = next(iter(result.values()))
 
             return output
+        except CommandTimeout as e:
+            raise TimeoutError("Command timed out: '{command}'".format(
+                command=command)) from e
         except RuntimeError as e:
             raise RuntimeError("Cannot run '{command}'".format(
                 command=command)) from e
@@ -85,9 +91,14 @@ class NodeImpl(Node):
         self._allocated_until = None
 
     def __str__(self):
+        if not self._host:
+            return "Node(NotAllocated)"
         return "Node({host}, {allocated_until})".format(
             host=self._host,
             allocated_until=self._allocated_until)
+
+    def __repr__(self):
+        return str(self)
 
     def tunnel(self,
                there: int,
