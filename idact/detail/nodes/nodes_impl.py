@@ -41,3 +41,6 @@ class NodesImpl(Nodes):  # pylint: disable=too-many-ancestors
     def __str__(self):
         return "Nodes([{}])".format(','.join(
             [str(node) for node in self._nodes]))
+
+    def __repr__(self):
+        return str(self)

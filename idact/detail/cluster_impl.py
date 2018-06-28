@@ -60,3 +60,6 @@ class ClusterImpl(Cluster):
 
     def __str__(self):
         return "Cluster{}".format(self._client_config)
+
+    def __repr__(self):
+        return str(self)
