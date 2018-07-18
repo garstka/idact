@@ -44,8 +44,7 @@ DOCS_INDEX_PATH = '{}/_build/html/index.html'.format(DOCS_ROOT)
 
 MODULES_TO_APIDOC = ['idact',
                      'tests',
-                     'scripts',
-                     'testing_setup']
+                     'scripts']
 
 
 def main(argv):

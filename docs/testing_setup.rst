@@ -1,1 +1,1 @@
-.. mdinclude:: ../testing_setup/README.md
+.. mdinclude:: ../scripts/testing_setup/README.md

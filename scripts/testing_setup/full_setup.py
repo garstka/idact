@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """Performs full testing environment setup: Pulls and runs the container,
    installs an ssh server, adds users.
 """

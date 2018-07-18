@@ -13,10 +13,10 @@ matrix:
     - python: 3.6
       env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10
 before_install:
-  - source testing_setup/container_prepare_envs.sh
+  - source scripts/testing_setup/container_prepare_envs.sh
   - printenv | sort
 install:
-  - python testing_setup/full_setup.py
+  - python scripts/testing_setup/full_setup.py
   - docker ps
 script:
   - docker exec $SLURM_CONTAINER sinfo
@@ -34,7 +34,7 @@ script:
   - python scripts/build_docs.py --no-show
   - python scripts/view_coverage.py --no-show
 after_success:
-  - python testing_setup/full_teardown.py
+  - python scripts/testing_setup/full_teardown.py
   - python scripts/deploy_docs.py
 env:
   global:
