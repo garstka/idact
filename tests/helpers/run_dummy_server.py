@@ -28,10 +28,10 @@ def run_dummy_server(server_port: int, timeout: float):
     ssh.exec_command("killall python3")
 
 
-STARTUP_TIME = 2
+STARTUP_TIME = 3
 
 
-def start_dummy_server_thread(server_port: int, timeout: float = 3) -> Thread:
+def start_dummy_server_thread(server_port: int, timeout: float = 5) -> Thread:
     """Runs a simple HTTP server in a separate thread.w
        See :func:`run_dummy_server`."""
 
