@@ -28,7 +28,7 @@ def run_dummy_server(server_port: int, timeout: float):
     ssh.exec_command("killall python3")
 
 
-STARTUP_TIME = 3
+STARTUP_TIME = 4
 
 
 def start_dummy_server_thread(server_port: int, timeout: float = 5) -> Thread:

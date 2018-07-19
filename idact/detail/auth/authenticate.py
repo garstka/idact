@@ -29,6 +29,7 @@ def authenticate(host: str, config: ClientClusterConfig):
     previous_gateway = None
 
     if host_is_gateway:
+        env.gateway = None
         env.host_string = gateway
     else:
         previous_gateway = env.gateway

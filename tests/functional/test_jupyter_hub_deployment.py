@@ -9,11 +9,11 @@ from idact import show_cluster, Walltime
 from idact.detail.auth.set_password import set_password
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment, TEST_CLUSTER
-from tests.helpers.test_users import get_test_user_password, USER_5
+from tests.helpers.test_users import get_test_user_password, USER_6
 
 
 def test_jupyter_hub_deployment():
-    user = USER_5
+    user = USER_6
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
         stack.enter_context(reset_environment(user))
