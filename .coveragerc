@@ -3,3 +3,6 @@ omit =
     setup.py
     */__init__.py
     tests/*
+exclude_lines =
+    pragma: no cover
+    @abstract
