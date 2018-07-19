@@ -1,3 +1,5 @@
+from contextlib import ExitStack
+
 import pytest
 from bitmath import MiB
 
@@ -10,45 +12,47 @@ from tests.helpers.test_users import USER_1, get_test_user_password
 
 def test_basic():
     user = USER_1
-    with disable_pytest_stdin():
-        with reset_environment(user):
-            with set_password(get_test_user_password(user)):
-                clusters = show_clusters()
-                print(clusters)
+    with ExitStack() as stack:
+        stack.enter_context(disable_pytest_stdin())
+        stack.enter_context(reset_environment(user))
+        stack.enter_context(set_password(get_test_user_password(user)))
 
-                assert len(clusters) == 1
+        clusters = show_clusters()
+        print(clusters)
 
-                cluster = show_cluster(name=TEST_CLUSTER)
-                print(cluster)
+        assert len(clusters) == 1
 
-                assert clusters[TEST_CLUSTER] == cluster
+        cluster = show_cluster(name=TEST_CLUSTER)
+        print(cluster)
 
-                nodes = cluster.allocate_nodes(nodes=2,
-                                               cores=1,
-                                               memory_per_node=MiB(100),
-                                               walltime=Walltime(minutes=30),
-                                               native_args={
-                                                   '--partition': 'debug'
-                                               })
+        assert clusters[TEST_CLUSTER] == cluster
 
-                assert len(nodes) == 2
-                assert nodes[0] in nodes
-                print(nodes)
+        nodes = cluster.allocate_nodes(nodes=2,
+                                       cores=1,
+                                       memory_per_node=MiB(100),
+                                       walltime=Walltime(minutes=30),
+                                       native_args={
+                                           '--partition': 'debug'
+                                       })
 
-                try:
-                    nodes.wait(timeout=10)
-                    assert nodes.running()
+        assert len(nodes) == 2
+        assert nodes[0] in nodes
+        print(nodes)
 
-                    print(nodes)
-                    print(nodes[0])
+        try:
+            nodes.wait(timeout=10)
+            assert nodes.running()
 
-                    assert nodes[0].run('whoami') == user
-                    assert nodes[1].run('whoami') == user
-                finally:
-                    nodes.cancel()
+            print(nodes)
+            print(nodes[0])
 
-                assert not nodes.running()
-                with pytest.raises(RuntimeError):
-                    nodes.wait()
-                with pytest.raises(RuntimeError):
-                    nodes[0].run('whoami')
+            assert nodes[0].run('whoami') == user
+            assert nodes[1].run('whoami') == user
+        finally:
+            nodes.cancel()
+
+        assert not nodes.running()
+        with pytest.raises(RuntimeError):
+            nodes.wait()
+        with pytest.raises(RuntimeError):
+            nodes[0].run('whoami')

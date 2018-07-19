@@ -1,3 +1,5 @@
+from contextlib import ExitStack
+
 from fabric.context_managers import hide
 from fabric.decorators import task
 from fabric.network import disconnect_all
@@ -17,12 +19,14 @@ def test_connection():
         host = 'user-1@localhost:2222'
         password = 'pass-1'
 
-        with hide('everything'):
-            with disable_pytest_stdin():
-                with set_password(password):
-                    result = execute(task_1, hosts=[host])
-        print('Result:')
-        print(result)
+        with ExitStack() as stack:
+            stack.enter_context(hide('everything'))
+            stack.enter_context(disable_pytest_stdin())
+            stack.enter_context(set_password(password))
+
+            result = execute(task_1, hosts=[host])
+            print('Result:')
+            print(result)
 
         assert result[host].splitlines()[0] == (
             'JOBID PARTITION     NAME     USER ST       '
