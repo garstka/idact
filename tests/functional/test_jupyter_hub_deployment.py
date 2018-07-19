@@ -2,6 +2,7 @@ from contextlib import ExitStack
 from pprint import pprint
 from time import sleep
 
+import fabric.network
 import requests
 from bitmath import MiB
 
@@ -36,15 +37,36 @@ def test_jupyter_hub_deployment():
 
             assert deployment.local_port == local_port
 
-            ps_lines = node.run("ps -ef -u $USER"
-                                " | grep jupyterhub").splitlines()
-            pprint(ps_lines)
-            assert len(ps_lines) == 3
+            fabric.network.disconnect_all()
+
+            ps_jupyter_lines = node.run(
+                "ps -ef -u $USER | grep jupyterhub").splitlines()
+            pprint(ps_jupyter_lines)
+            assert len(ps_jupyter_lines) == 3
+
+            ps_proxy_lines = node.run(
+                "ps -ef -u $USER | grep configurable-http-proxy").splitlines()
+            pprint(ps_proxy_lines)
+            assert len(ps_proxy_lines) == 3
 
             sleep(3)
             request = requests.get("http://127.0.0.1:{local_port}".format(
                 local_port=local_port))
             assert "text/html" in request.headers['Content-type']
+
+            deployment.cancel()
+
+            ps_jupyter_lines = node.run(
+                "ps -ef -u $USER | grep jupyterhub").splitlines()
+            pprint(ps_jupyter_lines)
+            assert len(ps_jupyter_lines) == 2
+
+            ps_proxy_lines = node.run(
+                "ps -ef -u $USER | grep configurable-http-proxy").splitlines()
+            pprint(ps_proxy_lines)
+            assert len(ps_proxy_lines) == 2
+
+            deployment = None
         finally:
             try:
                 if deployment is not None:
