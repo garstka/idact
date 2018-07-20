@@ -8,6 +8,7 @@ from idact import show_cluster, Walltime
 from idact.detail.auth.set_password import set_password
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment, TEST_CLUSTER
+from tests.helpers.retry import retry
 from tests.helpers.run_dummy_server import start_dummy_server_thread
 from tests.helpers.test_users import get_test_user_password, USER_5
 
@@ -42,8 +43,13 @@ def test_node_tunnel():
             assert tunnel.here == here
             assert tunnel.there == there
 
-            request = requests.get("http://127.0.0.1:{local_port}".format(
-                local_port=here))
+            def access_dummy_server():
+                return requests.get("http://127.0.0.1:{local_port}".format(
+                    local_port=here))
+
+            request = retry(access_dummy_server,
+                            retries=3,
+                            seconds_between_retries=2)
             assert "text/html" in request.headers['Content-type']
         finally:
             if tunnel is not None:

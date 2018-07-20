@@ -5,6 +5,7 @@ import requests
 from idact.detail.tunnel.build_tunnel import build_tunnel
 from idact.detail.tunnel.binding import Binding
 from tests.helpers.reset_environment import get_testing_host, get_testing_port
+from tests.helpers.retry import retry
 from tests.helpers.run_dummy_server import start_dummy_server_thread
 from tests.helpers.test_users import USER_3, get_test_user_password
 
@@ -39,8 +40,13 @@ def run_tunnel_test_for_bindings(bindings: List[Binding]):
         assert tunnel.here == local_port
         assert tunnel.there == server_port
 
-        request = requests.get("http://127.0.0.1:{local_port}".format(
-            local_port=local_port))
+        def access_dummy_server():
+            return requests.get("http://127.0.0.1:{local_port}".format(
+                local_port=local_port))
+
+        request = retry(access_dummy_server,
+                        retries=3,
+                        seconds_between_retries=2)
         assert "text/html" in request.headers['Content-type']
     finally:
         if server is not None:
