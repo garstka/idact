@@ -22,5 +22,5 @@ class JupyterDeployment(ABC):
 
     @abstractmethod
     def cancel(self):
-        """Closes the notebook server."""
+        """Closes the notebook server and the tunnel."""
         pass

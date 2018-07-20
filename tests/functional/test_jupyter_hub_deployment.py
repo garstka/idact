@@ -1,6 +1,5 @@
 from contextlib import ExitStack
 from pprint import pprint
-from time import sleep
 
 import fabric.network
 import requests
@@ -25,6 +24,15 @@ def test_jupyter_hub_deployment():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=30))
+
+        ps_jupyterhub = ("ps -ef -u $USER |"
+                         " grep '[/]usr/bin/python3.6 /usr/bin/jupyterhub'"
+                         "; exit 0")
+
+        ps_proxy = ("ps -ef -u $USER |"
+                    " grep '[n]ode /usr/bin/configurable-http-proxy'"
+                    "; exit 0")
+
         node = nodes[0]
         deployment = None
         try:
@@ -39,32 +47,27 @@ def test_jupyter_hub_deployment():
 
             fabric.network.disconnect_all()
 
-            ps_jupyter_lines = node.run(
-                "ps -ef -u $USER | grep jupyterhub").splitlines()
+            ps_jupyter_lines = node.run(ps_jupyterhub).splitlines()
             pprint(ps_jupyter_lines)
-            assert len(ps_jupyter_lines) == 3
+            assert len(ps_jupyter_lines) == 1
 
-            ps_proxy_lines = node.run(
-                "ps -ef -u $USER | grep configurable-http-proxy").splitlines()
+            ps_proxy_lines = node.run(ps_proxy).splitlines()
             pprint(ps_proxy_lines)
-            assert len(ps_proxy_lines) == 3
+            assert len(ps_proxy_lines) == 1
 
-            sleep(3)
             request = requests.get("http://127.0.0.1:{local_port}".format(
                 local_port=local_port))
             assert "text/html" in request.headers['Content-type']
 
             deployment.cancel()
 
-            ps_jupyter_lines = node.run(
-                "ps -ef -u $USER | grep jupyterhub").splitlines()
+            ps_jupyter_lines = node.run(ps_jupyterhub).splitlines()
             pprint(ps_jupyter_lines)
-            assert len(ps_jupyter_lines) == 2
+            assert not ps_jupyter_lines
 
-            ps_proxy_lines = node.run(
-                "ps -ef -u $USER | grep configurable-http-proxy").splitlines()
+            ps_proxy_lines = node.run(ps_proxy).splitlines()
             pprint(ps_proxy_lines)
-            assert len(ps_proxy_lines) == 2
+            assert not ps_proxy_lines
 
             deployment = None
         finally:

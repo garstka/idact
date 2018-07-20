@@ -1,4 +1,5 @@
 from idact.core.nodes import Node
+from idact.detail.helper.ptree import ptree
 
 CANCEL_TIMEOUT = 5
 
@@ -31,10 +32,16 @@ class GenericDeployment:
         return self._output
 
     def cancel(self):
-        """Kills the program. Fails, if it's still running after timeout."""
+        """Kills the program and all its child processes.
+           Fails, if the top level process is still running after timeout.
+        """
+        tree = ' '.join([str(pid)
+                         for pid
+                         in ptree(pid=self._pid, node=self._node)])
         self._node.run(
-            "kill {pid}"
+            "kill {tree}"
             "; sleep {timeout}"
             "; kill -0 {pid} && exit 1 || exit 0".format(
+                tree=tree,
                 pid=self._pid,
                 timeout=CANCEL_TIMEOUT))
