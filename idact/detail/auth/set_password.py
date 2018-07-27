@@ -19,5 +19,7 @@ def set_password(password: str):
     """
     previous_password = PasswordCache().password
     PasswordCache._password = password  # pylint: disable=protected-access
-    yield
-    PasswordCache._password = previous_password  # noqa, pylint: disable=protected-access,line-too-long
+    try:
+        yield
+    finally:
+        PasswordCache._password = previous_password  # noqa, pylint: disable=protected-access,line-too-long

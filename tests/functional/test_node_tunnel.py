@@ -7,10 +7,11 @@ from bitmath import MiB
 from idact import show_cluster, Walltime
 from idact.detail.auth.set_password import set_password
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
-from tests.helpers.reset_environment import reset_environment, TEST_CLUSTER
+from tests.helpers.reset_environment import reset_environment
 from tests.helpers.retry import retry
 from tests.helpers.run_dummy_server import start_dummy_server_thread
 from tests.helpers.test_users import get_test_user_password, USER_5
+from tests.helpers.testing_environment import TEST_CLUSTER
 
 
 def test_node_tunnel():

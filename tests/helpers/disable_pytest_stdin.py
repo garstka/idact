@@ -19,5 +19,7 @@ def disable_pytest_stdin():
     store = sys.stdin
     if os.name != 'nt':
         sys.stdin = FakeStdin()
-    yield
-    sys.stdin = store
+    try:
+        yield
+    finally:
+        sys.stdin = store

@@ -3,11 +3,12 @@ from typing import Union, Optional, Dict
 import bitmath
 
 from idact.core.cluster import Cluster
-from idact.core.nodes import Nodes
+from idact.core.nodes import Nodes, Node
 from idact.core.walltime import Walltime
 from idact.detail.allocation.allocation_parameters import AllocationParameters
 from idact.detail.config.client. \
     client_cluster_config import ClientClusterConfig
+from idact.detail.nodes.get_access_node import get_access_node
 from idact.detail.slurm.allocate_slurm_nodes import allocate_slurm_nodes
 from idact.detail.slurm.sbatch_arguments import SbatchArguments
 
@@ -49,6 +50,9 @@ class ClusterImpl(Cluster):
 
         return allocate_slurm_nodes(args=args,
                                     config=self._client_config)
+
+    def get_access_node(self) -> Node:
+        return get_access_node(config=self._client_config)
 
     @property
     def config(self) -> ClientClusterConfig:

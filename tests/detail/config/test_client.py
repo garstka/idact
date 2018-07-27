@@ -12,6 +12,14 @@ VALID_CLIENT_CLUSTER_CONFIG = ClientClusterConfig(host='abc',
                                                   user='user',
                                                   auth=AuthMethod.ASK)
 
+VALID_CLIENT_CLUSTER_CONFIG_WITH_PUBLIC_KEY_AUTH = \
+    ClientClusterConfig(host='abc',
+                        port=22,
+                        user='user',
+                        auth=AuthMethod.PUBLIC_KEY,
+                        key='/home/user/.ssh/id_rsa',
+                        install_key=False)
+
 
 def test_client_cluster_config_validation_is_used():
     with pytest.raises(ValueError):
@@ -29,6 +37,12 @@ def test_client_cluster_config_validation_is_used():
                             port=22,
                             user='',
                             auth=AuthMethod.ASK)
+    with pytest.raises(ValueError):
+        ClientClusterConfig(host='abc',
+                            port=22,
+                            user='user',
+                            auth=AuthMethod.PUBLIC_KEY,
+                            key='')
 
 
 def test_client_cluster_config_create():
@@ -40,6 +54,8 @@ def test_client_cluster_config_create():
     assert config.port == 22
     assert config.user == 'user'
     assert config.auth == AuthMethod.ASK
+    assert config.key is None
+    assert config.install_key
 
 
 def test_client_config_validation_is_used():
@@ -89,7 +105,9 @@ def test_client_config_serialize():
             'cluster1': {'host': 'abc',
                          'user': 'user',
                          'port': 22,
-                         'auth': 'ASK'}
+                         'auth': 'ASK',
+                         'key': None,
+                         'installKey': True}
         }
     }
     assert serialize_client_config_to_json(client_config) == expected_json
@@ -101,7 +119,9 @@ def test_client_config_deserialize():
             'cluster1': {'host': 'abc',
                          'user': 'user',
                          'port': 22,
-                         'auth': 'ASK'}
+                         'auth': 'ASK',
+                         'key': None,
+                         'installKey': True}
         }
     }
     client_config = ClientConfig(clusters={
@@ -109,4 +129,37 @@ def test_client_config_deserialize():
                                         user='user',
                                         port=22,
                                         auth=AuthMethod.ASK)})
+    assert deserialize_client_config_from_json(input_json) == client_config
+
+
+def test_client_config_serialize_public_key():
+    client_config = ClientConfig(clusters={
+        'cluster1': VALID_CLIENT_CLUSTER_CONFIG_WITH_PUBLIC_KEY_AUTH
+    })
+    expected_json = {
+        'clusters': {
+            'cluster1': {'host': 'abc',
+                         'user': 'user',
+                         'port': 22,
+                         'auth': 'PUBLIC_KEY',
+                         'key': '/home/user/.ssh/id_rsa',
+                         'installKey': False}
+        }
+    }
+    assert serialize_client_config_to_json(client_config) == expected_json
+
+
+def test_client_config_deserialize_public_key():
+    input_json = {
+        'clusters': {
+            'cluster1': {'host': 'abc',
+                         'user': 'user',
+                         'port': 22,
+                         'auth': 'PUBLIC_KEY',
+                         'key': '/home/user/.ssh/id_rsa',
+                         'installKey': False}
+        }
+    }
+    client_config = ClientConfig(clusters={
+        'cluster1': VALID_CLIENT_CLUSTER_CONFIG_WITH_PUBLIC_KEY_AUTH})
     assert deserialize_client_config_from_json(input_json) == client_config

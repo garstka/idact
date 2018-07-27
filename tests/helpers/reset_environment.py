@@ -7,16 +7,9 @@ from idact.detail.config.client.client_cluster_config \
 from idact.detail.config.client.client_config import ClientConfig
 from idact.detail.environment.environment import Environment
 from idact.detail.environment.environment_provider import EnvironmentProvider
-
-TEST_CLUSTER = 'test'
-
-
-def get_testing_host():
-    return 'localhost'
-
-
-def get_testing_port():
-    return os.environ.get('SLURM_PORT', 2222)
+from tests.helpers.clear_home import clear_home
+from tests.helpers.testing_environment import TEST_KEY_LOCATION, \
+    get_testing_host, get_testing_port, TEST_CLUSTER
 
 
 @contextmanager
@@ -24,6 +17,8 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
     # pylint: disable=protected-access
     saved_state = EnvironmentProvider._state
     EnvironmentProvider._state = None
+
+    os.environ['IDACT_KEY_LOCATION'] = TEST_KEY_LOCATION
 
     cluster = ClientClusterConfig(
         host=get_testing_host(),
@@ -34,5 +29,8 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
         initial_environment=Environment(
             config=ClientConfig(
                 clusters={TEST_CLUSTER: cluster})))
-    yield
-    EnvironmentProvider._state = saved_state
+    try:
+        yield
+    finally:
+        EnvironmentProvider._state = saved_state
+        clear_home(user=user)

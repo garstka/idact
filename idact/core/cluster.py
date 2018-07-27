@@ -9,7 +9,7 @@ from typing import Union, Optional, Dict
 
 import bitmath
 
-from idact.core.nodes import Nodes
+from idact.core.nodes import Nodes, Node
 from idact.core.walltime import Walltime
 
 
@@ -52,4 +52,9 @@ class Cluster(ABC):
                 * Native arguments take precedence over other arguments.
                 * Arguments with None as value are treated as flags.
         """
+        pass
+
+    @abstractmethod
+    def get_access_node(self) -> Node:
+        """Returns the cluster head node, which does not require allocation."""
         pass

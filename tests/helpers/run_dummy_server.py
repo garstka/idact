@@ -1,10 +1,8 @@
 from threading import Thread
 from time import sleep
 
-import paramiko
-
-from tests.helpers.reset_environment import get_testing_host, get_testing_port
-from tests.helpers.test_users import USER_4, get_test_user_password
+from tests.helpers.paramiko_connect import paramiko_connect
+from tests.helpers.test_users import USER_4
 
 
 def run_dummy_server(server_port: int, timeout: float):
@@ -14,18 +12,12 @@ def run_dummy_server(server_port: int, timeout: float):
 
         :param timeout: Timeout in seconds.
     """
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.WarningPolicy())
-    ssh.connect(hostname=get_testing_host(),
-                port=get_testing_port(),
-                username=USER_4,
-                password=get_test_user_password(USER_4),
-                look_for_keys=False)
-    ssh.exec_command(
-        "python3 -m http.server {server_port}".format(
-            server_port=server_port))
-    sleep(timeout)
-    ssh.exec_command("killall python3")
+    with paramiko_connect(user=USER_4) as ssh:
+        ssh.exec_command(
+            "python3 -m http.server {server_port}".format(
+                server_port=server_port))
+        sleep(timeout)
+        ssh.exec_command("killall python3")
 
 
 STARTUP_TIME = 1
