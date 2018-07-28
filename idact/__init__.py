@@ -10,6 +10,7 @@ from idact.core.auth import AuthMethod, KeyType
 from idact.core.environment import load_environment, save_environment
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Nodes, Node
+from idact.core.set_log_level import set_log_level
 from idact.core.show_clusters import show_cluster, show_clusters
 from idact.core.tunnel import Tunnel
 from idact.core.walltime import Walltime
@@ -32,7 +33,8 @@ _IMPORTED = {add_cluster,
              Nodes,
              Tunnel,
              JupyterDeployment,
-             KeyType}
+             KeyType,
+             set_log_level}
 """List of the public API members imported into the top level package
    for convenience."""
 

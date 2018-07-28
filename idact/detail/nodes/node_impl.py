@@ -29,8 +29,6 @@ class NodeImpl(Node):
 
         :param config: Client cluster config.
 
-        :param access_node: Main cluster node that does not require allocation,
-                            or None if this node is an access node.
     """
 
     def __init__(self,

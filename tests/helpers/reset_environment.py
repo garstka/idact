@@ -1,7 +1,9 @@
 import os
 from contextlib import contextmanager
+from logging import DEBUG
 
 from idact import AuthMethod
+from idact.core.set_log_level import set_log_level
 from idact.detail.config.client.client_cluster_config \
     import ClientClusterConfig
 from idact.detail.config.client.client_config import ClientConfig
@@ -29,6 +31,7 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
         initial_environment=Environment(
             config=ClientConfig(
                 clusters={TEST_CLUSTER: cluster})))
+    set_log_level(DEBUG)
     try:
         yield
     finally:

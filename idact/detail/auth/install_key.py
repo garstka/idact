@@ -13,6 +13,7 @@ from idact.detail.config.client.client_cluster_config \
     import ClientClusterConfig
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.yn_prompt import yn_prompt
+from idact.detail.log.get_logger import get_logger
 
 
 def warn_if_not_public_key_auth(config: ClientClusterConfig,
@@ -108,7 +109,7 @@ def install_key(config: ClientClusterConfig):
         :param config: Cluster config for connection.
 
     """
-    log = logging.getLogger(__name__)
+    log = get_logger(__name__)
 
     warn_if_not_public_key_auth(config=config, log=log)
 

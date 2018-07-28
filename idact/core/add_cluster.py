@@ -3,7 +3,6 @@
 
    See :func:`.add_cluster`.
 """
-import logging
 from typing import Optional, Union
 
 from idact.core.auth import AuthMethod, KeyType
@@ -12,6 +11,7 @@ from idact.detail.auth.generate_key import generate_key
 from idact.detail.config.client. \
     client_cluster_config import ClientClusterConfig
 from idact.detail.environment.environment_provider import EnvironmentProvider
+from idact.detail.log.get_logger import get_logger
 
 
 def add_cluster(name: str,
@@ -43,7 +43,7 @@ def add_cluster(name: str,
             use (if applicable).
             Default: True
        """
-    log = logging.getLogger(__name__)
+    log = get_logger(__name__)
     environment = EnvironmentProvider().environment
     if auth is None:
         log.info("No auth method specified, defaulting to password-based.")
@@ -63,11 +63,11 @@ def add_cluster(name: str,
                  " is not used.")
         key = None
 
-    client_config = ClientClusterConfig(host=host,
-                                        port=port,
-                                        user=user,
-                                        auth=auth,
-                                        key=key,
-                                        install_key=install_key)
+    config = ClientClusterConfig(host=host,
+                                 port=port,
+                                 user=user,
+                                 auth=auth,
+                                 key=key,
+                                 install_key=install_key)
     return environment.add_cluster(name=name,
-                                   client_config=client_config)
+                                   config=config)

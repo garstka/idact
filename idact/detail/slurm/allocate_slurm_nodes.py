@@ -20,6 +20,7 @@ def allocate_slurm_nodes(args: SbatchArguments,
        :param args:   sbatch arguments.
 
        :param config: Config for the cluster to allocate nodes on.
+
     """
 
     access_node = get_access_node(config=config)

@@ -77,6 +77,7 @@ def authenticate(host: str, config: ClientClusterConfig):
         :param host: SSH host.
 
         :param config: Cluster config.
+
     """
     if config.auth not in [AuthMethod.ASK, AuthMethod.PUBLIC_KEY]:
         raise ValueError("Authentication method not implemented: '{}'.".format(

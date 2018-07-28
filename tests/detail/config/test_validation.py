@@ -6,6 +6,8 @@ from idact.detail.config.validation.validate_hostname import validate_hostname
 from idact.detail.config.validation.validate_install_key import \
     validate_install_key
 from idact.detail.config.validation.validate_key_path import validate_key_path
+from idact.detail.config.validation.validate_log_level \
+    import validate_log_level
 from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.config.validation.validate_username import validate_username
 from idact.detail.config.validation.validation_error_message import \
@@ -100,6 +102,20 @@ def test_validate_key_path():
         validate_key_path(12)
     with pytest.raises(TypeError):
         validate_key_path(True)
+
+
+def test_validate_log_level():
+    assert validate_log_level(0) == 0
+    assert validate_log_level(1) == 1
+    assert validate_log_level(22) == 22
+    with pytest.raises(TypeError):
+        validate_log_level(None)
+    with pytest.raises(TypeError):
+        validate_log_level('1')
+    with pytest.raises(ValueError):
+        validate_log_level(-1)
+    with pytest.raises(ValueError):
+        validate_log_level(-10)
 
 
 def test_validate_port():

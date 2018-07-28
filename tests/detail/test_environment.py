@@ -24,7 +24,7 @@ def test_create_environment():
                                    port=22,
                                    user='user2',
                                    auth=AuthMethod.ASK)
-    environment.add_cluster(name='cluster2', client_config=cluster2)
+    environment.add_cluster(name='cluster2', config=cluster2)
 
     assert len(environment.config.clusters) == 2
     assert len(environment.clusters) == 2

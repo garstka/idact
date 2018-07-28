@@ -1,3 +1,5 @@
+from logging import INFO, DEBUG
+
 import pytest
 
 from idact.core.auth import AuthMethod
@@ -99,7 +101,7 @@ def test_client_config_create_empty_and_add_cluster():
 def test_client_config_serialize():
     client_config = ClientConfig(clusters={
         'cluster1': VALID_CLIENT_CLUSTER_CONFIG
-    })
+    }, log_level=INFO)
     expected_json = {
         'clusters': {
             'cluster1': {'host': 'abc',
@@ -108,7 +110,8 @@ def test_client_config_serialize():
                          'auth': 'ASK',
                          'key': None,
                          'installKey': True}
-        }
+        },
+        'logLevel': INFO
     }
     assert serialize_client_config_to_json(client_config) == expected_json
 
@@ -122,13 +125,14 @@ def test_client_config_deserialize():
                          'auth': 'ASK',
                          'key': None,
                          'installKey': True}
-        }
+        },
+        'logLevel': DEBUG
     }
     client_config = ClientConfig(clusters={
         'cluster1': ClientClusterConfig(host='abc',
                                         user='user',
                                         port=22,
-                                        auth=AuthMethod.ASK)})
+                                        auth=AuthMethod.ASK)}, log_level=DEBUG)
     assert deserialize_client_config_from_json(input_json) == client_config
 
 
@@ -144,7 +148,8 @@ def test_client_config_serialize_public_key():
                          'auth': 'PUBLIC_KEY',
                          'key': '/home/user/.ssh/id_rsa',
                          'installKey': False}
-        }
+        },
+        'logLevel': INFO
     }
     assert serialize_client_config_to_json(client_config) == expected_json
 
@@ -158,7 +163,8 @@ def test_client_config_deserialize_public_key():
                          'auth': 'PUBLIC_KEY',
                          'key': '/home/user/.ssh/id_rsa',
                          'installKey': False}
-        }
+        },
+        'logLevel': INFO
     }
     client_config = ClientConfig(clusters={
         'cluster1': VALID_CLIENT_CLUSTER_CONFIG_WITH_PUBLIC_KEY_AUTH})

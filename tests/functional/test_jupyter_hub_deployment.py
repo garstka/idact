@@ -71,6 +71,7 @@ def test_jupyter_hub_deployment():
             assert not ps_proxy_lines
 
             deployment = None
+
         finally:
             try:
                 if deployment is not None:

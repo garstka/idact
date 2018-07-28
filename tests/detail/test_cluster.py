@@ -9,4 +9,4 @@ def test_cluster_create():
                                                 port=22,
                                                 user='user',
                                                 auth=AuthMethod.ASK)
-    ClusterImpl(client_config=client_cluster_config)
+    ClusterImpl(config=client_cluster_config)

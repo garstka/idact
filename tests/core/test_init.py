@@ -1,3 +1,4 @@
+from idact.core.set_log_level import set_log_level
 from idact.core.nodes import Node, Nodes
 from idact.core.auth import AuthMethod, KeyType
 from idact.core.cluster import Cluster
@@ -14,7 +15,7 @@ def test_aliases():
     """Tests classes and functions imported from the core package
        to the top level package.
     """
-    assert len(_IMPORTED) == 13
+    assert len(_IMPORTED) == 14
     from idact import add_cluster as add_cluster2
     from idact import show_cluster as show_cluster2
     from idact import show_clusters as show_clusters2
@@ -28,6 +29,7 @@ def test_aliases():
     from idact import Tunnel as Tunnel2
     from idact import JupyterDeployment as JupyterDeployment2
     from idact import KeyType as KeyType2
+    from idact import set_log_level as set_log_level2
 
     assert add_cluster is add_cluster2
     assert show_cluster is show_cluster2
@@ -42,6 +44,7 @@ def test_aliases():
     assert Tunnel is Tunnel2
     assert JupyterDeployment is JupyterDeployment2
     assert KeyType is KeyType2
+    assert set_log_level is set_log_level2
 
     main_module = 'idact'
     assert main_module == add_cluster.__module__
@@ -57,3 +60,4 @@ def test_aliases():
     assert main_module == Tunnel.__module__
     assert main_module == JupyterDeployment.__module__
     assert main_module == KeyType.__module__
+    assert main_module == set_log_level.__module__

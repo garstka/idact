@@ -16,12 +16,13 @@ from idact.detail.slurm.sbatch_arguments import SbatchArguments
 class ClusterImpl(Cluster):
     """Implementation of the Cluster interface.
 
-       :param client_config: Client-side cluster config.
+       :param config: Client-side cluster config.
+
     """
 
     def __init__(self,
-                 client_config: ClientClusterConfig):
-        self._client_config = client_config
+                 config: ClientClusterConfig):
+        self._config = config
 
     def allocate_nodes(self,
                        nodes: int = 1,
@@ -49,21 +50,21 @@ class ClusterImpl(Cluster):
         args = SbatchArguments(params=parameters)
 
         return allocate_slurm_nodes(args=args,
-                                    config=self._client_config)
+                                    config=self._config)
 
     def get_access_node(self) -> Node:
-        return get_access_node(config=self._client_config)
+        return get_access_node(config=self._config)
 
     @property
     def config(self) -> ClientClusterConfig:
         """Returns the client-side cluster config."""
-        return self._client_config
+        return self._config
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
     def __str__(self):
-        return "Cluster{}".format(self._client_config)
+        return "Cluster{}".format(self._config)
 
     def __repr__(self):
         return str(self)

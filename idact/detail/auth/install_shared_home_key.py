@@ -1,4 +1,3 @@
-import logging
 from io import BytesIO
 
 from fabric.contrib.files import exists
@@ -7,6 +6,8 @@ import fabric.decorators
 import fabric.tasks
 
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
+from idact.detail.helper.utc_now import utc_now
+from idact.detail.log.get_logger import get_logger
 
 
 def install_shared_home_key():
@@ -15,7 +16,7 @@ def install_shared_home_key():
        If it was not generated, generates one.
        Expects password authentication to have already been performed.
     """
-    log = logging.getLogger(__name__)
+    log = get_logger(__name__)
 
     @fabric.decorators.task
     def task():
@@ -30,6 +31,7 @@ def install_shared_home_key():
                 " -t rsa"
                 " -f ~/.ssh/id_rsa"
                 " -N ''")
+            print(utc_now())
 
         public_key_fd = BytesIO()
         get("~/.ssh/id_rsa.pub", public_key_fd)

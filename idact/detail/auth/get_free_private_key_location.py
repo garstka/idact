@@ -1,4 +1,3 @@
-import logging
 import os
 import random
 import string
@@ -7,6 +6,7 @@ from typing import Optional
 
 from idact.core.auth import KeyType
 from idact.detail.auth.get_public_key_location import get_public_key_location
+from idact.detail.log.get_logger import get_logger
 
 KEY_NAME_PREFIX = {KeyType.RSA: 'id_rsa_'}
 KEY_NAME_SUFFIX_LENGTH = 2
@@ -52,7 +52,7 @@ def try_generate_unique_path(suffix_length: int,
         :param prefix: File name prefix.
 
     """
-    log = logging.getLogger(__name__)
+    log = get_logger(__name__)
     suffix = get_key_suffix(length=suffix_length)
 
     private_key_path = get_key_path(location=location,
