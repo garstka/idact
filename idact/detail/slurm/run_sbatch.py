@@ -1,7 +1,25 @@
 import shlex
 
+from typing import Optional, Dict
+
 from idact.core.nodes import Node
 from idact.detail.slurm.sbatch_arguments import SbatchArguments
+
+
+def format_args(args: Dict[str, Optional[str]]) -> str:
+    """Quotes and joins arguments.
+
+        :param args: Arguments to process.
+
+    """
+    argument_list = []
+    for key, value in sorted(args.items()):
+        argument_list.append(key)
+        if value is not None:
+            argument_list.append(value)
+
+    quoted = ' '.join([shlex.quote(arg) for arg in argument_list])
+    return quoted
 
 
 def format_sbatch_allocation_request(args: SbatchArguments) -> str:
@@ -9,19 +27,19 @@ def format_sbatch_allocation_request(args: SbatchArguments) -> str:
 
         :param args: Arguments to append.
     """
-    argument_list = []
-    for key, value in sorted(args.args.items()):
-        argument_list.append(key)
-        if value is not None:
-            argument_list.append(value)
+    quoted_native = format_args(args=args.native_args)
+    quoted = format_args(args=args.args)
 
-    quoted = ' '.join([shlex.quote(arg) for arg in argument_list])
-
-    final = "sbatch {args}".format(args=quoted)
-    final += (" --parsable"
-              " --output=/dev/null"
-              " --wrap='/bin/bash -c"
-              " \"trap : TERM INT; sleep infinity & wait\"'")
+    final = ("sbatch"
+             " {quoted_native}"
+             " {quoted}"
+             " --tasks-per-node=1"  # One /bin/bash -c ... per node.
+             " --parsable"
+             " --output=/dev/null"
+             " --wrap='srun /bin/bash -c"
+             " \"trap : TERM INT; sleep infinity & wait\"'") \
+        .format(quoted_native=quoted_native,
+                quoted=quoted)
     return final
 
 

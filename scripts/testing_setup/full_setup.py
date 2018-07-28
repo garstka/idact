@@ -20,7 +20,8 @@ COMMANDS = [i.format(python=PYTHON) for i in
              '{python} ssh_add_users.py',
              '{python} ssh_run.py',
              '{python} install_python.py',
-             '{python} install_jupyter.py']]
+             '{python} install_jupyter.py',
+             '{python} install_srun_mock.py', ]]
 
 
 def main():

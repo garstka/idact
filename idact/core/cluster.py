@@ -49,7 +49,7 @@ class Cluster(ABC):
             :param native_args:
                 * Native arguments for the workload manager.
                 * Values are not validated.
-                * Native arguments take precedence over other arguments.
+                * Supported arguments take precedence over native arguments.
                 * Arguments with None as value are treated as flags.
         """
         pass

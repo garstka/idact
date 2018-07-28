@@ -10,7 +10,7 @@ def sbatch_set_nodes(params: AllocationParameters,
 
 def sbatch_set_cores(params: AllocationParameters,
                      args: Dict[str, str]):
-    args['--ntasks-per-node'] = str(params.cores)
+    args['--cpus-per-task'] = str(params.cores)
 
 
 def sbatch_set_memory_per_node(params: AllocationParameters,
@@ -50,6 +50,10 @@ class SbatchArguments:
     def __init__(self,
                  params: AllocationParameters):
 
+        self._native_args = {arg: value
+                             for arg, value
+                             in params.native_args.items()}
+
         self._args = {}
         for param, value in params.all.items():
             try:
@@ -64,8 +68,9 @@ class SbatchArguments:
                                  "'{}'".format(param))
             handler(params=params, args=self._args)
 
-        for arg, value in params.native_args.items():
-            self._args[arg] = value
+    @property
+    def native_args(self) -> Dict[str, Optional[str]]:
+        return self._native_args
 
     @property
     def args(self) -> Dict[str, Optional[str]]:
