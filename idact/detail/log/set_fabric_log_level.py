@@ -1,6 +1,6 @@
 from logging import DEBUG
 
-from fabric.context_managers import show, hide
+import fabric.state
 
 
 def set_fabric_log_level(level: int):
@@ -10,7 +10,6 @@ def set_fabric_log_level(level: int):
 
         :param level: Log level.
     """
-    if level <= DEBUG:
-        show('everything').__enter__()  # pylint: disable=no-member
-    else:
-        hide('everything').__enter__()  # pylint: disable=no-member
+    show = level <= DEBUG
+    for group in ['warnings', 'running', 'user', 'output', 'exceptions']:
+        fabric.state.output[group] = show
