@@ -14,5 +14,6 @@ def get_access_node(config: ClientClusterConfig) -> NodeImpl:
     """
     node = NodeImpl(config=config)
     node.make_allocated(host=config.host,
+                        port=config.port,
                         allocated_until=None)
     return node

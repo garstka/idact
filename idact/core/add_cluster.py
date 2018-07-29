@@ -20,7 +20,8 @@ def add_cluster(name: str,
                 port: int = 22,
                 auth: Optional[AuthMethod] = None,
                 key: Union[None, str, KeyType] = None,
-                install_key: bool = True) -> Cluster:
+                install_key: bool = True,
+                disable_sshd: bool = False) -> Cluster:
     """Adds a new cluster.
 
         :param name:
@@ -42,6 +43,10 @@ def add_cluster(name: str,
             True, if the public key should be installed on the cluster before
             use (if applicable).
             Default: True
+        :param disable_sshd:
+            Should be set to True, if the cluster allows ssh connection
+            to compute nodes out of the box.
+            Default: False
        """
     log = get_logger(__name__)
     environment = EnvironmentProvider().environment
@@ -58,16 +63,13 @@ def add_cluster(name: str,
         else:
             raise ValueError("Invalid key argument for public key"
                              " authentication.")
-    elif key is not None:
-        log.info("Ignoring key argument, because public key authentication"
-                 " is not used.")
-        key = None
 
     config = ClientClusterConfig(host=host,
                                  port=port,
                                  user=user,
                                  auth=auth,
                                  key=key,
-                                 install_key=install_key)
+                                 install_key=install_key,
+                                 disable_sshd=disable_sshd)
     return environment.add_cluster(name=name,
                                    config=config)

@@ -6,14 +6,16 @@ import fabric.decorators
 import fabric.tasks
 
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
-from idact.detail.helper.utc_now import utc_now
 from idact.detail.log.get_logger import get_logger
+
+SHARED_HOST_KEY_PATH = "~/.ssh/ssh_host_rsa_key"
 
 
 def install_shared_home_key():
-    """Installs shared home public key on access node to allow public key
-       authentication between the access node and cluster nodes.
-       If it was not generated, generates one.
+    """Installs shared home public key and host key on access node
+       in order to allow public key authentication between the access node
+       and cluster nodes.
+       If any of the keys was not generated, it will be at this point.
        Expects password authentication to have already been performed.
     """
     log = get_logger(__name__)
@@ -31,7 +33,12 @@ def install_shared_home_key():
                 " -t rsa"
                 " -f ~/.ssh/id_rsa"
                 " -N ''")
-            print(utc_now())
+        if not exists(SHARED_HOST_KEY_PATH):
+            log.info("Generating shared host key...")
+            run("ssh-keygen"
+                " -t rsa"
+                " -f {shared_host_key_path}"
+                " -N ''".format(shared_host_key_path=SHARED_HOST_KEY_PATH))
 
         public_key_fd = BytesIO()
         get("~/.ssh/id_rsa.pub", public_key_fd)

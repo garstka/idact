@@ -11,15 +11,20 @@ from idact.detail.auth.install_key import install_key
 from idact.detail.auth.install_shared_home_key import install_shared_home_key
 from idact.detail.config.client.client_cluster_config \
     import ClientClusterConfig
+from idact.detail.entry_point.get_entry_point_script_contents import \
+    COMPUTE_NODE_AUTHORIZED_KEYS
 
 
 def get_host_strings(host: str,
+                     port: int,
                      config: ClientClusterConfig) -> Tuple[str, str]:
     """Returns host strings for the gateway and target host.
        If the target host is the access node, there is no gateway.
        Otherwise, the access node is the gateway.
 
         :param host: Connection target.
+
+        :param port: Connection target port.
 
         :param config: Cluster config.
 
@@ -30,13 +35,15 @@ def get_host_strings(host: str,
         env_host_string = gateway
     else:
         env_gateway = gateway
-        env_host_string = "{user}@{host}".format(user=config.user,
-                                                 host=host)
+        env_host_string = "{user}@{host}:{port}".format(user=config.user,
+                                                        host=host,
+                                                        port=port)
     return env_gateway, env_host_string
 
 
 def install_key_using_password_authentication(config: ClientClusterConfig):
-    """Authenticates with a password and tries to install public key.
+    """Authenticates with a password and tries to install public key
+       using the default authorized_keys file.
 
         :param config: Cluster config.
 
@@ -53,11 +60,14 @@ def install_key_using_password_authentication(config: ClientClusterConfig):
         env.gateway, env.host_string = saved_gateway, saved_host_string
 
 
-def install_shared_home_key_using_current_authentication(access_node: str):
-    """Installs the key for authentication between the access node,
+def install_keys_using_current_authentication(access_node: str,
+                                              config: ClientClusterConfig):  # noqa, pylint: disable=line-too-long
+    """Installs keys for authentication between the access node,
        and cluster nodes. Uses current authentication.
 
         :param access_node: The access node.
+
+        :param config: Cluster config.
 
     """
     saved_password = env.password
@@ -65,26 +75,39 @@ def install_shared_home_key_using_current_authentication(access_node: str):
     try:
         env.gateway, env.host_string = None, access_node
         install_shared_home_key()
+        install_key(config=config,
+                    authorized_keys=COMPUTE_NODE_AUTHORIZED_KEYS)
     finally:
         env.password = saved_password
         env.gateway, env.host_string = saved_gateway, saved_host_string
 
 
 @contextmanager
-def authenticate(host: str, config: ClientClusterConfig):
+def authenticate(host: str,
+                 port: int,
+                 config: ClientClusterConfig,
+                 install_shared_keys: bool = False):
     """Authenticates the user in Fabric.
 
         :param host: SSH host.
 
+        :param port: SSH port.
+
         :param config: Cluster config.
+
+        :param install_shared_keys: True, if shared home keys be installed
+                                    after authentication.
 
     """
     if config.auth not in [AuthMethod.ASK, AuthMethod.PUBLIC_KEY]:
         raise ValueError("Authentication method not implemented: '{}'.".format(
             config.auth))
 
+    env.always_use_pty = False
     previous_gateway, previous_host = env.gateway, env.host_string
-    env.gateway, env.host_string = get_host_strings(host=host, config=config)
+    env.gateway, env.host_string = get_host_strings(host=host,
+                                                    port=port,
+                                                    config=config)
 
     try:
         if config.auth == AuthMethod.ASK:
@@ -92,18 +115,21 @@ def authenticate(host: str, config: ClientClusterConfig):
         elif config.auth == AuthMethod.PUBLIC_KEY:
             if config.install_key:
                 install_key_using_password_authentication(config=config)
-            env.key_filename = config.key
+                env.key_filename = config.key
 
         access_node = get_host_string(config=config)
-        if env.host_string != access_node:
-            install_shared_home_key_using_current_authentication(
-                access_node=access_node)
+        if install_shared_keys:
+            install_keys_using_current_authentication(
+                access_node=access_node,
+                config=config)
 
+        # Key is needed between gateway and compute nodes even when using
+        # password-based authentication.
+        env.key_filename = config.key
         with disable_getpass():
             yield
     finally:
         env.gateway, env.host_string = previous_gateway, previous_host
 
         env.password = None
-        if config.auth == AuthMethod.PUBLIC_KEY:
-            env.key_filename = None
+        env.key_filename = None

@@ -10,11 +10,7 @@ import sys
 
 
 def main(argv):
-    try:
-        command_start = argv.index('/bin/bash')
-    except ValueError:
-        command_start = argv.index('/usr/bin/bash')
-
+    command_start = 1
     return sub.call(argv[command_start:])
 
 

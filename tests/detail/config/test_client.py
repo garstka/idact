@@ -109,7 +109,8 @@ def test_client_config_serialize():
                          'port': 22,
                          'auth': 'ASK',
                          'key': None,
-                         'installKey': True}
+                         'installKey': True,
+                         'disableSshd': False}
         },
         'logLevel': INFO
     }
@@ -124,7 +125,8 @@ def test_client_config_deserialize():
                          'port': 22,
                          'auth': 'ASK',
                          'key': None,
-                         'installKey': True}
+                         'installKey': True,
+                         'disableSshd': False}
         },
         'logLevel': DEBUG
     }
@@ -147,7 +149,8 @@ def test_client_config_serialize_public_key():
                          'port': 22,
                          'auth': 'PUBLIC_KEY',
                          'key': '/home/user/.ssh/id_rsa',
-                         'installKey': False}
+                         'installKey': False,
+                         'disableSshd': False}
         },
         'logLevel': INFO
     }
@@ -162,7 +165,8 @@ def test_client_config_deserialize_public_key():
                          'port': 22,
                          'auth': 'PUBLIC_KEY',
                          'key': '/home/user/.ssh/id_rsa',
-                         'installKey': False}
+                         'installKey': False,
+                         'disableSshd': False}
         },
         'logLevel': INFO
     }

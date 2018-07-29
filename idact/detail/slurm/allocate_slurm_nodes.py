@@ -25,8 +25,8 @@ def allocate_slurm_nodes(args: SbatchArguments,
 
     access_node = get_access_node(config=config)
 
-    job_id = run_sbatch(args=args,
-                        node=access_node)
+    job_id, entry_point_script_path = run_sbatch(args=args,
+                                                 node=access_node)
 
     squeue_tries = range(0, 3)
     interval = 3
@@ -45,9 +45,11 @@ def allocate_slurm_nodes(args: SbatchArguments,
     node_count = job.node_count
     nodes = [NodeImpl(config=config) for _ in range(0, node_count)]
 
-    allocation = SlurmAllocation(job_id=job_id,
-                                 access_node=access_node,
-                                 nodes=nodes)
+    allocation = SlurmAllocation(
+        job_id=job_id,
+        access_node=access_node,
+        nodes=nodes,
+        entry_point_script_path=entry_point_script_path)
 
     return NodesImpl(nodes=nodes,
                      allocation=allocation)

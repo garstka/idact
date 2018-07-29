@@ -1,12 +1,12 @@
 import logging
 import os
+from io import BytesIO
 from typing import Optional
 
-from fabric.operations import run
+from fabric.operations import run, get
 import fabric.decorators
 import fabric.tasks
 
-from idact.core.auth import AuthMethod
 from idact.detail.auth.generate_key import generate_key
 from idact.detail.auth.get_public_key_location import get_public_key_location
 from idact.detail.config.client.client_cluster_config \
@@ -14,39 +14,6 @@ from idact.detail.config.client.client_cluster_config \
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.yn_prompt import yn_prompt
 from idact.detail.log.get_logger import get_logger
-
-
-def warn_if_not_public_key_auth(config: ClientClusterConfig,
-                                log: logging.Logger):
-    """Logs a warning, if the key is about to be installed,
-       but public key authentication is off.
-
-        :param config: Cluster config.
-
-        :param log: Logger.
-
-    """
-    if config.auth != AuthMethod.PUBLIC_KEY:
-        log.warning(
-            "Installing key, despite"
-            " auth method being {actual}"
-            " instead of {expected}".format(
-                actual=config.auth,
-                expected=AuthMethod.PUBLIC_KEY))
-
-
-def warn_if_install_flag_unset(config: ClientClusterConfig,
-                               log: logging.Logger):
-    """Logs a warning, if the key is about to be installed,
-       but the install flag is off.
-
-        :param config: Cluster config.
-
-        :param log: Logger.
-
-    """
-    if not config.install_key:
-        log.warning("Installing key, despite install key flag being unset.")
 
 
 def try_getting_public_key_from_config(config: ClientClusterConfig,
@@ -101,19 +68,22 @@ def read_public_key(public_key_path: str) -> str:
         return public_key_lines[0]
 
 
-def install_key(config: ClientClusterConfig):
+def install_key(config: ClientClusterConfig,
+                authorized_keys: Optional[str] = None):
     """Installs public key on access node.
        If it was not generated or it's missing, generates one.
        Expects password authentication to have already been performed.
 
         :param config: Cluster config for connection.
 
+        :param authorized_keys: Path to authorized_keys.
+                                Default: ~/.ssh/authorized_keys
     """
     log = get_logger(__name__)
 
-    warn_if_not_public_key_auth(config=config, log=log)
-
-    warn_if_install_flag_unset(config=config, log=log)
+    authorized_keys_path = (authorized_keys
+                            if authorized_keys
+                            else ".ssh/authorized_keys")
 
     public_key_path = try_getting_public_key_from_config(config=config,
                                                          log=log)
@@ -129,12 +99,23 @@ def install_key(config: ClientClusterConfig):
     def task():
         run("mkdir -p ~/.ssh")
         run("chmod 700 ~/.ssh")
-        run("touch ~/.ssh/authorized_keys")
-        run("chmod 644 ~/.ssh/authorized_keys")
-        run("echo '{public_key}' >> ~/.ssh/authorized_keys".format(
-            public_key=public_key))
-        run("grep '{public_key}' ~/.ssh/authorized_keys".format(
-            public_key=public_key))
+        run("touch '{authorized_keys_path}'".format(
+            authorized_keys_path=authorized_keys_path))
+        run("chmod 644 '{authorized_keys_path}'".format(
+            authorized_keys_path=authorized_keys_path))
+
+        authorized_keys_fd = BytesIO()
+        get(authorized_keys_path, authorized_keys_fd)
+        authorized_keys_contents = \
+            authorized_keys_fd.getvalue().decode('ascii').splitlines()
+
+        if public_key not in authorized_keys_contents:
+            run("echo '{public_key}' >> {authorized_keys_path}".format(
+                public_key=public_key,
+                authorized_keys_path=authorized_keys_path))
+        run("grep '{public_key}' '{authorized_keys_path}'".format(
+            public_key=public_key,
+            authorized_keys_path=authorized_keys_path))
 
     with raise_on_remote_fail(exception=RuntimeError):
         fabric.tasks.execute(task)

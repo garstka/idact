@@ -3,8 +3,7 @@ import pytest
 from idact.detail.config.validation.validate_cluster_name import \
     validate_cluster_name
 from idact.detail.config.validation.validate_hostname import validate_hostname
-from idact.detail.config.validation.validate_install_key import \
-    validate_install_key
+from idact.detail.config.validation.validate_bool import validate_bool
 from idact.detail.config.validation.validate_key_path import validate_key_path
 from idact.detail.config.validation.validate_log_level \
     import validate_log_level
@@ -81,14 +80,14 @@ def test_validate_hostname():
         validate_hostname(' hostname ')
 
 
-def test_validate_install_key():
-    assert validate_install_key(install_key=True)
-    assert not validate_install_key(install_key=False)
+def test_validate_bool():
+    assert validate_bool(value=True)
+    assert not validate_bool(value=False)
 
     with pytest.raises(TypeError):
-        validate_install_key('True')
+        validate_bool('True')
     with pytest.raises(TypeError):
-        validate_install_key(12)
+        validate_bool(12)
 
 
 def test_validate_key_path():

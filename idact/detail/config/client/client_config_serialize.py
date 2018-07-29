@@ -14,7 +14,8 @@ def serialize_client_config_to_json(config: ClientConfig) -> dict:
                                 'user': cluster_config.user,
                                 'auth': str(cluster_config.auth).split('.')[1],
                                 'key': cluster_config.key,
-                                'installKey': cluster_config.install_key}
+                                'installKey': cluster_config.install_key,
+                                'disableSshd': cluster_config.disable_sshd}
                          for name, cluster_config in config.clusters.items()},
             'logLevel': config.log_level}
 
@@ -29,7 +30,8 @@ def deserialize_client_config_from_json(data: dict) -> ClientConfig:
                                           user=value['user'],
                                           auth=AuthMethod[value['auth']],
                                           key=value['key'],
-                                          install_key=value['installKey'])
+                                          install_key=value['installKey'],
+                                          disable_sshd=value['disableSshd'])
                 for name, value in data['clusters'].items()}
     return ClientConfig(clusters=clusters,
                         log_level=data['logLevel'])

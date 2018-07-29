@@ -14,7 +14,8 @@ def build_tunnel(bindings: List[Binding],
                  hostname: str,
                  port: int,
                  ssh_username: str,
-                 ssh_password: Optional[str]) -> Tunnel:
+                 ssh_password: Optional[str] = None,
+                 ssh_pkey: Optional[str] = None) -> Tunnel:
     """Builds a multi-hop tunnel from a sequence of bindings.
 
         :param hostname: First host name.
@@ -23,9 +24,11 @@ def build_tunnel(bindings: List[Binding],
 
         :param bindings: Sequence of bindings, starting with the local binding.
 
-        :param ssh_username: Ssh username for the first hop.
+        :param ssh_username: Ssh username.
 
-        :param ssh_password: Ssh password for the first hop.
+        :param ssh_password: Ssh password.
+
+        :param ssh_pkey: Ssh private key.
     """
     if len(bindings) < 2:
         raise ValueError("At least one local and one remote binding"
@@ -40,6 +43,7 @@ def build_tunnel(bindings: List[Binding],
                 (hostname, port),
                 ssh_username=ssh_username,
                 ssh_password=ssh_password,
+                ssh_pkey=ssh_pkey,
                 local_bind_address=ANY_ADDRESS,
                 remote_bind_address=bindings[1].as_tuple()),
             there=bindings[1].port))
@@ -54,6 +58,7 @@ def build_tunnel(bindings: List[Binding],
                     ("127.0.0.1", prev_tunnel.forwarder.local_bind_port),
                     ssh_username=ssh_username,
                     ssh_password=ssh_password,
+                    ssh_pkey=ssh_pkey,
                     local_bind_address=ANY_ADDRESS,
                     remote_bind_address=next_binding.as_tuple()),
                 there=next_binding.port)
@@ -71,6 +76,7 @@ def build_tunnel(bindings: List[Binding],
             ("127.0.0.1", last_hop_port),
             ssh_username=ssh_username,
             ssh_password=ssh_password,
+            ssh_pkey=ssh_pkey,
             local_bind_address=bindings[0].as_tuple(),
             remote_bind_address=bindings[-1].as_tuple()),
         there=bindings[-1].port))
