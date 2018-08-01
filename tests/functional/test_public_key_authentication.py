@@ -3,6 +3,7 @@ from contextlib import ExitStack
 
 import pytest
 from bitmath import MiB
+from fabric.context_managers import settings
 
 from idact import AuthMethod, add_cluster, show_cluster, Walltime
 from idact.core.auth import KeyType
@@ -14,7 +15,7 @@ from tests.helpers.reset_environment import reset_environment, \
     get_testing_host, get_testing_port
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import USER_8, get_test_user_password, USER_9, \
-    USER_10, USER_11, USER_14
+    USER_10, USER_11, USER_14, USER_12
 from tests.helpers.testing_environment import TEST_CLUSTER
 
 
@@ -104,7 +105,7 @@ def check_remote_key_and_node_access(user: str):
         nodes.cancel()
 
 
-def test_generate_and_install_key_on_access_node():
+def generate_missing_key_prompttest_generate_and_install_key_on_access_node():
     with ExitStack() as stack:
         user = USER_8
         stack.enter_context(clear_environment(user))
@@ -173,6 +174,46 @@ def test_install_already_generated_key_on_access_node():
                     auth=AuthMethod.PUBLIC_KEY,
                     key=key,
                     install_key=True)
+
+        check_remote_key_and_node_access(user=user)
+
+
+def test_generate_and_install_missing_key_on_access_node():
+    with ExitStack() as stack:
+        user = USER_12
+        stack.enter_context(clear_environment(user))
+        stack.enter_context(set_up_key_location())
+        stack.enter_context(disable_pytest_stdin())
+
+        missing_key = os.path.join(os.environ['IDACT_KEY_LOCATION'],
+                                   'id_rsa_fake')
+
+        add_cluster(name=TEST_CLUSTER,
+                    user=user,
+                    host=get_testing_host(),
+                    port=get_testing_port(),
+                    auth=AuthMethod.PUBLIC_KEY,
+                    key=missing_key,
+                    install_key=True)
+
+        cluster = show_cluster(TEST_CLUSTER)
+        node = cluster.get_access_node()
+
+        generate_missing_key_prompt = (
+            "Generate new public/private key pair? [Y/n] ")
+
+        with set_password(get_test_user_password(user)):
+            with pytest.raises(IOError):  # Will prompt for input.
+                node.run('whoami')
+
+            # Key missing and user chose not to generate one.
+            with settings(prompts={generate_missing_key_prompt: 'n'}):
+                with pytest.raises(RuntimeError):
+                    node.run('whoami')
+
+            # Key missing, generated and installed.
+            with settings(prompts={generate_missing_key_prompt: 'y'}):
+                assert node.run('whoami') == user
 
         check_remote_key_and_node_access(user=user)
 

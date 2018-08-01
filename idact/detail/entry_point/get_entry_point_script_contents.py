@@ -49,6 +49,7 @@ def get_entry_point_script_contents(config: ClientClusterConfig) -> str:
              " -oKerberosAuthentication=no"
              " -oGSSAPIAuthentication=no"
              " -oUsePAM=no"
+             " -oSubsystem='sftp /usr/libexec/openssh/sftp-server'"
              " -oX11Forwarding=yes\n"
              "exit $?").format(shared_host_key_path=SHARED_HOST_KEY_PATH,
                                port_info_location=PORT_INFO_LOCATION,

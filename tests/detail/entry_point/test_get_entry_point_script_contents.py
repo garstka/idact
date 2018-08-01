@@ -46,6 +46,7 @@ def test_entry_point_sshd():
                 " -oKerberosAuthentication=no"
                 " -oGSSAPIAuthentication=no"
                 " -oUsePAM=no"
+                " -oSubsystem='sftp /usr/libexec/openssh/sftp-server'"
                 " -oX11Forwarding=yes\n"
                 "exit $?")
     print()

@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional
+from typing import Optional, Any, Callable
 
 import fabric.operations
 import fabric.tasks
@@ -8,7 +8,6 @@ from fabric.exceptions import CommandTimeout
 from fabric.state import env
 
 from idact.core.jupyter_deployment import JupyterDeployment
-from idact.core.nodes import Node
 from idact.detail.auth.authenticate import authenticate
 from idact.detail.config.client.client_cluster_config \
     import ClientClusterConfig
@@ -16,11 +15,12 @@ from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.utc_now import utc_now
 from idact.detail.jupyter.deploy_jupyter import deploy_jupyter
+from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.tunnel.binding import Binding
 from idact.detail.tunnel.build_tunnel import build_tunnel
 
 
-class NodeImpl(Node):
+class NodeImpl(NodeInternal):
     """Cluster node interface.
 
         :param config: Client cluster config.
@@ -55,24 +55,27 @@ class NodeImpl(Node):
                  command: str,
                  timeout: Optional[int] = None,
                  install_keys: bool = False) -> str:
-        """Internal run.
-
-            :param command: See :meth:`.Node.run`
-
-            :param timeout: See :meth:`.Node.run`
-
-            :param install_keys: If True, shared SSH keys will be installed
-                after authentication (see :func:`.install_shared_home_key`).
-
-        """
         try:
-            self._ensure_allocated()
-
             @fabric.decorators.task
             def task():
                 return fabric.operations.run(command,
                                              pty=False,
                                              timeout=timeout)
+
+            return self.run_task(task=task,
+                                 install_keys=install_keys)
+        except CommandTimeout as e:
+            raise TimeoutError("Command timed out: '{command}'".format(
+                command=command)) from e
+        except RuntimeError as e:
+            raise RuntimeError("Cannot run '{command}'".format(
+                command=command)) from e
+
+    def run_task(self,
+                 task: Callable,
+                 install_keys: bool = False) -> Any:
+        try:
+            self._ensure_allocated()
 
             with raise_on_remote_fail(exception=RuntimeError):
                 with authenticate(host=self._host,
@@ -84,12 +87,8 @@ class NodeImpl(Node):
             output = next(iter(result.values()))
 
             return output
-        except CommandTimeout as e:
-            raise TimeoutError("Command timed out: '{command}'".format(
-                command=command)) from e
         except RuntimeError as e:
-            raise RuntimeError("Cannot run '{command}'".format(
-                command=command)) from e
+            raise RuntimeError("Cannot run task.") from e
 
     def make_allocated(self,
                        host: str,

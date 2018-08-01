@@ -1,7 +1,11 @@
 from time import sleep
 
+from typing import Callable, Any
 
-def retry(fun, retries: int, seconds_between_retries: int):
+from idact.detail.log.get_logger import get_logger
+
+
+def retry(fun: Callable, retries: int, seconds_between_retries: int) -> Any:
     """Retries function call, if it throws an exception.
 
         :param fun:   Function to call.
@@ -11,14 +15,13 @@ def retry(fun, retries: int, seconds_between_retries: int):
         :param seconds_between_retries: Time between calls.
 
     """
+    log = get_logger(__name__)
     for i in range(0, retries + 1):
         try:
             return fun()
         except Exception as e:  # pylint: disable=broad-except
             if i >= retries:
                 raise e
-            print("Exception: {e}, retry {retry}/{retries}."
-                  .format(e=e,
-                          retry=i + 1,
-                          retries=retries))
+            log.warning("Exception: %s, retry %d/%d.",
+                        str(e), i + 1, retries)
             sleep(seconds_between_retries)

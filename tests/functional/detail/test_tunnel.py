@@ -4,8 +4,9 @@ import requests
 
 from idact.detail.tunnel.build_tunnel import build_tunnel
 from idact.detail.tunnel.binding import Binding
+from idact.detail.helper.retry import retry
+
 from tests.helpers.reset_environment import get_testing_host, get_testing_port
-from tests.helpers.retry import retry
 from tests.helpers.run_dummy_server import start_dummy_server_thread
 from tests.helpers.test_users import USER_3, get_test_user_password
 

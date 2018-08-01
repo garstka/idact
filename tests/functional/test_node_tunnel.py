@@ -6,9 +6,10 @@ from bitmath import MiB
 
 from idact import show_cluster, Walltime, Nodes, AuthMethod
 from idact.detail.auth.set_password import set_password
+from idact.detail.helper.retry import retry
+
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
-from tests.helpers.retry import retry
 from tests.helpers.run_dummy_server import start_dummy_server_thread
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import get_test_user_password, USER_5, USER_13
