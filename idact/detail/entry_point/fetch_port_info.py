@@ -7,7 +7,7 @@ from fabric.operations import get, run
 
 from idact.detail.auth.authenticate import authenticate
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 from idact.detail.entry_point.sshd_port_info import PORT_INFO_FILE_FORMAT, \
     PORT_INFO_LOCATION
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
@@ -15,7 +15,7 @@ from idact.detail.log.get_logger import get_logger
 
 
 def fetch_port_info(allocation_id: int,
-                    config: ClientClusterConfig) -> str:
+                    config: ClusterConfigImpl) -> str:
     """Fetches the file containing ssh ports.
        Returns an empty string, if not found.
 

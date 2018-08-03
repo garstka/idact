@@ -1,7 +1,9 @@
 from typing import Optional
 
 from idact.core.auth import AuthMethod
-from idact.detail.config.client.setup_actions_config import SetupActionsConfig
+from idact.core.config import ClusterConfig
+from idact.detail.config.client.setup_actions_config import \
+    SetupActionsConfigImpl
 from idact.detail.config.validation.validate_hostname import validate_hostname
 from idact.detail.config.validation.validate_bool import validate_bool
 from idact.detail.config.validation.validate_key_path import validate_key_path
@@ -11,7 +13,7 @@ from idact.detail.config.validation.validate_setup_actions_config import \
 from idact.detail.config.validation.validate_username import validate_username
 
 
-class ClientClusterConfig:
+class ClusterConfigImpl(ClusterConfig):
     """Client-side cluster config.
 
        :param host: Cluster hostname.
@@ -28,6 +30,9 @@ class ClientClusterConfig:
        :param install_key: True, if the key should be installed on cluster
                            before use.
 
+       :param disable_sshd: Disables sshd server as an entry point for
+                            all nodes.
+
        :param setup_actions: Commands to run before deployment.
 
     """
@@ -40,13 +45,13 @@ class ClientClusterConfig:
                  key: Optional[str] = None,
                  install_key: bool = True,
                  disable_sshd: bool = False,
-                 setup_actions: Optional[SetupActionsConfig] = None):
+                 setup_actions: Optional[SetupActionsConfigImpl] = None):
         if install_key is None:
             install_key = True
         if disable_sshd is None:
             disable_sshd = False
         if setup_actions is None:
-            setup_actions = SetupActionsConfig()
+            setup_actions = SetupActionsConfigImpl()
 
         self._host = validate_hostname(host)
         self._port = validate_port(port)
@@ -94,7 +99,7 @@ class ClientClusterConfig:
         return self._disable_sshd
 
     @property
-    def setup_actions(self) -> SetupActionsConfig:
+    def setup_actions(self) -> SetupActionsConfigImpl:
         return self._setup_actions
 
     def __eq__(self, other):

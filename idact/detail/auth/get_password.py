@@ -3,10 +3,10 @@ from getpass import getpass
 from idact.detail.auth.get_host_string import get_host_string
 from idact.detail.auth.set_password import PasswordCache
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 
 
-def get_password(config: ClientClusterConfig):
+def get_password(config: ClusterConfigImpl):
     """Obtains the password from user input or password cache.
 
         :param config: Cluster config.

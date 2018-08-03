@@ -1,13 +1,13 @@
 from idact.detail.auth.install_shared_home_key import SHARED_HOST_KEY_PATH
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 from idact.detail.entry_point.sshd_port_info import PORT_INFO_FILE_FORMAT, \
     PORT_INFO_LOCATION
 
 COMPUTE_NODE_AUTHORIZED_KEYS = ".ssh/authorized_keys.idact"
 
 
-def get_entry_point_script_contents(config: ClientClusterConfig) -> str:
+def get_entry_point_script_contents(config: ClusterConfigImpl) -> str:
     """Formats a full entry point script and returns its contents.
 
        If the entry point deploys an sshd server, its port will be written

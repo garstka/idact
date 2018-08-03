@@ -1,8 +1,8 @@
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 
 
-def get_host_string(config: ClientClusterConfig):
+def get_host_string(config: ClusterConfigImpl):
     """Returns a host string for Fabric.
 
         :param config: Cluster config.

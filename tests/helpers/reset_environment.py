@@ -5,7 +5,7 @@ from logging import DEBUG
 from idact import AuthMethod
 from idact.core.set_log_level import set_log_level
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
 from idact.detail.environment.environment import Environment
 from idact.detail.environment.environment_provider import EnvironmentProvider
@@ -22,7 +22,7 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
 
     os.environ['IDACT_KEY_LOCATION'] = TEST_KEY_LOCATION
 
-    cluster = ClientClusterConfig(
+    cluster = ClusterConfigImpl(
         host=get_testing_host(),
         port=get_testing_port(),
         user=user,

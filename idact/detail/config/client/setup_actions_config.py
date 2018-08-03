@@ -1,13 +1,14 @@
 from typing import List, Optional
 
+from idact.core.config import SetupActionsConfig
 from idact.detail.config.validation.validate_setup_actions import \
     validate_setup_actions
 
 
-class SetupActionsConfig:
+class SetupActionsConfigImpl(SetupActionsConfig):
     """Commands to run before deployment.
 
-        :param jupyter: Commands to run before deployment of Jupyter Notebook.
+        :param jupyter: See :meth:`.SetupActionsConfigImpl.jupyter`
 
     """
 

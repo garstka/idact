@@ -2,7 +2,7 @@ from time import sleep
 
 from idact.core.nodes import Nodes
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 from idact.detail.nodes.get_access_node import get_access_node
 from idact.detail.nodes.node_impl import NodeImpl
 from idact.detail.nodes.nodes_impl import NodesImpl
@@ -14,7 +14,7 @@ from idact.detail.slurm.slurm_allocation import SlurmAllocation
 
 
 def allocate_slurm_nodes(args: SbatchArguments,
-                         config: ClientClusterConfig) -> Nodes:
+                         config: ClusterConfigImpl) -> Nodes:
     """Tries to allocate nodes using Slurm.
 
        :param args:   sbatch arguments.

@@ -8,56 +8,69 @@ from idact.core.walltime import Walltime
 from idact.core.environment import load_environment, save_environment
 from idact.core.tunnel import Tunnel
 from idact.core.jupyter_deployment import JupyterDeployment
+from idact.core.config import ClusterConfig, SetupActionsConfig
 from idact import _IMPORTED
+from idact import add_cluster as add_cluster2
+from idact import show_cluster as show_cluster2
+from idact import show_clusters as show_clusters2
+from idact import load_environment as load_environment2
+from idact import save_environment as save_environment2
+from idact import AuthMethod as AuthMethod2
+from idact import Cluster as Cluster2
+from idact import Node as Node2
+from idact import Nodes as Nodes2
+from idact import Walltime as Walltime2
+from idact import Tunnel as Tunnel2
+from idact import JupyterDeployment as JupyterDeployment2
+from idact import KeyType as KeyType2
+from idact import set_log_level as set_log_level2
+from idact import ClusterConfig as ClusterConfig2
+from idact import SetupActionsConfig as SetupActionsConfig2
+
+IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
+                          (show_cluster, show_cluster2),
+                          (show_clusters, show_clusters2),
+                          (load_environment, load_environment2),
+                          (save_environment, save_environment2),
+                          (AuthMethod, AuthMethod2),
+                          (Cluster, Cluster2),
+                          (Node, Node2),
+                          (Nodes, Nodes2),
+                          (Walltime, Walltime2),
+                          (Tunnel, Tunnel2),
+                          (JupyterDeployment, JupyterDeployment2),
+                          (KeyType, KeyType2),
+                          (set_log_level, set_log_level2),
+                          (ClusterConfig, ClusterConfig2),
+                          (SetupActionsConfig, SetupActionsConfig2)]
+
+CORE_IMPORTS = [add_cluster,
+                load_environment,
+                save_environment,
+                show_cluster,
+                show_clusters,
+                AuthMethod,
+                Cluster,
+                Node,
+                Nodes,
+                Walltime,
+                Tunnel,
+                JupyterDeployment,
+                KeyType,
+                set_log_level,
+                ClusterConfig,
+                SetupActionsConfig]
 
 
 def test_aliases():
     """Tests classes and functions imported from the core package
        to the top level package.
     """
-    assert len(_IMPORTED) == 14
-    from idact import add_cluster as add_cluster2
-    from idact import show_cluster as show_cluster2
-    from idact import show_clusters as show_clusters2
-    from idact import load_environment as load_environment2
-    from idact import save_environment as save_environment2
-    from idact import AuthMethod as AuthMethod2
-    from idact import Cluster as Cluster2
-    from idact import Node as Node2
-    from idact import Nodes as Nodes2
-    from idact import Walltime as Walltime2
-    from idact import Tunnel as Tunnel2
-    from idact import JupyterDeployment as JupyterDeployment2
-    from idact import KeyType as KeyType2
-    from idact import set_log_level as set_log_level2
+    assert len(_IMPORTED) == 16
 
-    assert add_cluster is add_cluster2
-    assert show_cluster is show_cluster2
-    assert show_clusters is show_clusters2
-    assert load_environment is load_environment2
-    assert save_environment is save_environment2
-    assert AuthMethod is AuthMethod2
-    assert Cluster is Cluster2
-    assert Node is Node2
-    assert Nodes is Nodes2
-    assert Walltime is Walltime2
-    assert Tunnel is Tunnel2
-    assert JupyterDeployment is JupyterDeployment2
-    assert KeyType is KeyType2
-    assert set_log_level is set_log_level2
+    for core, main in IMPORT_PAIRS_CORE_MAIN:
+        assert core is main
 
     main_module = 'idact'
-    assert main_module == add_cluster.__module__
-    assert main_module == load_environment.__module__
-    assert main_module == save_environment.__module__
-    assert main_module == show_cluster.__module__
-    assert main_module == show_clusters.__module__
-    assert main_module == AuthMethod.__module__
-    assert main_module == Cluster.__module__
-    assert main_module == Node.__module__
-    assert main_module == Nodes.__module__
-    assert main_module == Walltime.__module__
-    assert main_module == Tunnel.__module__
-    assert main_module == JupyterDeployment.__module__
-    assert main_module == KeyType.__module__
-    assert main_module == set_log_level.__module__
+    for core in CORE_IMPORTS:
+        assert main_module == core.__module__

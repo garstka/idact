@@ -3,7 +3,7 @@ from typing import Optional, Dict
 from idact.core.cluster import Cluster
 from idact.detail.cluster_impl import ClusterImpl
 from idact.detail.config.client. \
-    client_cluster_config import ClientClusterConfig
+    client_cluster_config import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
 from idact.detail.log.logger_provider import LoggerProvider
 from idact.detail.log.set_fabric_log_level import set_fabric_log_level
@@ -34,7 +34,7 @@ class Environment:
 
     def add_cluster(self,
                     name: str,
-                    config: ClientClusterConfig) -> Cluster:
+                    config: ClusterConfigImpl) -> Cluster:
         """Adds a cluster to config and cluster list.
            Returns the added :class:`.Cluster`.
 

@@ -1,27 +1,27 @@
 from idact import AuthMethod
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 from idact.detail.entry_point.get_entry_point_script_contents import \
     get_entry_point_script_contents
 
 
 def test_entry_point_disabled_sshd():
-    config = ClientClusterConfig(host='host',
-                                 port=123,
-                                 user='user',
-                                 auth=AuthMethod.PUBLIC_KEY,
-                                 disable_sshd=True)
+    config = ClusterConfigImpl(host='host',
+                               port=123,
+                               user='user',
+                               auth=AuthMethod.PUBLIC_KEY,
+                               disable_sshd=True)
     formatted = get_entry_point_script_contents(config=config)
     assert formatted == ("#!/usr/bin/env bash\n"
                          "trap : TERM INT; sleep infinity & wait")
 
 
 def test_entry_point_sshd():
-    config = ClientClusterConfig(host='host',
-                                 port=123,
-                                 user='user',
-                                 auth=AuthMethod.PUBLIC_KEY,
-                                 disable_sshd=False)
+    config = ClusterConfigImpl(host='host',
+                               port=123,
+                               user='user',
+                               auth=AuthMethod.PUBLIC_KEY,
+                               disable_sshd=False)
     formatted = get_entry_point_script_contents(config=config)
     expected = ("#!/usr/bin/env bash\n"
                 "SSHD_PORT=$(python -c 'import socket;"

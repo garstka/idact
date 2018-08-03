@@ -1,9 +1,9 @@
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 from idact.detail.nodes.node_impl import NodeImpl
 
 
-def get_access_node(config: ClientClusterConfig) -> NodeImpl:
+def get_access_node(config: ClusterConfigImpl) -> NodeImpl:
     """Returns the cluster access node, identified
        by :attr:`.ClientClusterConfig.host`.
 

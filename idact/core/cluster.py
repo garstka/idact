@@ -9,6 +9,7 @@ from typing import Union, Optional, Dict
 
 import bitmath
 
+from idact.core.config import ClusterConfig
 from idact.core.nodes import Nodes, Node
 from idact.core.walltime import Walltime
 
@@ -57,4 +58,10 @@ class Cluster(ABC):
     @abstractmethod
     def get_access_node(self) -> Node:
         """Returns the cluster head node, which does not require allocation."""
+        pass
+
+    @property
+    @abstractmethod
+    def config(self) -> ClusterConfig:
+        """Client-side cluster config."""
         pass

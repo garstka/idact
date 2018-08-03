@@ -4,7 +4,7 @@ from typing import Optional, Callable, Any
 
 from idact.core.nodes import Node
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 
 
 class NodeInternal(Node):
@@ -42,6 +42,6 @@ class NodeInternal(Node):
 
     @property
     @abstractmethod
-    def config(self) -> ClientClusterConfig:
+    def config(self) -> ClusterConfigImpl:
         """Client cluster config."""
         pass

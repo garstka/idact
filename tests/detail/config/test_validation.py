@@ -1,6 +1,7 @@
 import pytest
 
-from idact.detail.config.client.setup_actions_config import SetupActionsConfig
+from idact.detail.config.client.setup_actions_config import \
+    SetupActionsConfigImpl
 from idact.detail.config.validation.validate_cluster_name import \
     validate_cluster_name
 from idact.detail.config.validation.validate_hostname import validate_hostname
@@ -164,9 +165,9 @@ def test_validate_setup_actions():
 
 def test_validate_setup_actions_config():
     assert validate_setup_actions_config(
-        SetupActionsConfig()) == SetupActionsConfig()
-    assert validate_setup_actions_config(SetupActionsConfig(
-        jupyter=['echo a'])) == SetupActionsConfig(jupyter=['echo a'])
+        SetupActionsConfigImpl()) == SetupActionsConfigImpl()
+    assert validate_setup_actions_config(SetupActionsConfigImpl(
+        jupyter=['echo a'])) == SetupActionsConfigImpl(jupyter=['echo a'])
 
     with pytest.raises(TypeError):
         validate_setup_actions_config(None)

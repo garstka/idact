@@ -9,7 +9,7 @@ from idact.core.auth import AuthMethod, KeyType
 from idact.core.cluster import Cluster
 from idact.detail.auth.generate_key import generate_key
 from idact.detail.config.client. \
-    client_cluster_config import ClientClusterConfig
+    client_cluster_config import ClusterConfigImpl
 from idact.detail.environment.environment_provider import EnvironmentProvider
 from idact.detail.log.get_logger import get_logger
 
@@ -64,12 +64,12 @@ def add_cluster(name: str,
             raise ValueError("Invalid key argument for public key"
                              " authentication.")
 
-    config = ClientClusterConfig(host=host,
-                                 port=port,
-                                 user=user,
-                                 auth=auth,
-                                 key=key,
-                                 install_key=install_key,
-                                 disable_sshd=disable_sshd)
+    config = ClusterConfigImpl(host=host,
+                               port=port,
+                               user=user,
+                               auth=auth,
+                               key=key,
+                               install_key=install_key,
+                               disable_sshd=disable_sshd)
     return environment.add_cluster(name=name,
                                    config=config)

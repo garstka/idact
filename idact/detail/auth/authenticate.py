@@ -10,14 +10,14 @@ from idact.detail.auth.get_password import get_password
 from idact.detail.auth.install_key import install_key
 from idact.detail.auth.install_shared_home_key import install_shared_home_key
 from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+    import ClusterConfigImpl
 from idact.detail.entry_point.get_entry_point_script_contents import \
     COMPUTE_NODE_AUTHORIZED_KEYS
 
 
 def get_host_strings(host: str,
                      port: int,
-                     config: ClientClusterConfig) -> Tuple[str, str]:
+                     config: ClusterConfigImpl) -> Tuple[str, str]:
     """Returns host strings for the gateway and target host.
        If the target host is the access node, there is no gateway.
        Otherwise, the access node is the gateway.
@@ -41,7 +41,7 @@ def get_host_strings(host: str,
     return env_gateway, env_host_string
 
 
-def install_key_using_password_authentication(config: ClientClusterConfig):
+def install_key_using_password_authentication(config: ClusterConfigImpl):
     """Authenticates with a password and tries to install public key
        using the default authorized_keys file.
 
@@ -61,7 +61,7 @@ def install_key_using_password_authentication(config: ClientClusterConfig):
 
 
 def install_keys_using_current_authentication(access_node: str,
-                                              config: ClientClusterConfig):  # noqa, pylint: disable=line-too-long
+                                              config: ClusterConfigImpl):  # noqa, pylint: disable=line-too-long
     """Installs keys for authentication between the access node,
        and cluster nodes. Uses current authentication.
 
@@ -85,7 +85,7 @@ def install_keys_using_current_authentication(access_node: str,
 @contextmanager
 def authenticate(host: str,
                  port: int,
-                 config: ClientClusterConfig,
+                 config: ClusterConfigImpl,
                  install_shared_keys: bool = False):
     """Authenticates the user in Fabric.
 

@@ -1,10 +1,11 @@
 import pytest
 
-from idact.detail.config.client.setup_actions_config import SetupActionsConfig
+from idact.detail.config.client.setup_actions_config import \
+    SetupActionsConfigImpl
 
 
 def test_setup_actions():
-    setup_actions = SetupActionsConfig()
+    setup_actions = SetupActionsConfigImpl()
     assert setup_actions.jupyter == []
     setup_actions.jupyter = ['abcd']
     assert setup_actions.jupyter == ['abcd']

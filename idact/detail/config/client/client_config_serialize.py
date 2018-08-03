@@ -2,9 +2,10 @@ from typing import Any, Optional
 
 from idact.core.auth import AuthMethod
 from idact.detail.config.client. \
-    client_cluster_config import ClientClusterConfig
+    client_cluster_config import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
-from idact.detail.config.client.setup_actions_config import SetupActionsConfig
+from idact.detail.config.client.setup_actions_config import \
+    SetupActionsConfigImpl
 from idact.detail.log.get_logger import get_logger
 
 
@@ -65,7 +66,7 @@ def deserialize_client_config_from_json(data: dict) -> ClientConfig:
         log.debug("Filled missing fields with None: %s", data)
 
     clusters = {
-        name: ClientClusterConfig(
+        name: ClusterConfigImpl(
             host=value['host'],
             port=value['port'],
             user=value['user'],
@@ -73,7 +74,7 @@ def deserialize_client_config_from_json(data: dict) -> ClientConfig:
             key=value['key'],
             install_key=value['installKey'],
             disable_sshd=value['disableSshd'],
-            setup_actions=SetupActionsConfig(
+            setup_actions=SetupActionsConfigImpl(
                 jupyter=value['setupActions']['jupyter'])
         ) for name, value in data['clusters'].items()}
     return ClientConfig(clusters=clusters,

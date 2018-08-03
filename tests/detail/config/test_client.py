@@ -4,57 +4,58 @@ import pytest
 
 from idact.core.auth import AuthMethod
 from idact.detail.config.client. \
-    client_cluster_config import ClientClusterConfig
+    client_cluster_config import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
 from idact.detail.config.client.client_config_serialize import \
     serialize_client_config_to_json, deserialize_client_config_from_json
-from idact.detail.config.client.setup_actions_config import SetupActionsConfig
+from idact.detail.config.client.setup_actions_config import \
+    SetupActionsConfigImpl
 from idact.detail.log.logger_provider import LoggerProvider
 
-VALID_CLIENT_CLUSTER_CONFIG = ClientClusterConfig(host='abc',
-                                                  port=22,
-                                                  user='user',
-                                                  auth=AuthMethod.ASK)
+VALID_CLIENT_CLUSTER_CONFIG = ClusterConfigImpl(host='abc',
+                                                port=22,
+                                                user='user',
+                                                auth=AuthMethod.ASK)
 
 VALID_CLIENT_CLUSTER_CONFIG_WITH_PUBLIC_KEY_AUTH = \
-    ClientClusterConfig(host='abc',
-                        port=22,
-                        user='user',
-                        auth=AuthMethod.PUBLIC_KEY,
-                        key='/home/user/.ssh/id_rsa',
-                        install_key=False,
-                        setup_actions=SetupActionsConfig(jupyter=['echo a']))
+    ClusterConfigImpl(host='abc',
+                      port=22,
+                      user='user',
+                      auth=AuthMethod.PUBLIC_KEY,
+                      key='/home/user/.ssh/id_rsa',
+                      install_key=False,
+                      setup_actions=SetupActionsConfigImpl(jupyter=['echo a']))
 
 
 def test_client_cluster_config_validation_is_used():
     with pytest.raises(ValueError):
-        ClientClusterConfig(host='',
-                            port=22,
-                            user='user',
-                            auth=AuthMethod.ASK)
+        ClusterConfigImpl(host='',
+                          port=22,
+                          user='user',
+                          auth=AuthMethod.ASK)
     with pytest.raises(ValueError):
-        ClientClusterConfig(host='abc',
-                            port=-1,
-                            user='user',
-                            auth=AuthMethod.ASK)
+        ClusterConfigImpl(host='abc',
+                          port=-1,
+                          user='user',
+                          auth=AuthMethod.ASK)
     with pytest.raises(ValueError):
-        ClientClusterConfig(host='abc',
-                            port=22,
-                            user='',
-                            auth=AuthMethod.ASK)
+        ClusterConfigImpl(host='abc',
+                          port=22,
+                          user='',
+                          auth=AuthMethod.ASK)
     with pytest.raises(ValueError):
-        ClientClusterConfig(host='abc',
-                            port=22,
-                            user='user',
-                            auth=AuthMethod.PUBLIC_KEY,
-                            key='')
+        ClusterConfigImpl(host='abc',
+                          port=22,
+                          user='user',
+                          auth=AuthMethod.PUBLIC_KEY,
+                          key='')
 
 
 def test_client_cluster_config_create():
-    config = ClientClusterConfig(host='abc',
-                                 port=22,
-                                 user='user',
-                                 auth=AuthMethod.ASK)
+    config = ClusterConfigImpl(host='abc',
+                               port=22,
+                               user='user',
+                               auth=AuthMethod.ASK)
     assert config.host == 'abc'
     assert config.port == 22
     assert config.user == 'user'
@@ -93,10 +94,10 @@ def test_client_config_create_empty_and_add_cluster():
 
     with pytest.raises(ValueError):
         client_config.add_cluster('cluster1',
-                                  ClientClusterConfig(host='another',
-                                                      port=22,
-                                                      user='user',
-                                                      auth=AuthMethod.ASK))
+                                  ClusterConfigImpl(host='another',
+                                                    port=22,
+                                                    user='user',
+                                                    auth=AuthMethod.ASK))
 
     assert client_config.clusters['cluster1'] is cluster_cluster_config
 
@@ -137,10 +138,10 @@ def test_client_config_deserialize():
         'logLevel': DEBUG
     }
     client_config = ClientConfig(clusters={
-        'cluster1': ClientClusterConfig(host='abc',
-                                        user='user',
-                                        port=22,
-                                        auth=AuthMethod.ASK)}, log_level=DEBUG)
+        'cluster1': ClusterConfigImpl(host='abc',
+                                      user='user',
+                                      port=22,
+                                      auth=AuthMethod.ASK)}, log_level=DEBUG)
     assert deserialize_client_config_from_json(input_json) == client_config
 
 
