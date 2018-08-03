@@ -4,30 +4,6 @@ from idact.detail.deployment.get_deployment_command import \
     get_deployment_command
 
 
-def test_single_quote_is_not_allowed():
-    with pytest.raises(ValueError):
-        get_deployment_command("'")
-    with pytest.raises(ValueError):
-        get_deployment_command("''")
-    with pytest.raises(ValueError):
-        get_deployment_command("echo 'ABC DEF'")
-
-
-def test_single_ampersand_is_not_allowed():
-    with pytest.raises(ValueError):
-        get_deployment_command("&")
-    with pytest.raises(ValueError):
-        get_deployment_command("a&b")
-    with pytest.raises(ValueError):
-        get_deployment_command("a &b")
-    with pytest.raises(ValueError):
-        get_deployment_command("a & b")
-    with pytest.raises(ValueError):
-        get_deployment_command("a\t& b")
-    with pytest.raises(ValueError):
-        get_deployment_command("ab &")
-
-
 def test_negative_time_is_not_allowed():
     with pytest.raises(ValueError):
         get_deployment_command("echo abc",
@@ -38,42 +14,33 @@ def test_negative_time_is_not_allowed():
 
 
 def test_get_deployment_command():
-    assert get_deployment_command("echo A B && rm \"ABC DEF\"") == (
+    assert get_deployment_command(script_path="a.sh") == (
         "exec 3< <(nohup bash -c"
-        " 'sleep 1;''echo A B && rm \"ABC DEF\"' 2>&1)"
+        " 'sleep 1;'a.sh 2>&1)"
         " ; echo $!"
         " ; timeout 2 cat <&3"
+        " ; rm -f a.sh"
         " ; exit 0")
-    assert \
-        get_deployment_command("echo \"A B\" \"C D\" || rm \"ABC DEF\"") == (
-            "exec 3< <(nohup bash -c"
-            " 'sleep 1;''echo \"A B\" \"C D\" || rm \"ABC DEF\"' 2>&1)"
-            " ; echo $!"
-            " ; timeout 2 cat <&3"
-            " ; exit 0")
-    assert get_deployment_command("echo \"A B\"; echo \"C D\";") == (
+    assert get_deployment_command(
+        script_path="b.sh",
+        capture_output_seconds=0) == ("exec 3< <(nohup bash -c"
+                                      " 'sleep 1;'b.sh 2>&1)"
+                                      " ; echo $!"
+                                      " ; timeout 1 cat <&3"
+                                      " ; rm -f b.sh"
+                                      " ; exit 0")
+    assert get_deployment_command(
+        script_path="c.sh",
+        capture_output_seconds=2) == ("exec 3< <(nohup bash -c"
+                                      " 'sleep 1;'c.sh 2>&1)"
+                                      " ; echo $!"
+                                      " ; timeout 3 cat <&3"
+                                      " ; rm -f c.sh"
+                                      " ; exit 0")
+    assert get_deployment_command(script_path="dir/some file") == (
         "exec 3< <(nohup bash -c"
-        " 'sleep 1;''echo \"A B\"; echo \"C D\";' 2>&1)"
+        " 'sleep 1;''dir/some file' 2>&1)"
         " ; echo $!"
         " ; timeout 2 cat <&3"
+        " ; rm -f 'dir/some file'"
         " ; exit 0")
-    assert get_deployment_command("echo A B > c.d") == (
-        "exec 3< <(nohup bash -c"
-        " 'sleep 1;''echo A B > c.d' 2>&1)"
-        " ; echo $!"
-        " ; timeout 2 cat <&3"
-        " ; exit 0")
-    assert \
-        get_deployment_command("echo A B > c.d", capture_output_seconds=0) == (
-            "exec 3< <(nohup bash -c"
-            " 'sleep 1;''echo A B > c.d' 2>&1)"
-            " ; echo $!"
-            " ; timeout 1 cat <&3"
-            " ; exit 0")
-    assert \
-        get_deployment_command("echo A B > c.d", capture_output_seconds=2) == (
-            "exec 3< <(nohup bash -c"
-            " 'sleep 1;''echo A B > c.d' 2>&1)"
-            " ; echo $!"
-            " ; timeout 3 cat <&3"
-            " ; exit 0")

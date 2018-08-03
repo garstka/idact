@@ -8,6 +8,8 @@ from idact.detail.config.client. \
 from idact.detail.config.client.client_config import ClientConfig
 from idact.detail.config.client.client_config_serialize import \
     serialize_client_config_to_json, deserialize_client_config_from_json
+from idact.detail.config.client.setup_actions_config import SetupActionsConfig
+from idact.detail.log.logger_provider import LoggerProvider
 
 VALID_CLIENT_CLUSTER_CONFIG = ClientClusterConfig(host='abc',
                                                   port=22,
@@ -20,7 +22,8 @@ VALID_CLIENT_CLUSTER_CONFIG_WITH_PUBLIC_KEY_AUTH = \
                         user='user',
                         auth=AuthMethod.PUBLIC_KEY,
                         key='/home/user/.ssh/id_rsa',
-                        install_key=False)
+                        install_key=False,
+                        setup_actions=SetupActionsConfig(jupyter=['echo a']))
 
 
 def test_client_cluster_config_validation_is_used():
@@ -110,7 +113,8 @@ def test_client_config_serialize():
                          'auth': 'ASK',
                          'key': None,
                          'installKey': True,
-                         'disableSshd': False}
+                         'disableSshd': False,
+                         'setupActions': {'jupyter': []}}
         },
         'logLevel': INFO
     }
@@ -118,6 +122,7 @@ def test_client_config_serialize():
 
 
 def test_client_config_deserialize():
+    LoggerProvider().log_level = DEBUG
     input_json = {
         'clusters': {
             'cluster1': {'host': 'abc',
@@ -126,7 +131,8 @@ def test_client_config_deserialize():
                          'auth': 'ASK',
                          'key': None,
                          'installKey': True,
-                         'disableSshd': False}
+                         'disableSshd': False,
+                         'setupActions': {'jupyter': []}}
         },
         'logLevel': DEBUG
     }
@@ -150,10 +156,9 @@ def test_client_config_serialize_public_key():
                          'auth': 'PUBLIC_KEY',
                          'key': '/home/user/.ssh/id_rsa',
                          'installKey': False,
-                         'disableSshd': False}
-        },
-        'logLevel': INFO
-    }
+                         'disableSshd': False,
+                         'setupActions': {'jupyter': ['echo a']}}
+        }, 'logLevel': INFO}
     assert serialize_client_config_to_json(client_config) == expected_json
 
 
@@ -166,10 +171,59 @@ def test_client_config_deserialize_public_key():
                          'auth': 'PUBLIC_KEY',
                          'key': '/home/user/.ssh/id_rsa',
                          'installKey': False,
-                         'disableSshd': False}
+                         'disableSshd': False,
+                         'setupActions': {'jupyter': ['echo a']}}
         },
         'logLevel': INFO
     }
     client_config = ClientConfig(clusters={
         'cluster1': VALID_CLIENT_CLUSTER_CONFIG_WITH_PUBLIC_KEY_AUTH})
     assert deserialize_client_config_from_json(input_json) == client_config
+
+
+EXPECTED_DEFAULT_JSON = {
+    'clusters': {
+        'cluster1': {'host': 'abc',
+                     'user': 'user',
+                     'port': 22,
+                     'auth': 'ASK',
+                     'key': None,
+                     'installKey': True,
+                     'disableSshd': False,
+                     'setupActions': {'jupyter': []}}
+    },
+    'logLevel': INFO
+}
+
+
+def test_client_config_fill_out_missing_fields():
+    input_json = {
+        'clusters': {
+            'cluster1': {'host': 'abc',
+                         'user': 'user',
+                         'port': 22,
+                         'auth': 'ASK'}
+        },
+        'logLevel': INFO
+    }
+    client_config = deserialize_client_config_from_json(input_json)
+
+    assert serialize_client_config_to_json(client_config) == (
+        EXPECTED_DEFAULT_JSON)
+
+
+def test_client_config_fill_out_missing_fields_setup_actions():
+    input_json = {
+        'clusters': {
+            'cluster1': {'host': 'abc',
+                         'user': 'user',
+                         'port': 22,
+                         'auth': 'ASK',
+                         'setupActions': {}}
+        },
+        'logLevel': INFO
+    }
+    client_config = deserialize_client_config_from_json(input_json)
+
+    assert serialize_client_config_to_json(client_config) == (
+        EXPECTED_DEFAULT_JSON)

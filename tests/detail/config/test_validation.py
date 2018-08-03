@@ -1,5 +1,6 @@
 import pytest
 
+from idact.detail.config.client.setup_actions_config import SetupActionsConfig
 from idact.detail.config.validation.validate_cluster_name import \
     validate_cluster_name
 from idact.detail.config.validation.validate_hostname import validate_hostname
@@ -8,6 +9,10 @@ from idact.detail.config.validation.validate_key_path import validate_key_path
 from idact.detail.config.validation.validate_log_level \
     import validate_log_level
 from idact.detail.config.validation.validate_port import validate_port
+from idact.detail.config.validation.validate_setup_actions import \
+    validate_setup_actions
+from idact.detail.config.validation.validate_setup_actions_config import \
+    validate_setup_actions_config
 from idact.detail.config.validation.validate_username import validate_username
 from idact.detail.config.validation.validation_error_message import \
     validation_error_message
@@ -133,6 +138,42 @@ def test_validate_port():
         validate_port(2 ** 16)
     with pytest.raises(ValueError):
         validate_port(2 ** 17)
+
+
+def test_validate_setup_actions():
+    assert validate_setup_actions([]) == []
+    assert validate_setup_actions(['a']) == ['a']
+    assert validate_setup_actions(['a', 'b']) == ['a', 'b']
+    with pytest.raises(TypeError):
+        validate_setup_actions([None])
+    with pytest.raises(TypeError):
+        validate_setup_actions(['a', 'b', None])
+    with pytest.raises(TypeError):
+        validate_setup_actions([1])
+    with pytest.raises(TypeError):
+        validate_setup_actions([1, 'a'])
+    with pytest.raises(TypeError):
+        validate_setup_actions(['a', 'b', 1])
+    with pytest.raises(TypeError):
+        validate_setup_actions(None)
+    with pytest.raises(TypeError):
+        validate_setup_actions('a')
+    with pytest.raises(TypeError):
+        validate_setup_actions(1)
+
+
+def test_validate_setup_actions_config():
+    assert validate_setup_actions_config(
+        SetupActionsConfig()) == SetupActionsConfig()
+    assert validate_setup_actions_config(SetupActionsConfig(
+        jupyter=['echo a'])) == SetupActionsConfig(jupyter=['echo a'])
+
+    with pytest.raises(TypeError):
+        validate_setup_actions_config(None)
+    with pytest.raises(TypeError):
+        validate_setup_actions_config(1)
+    with pytest.raises(TypeError):
+        validate_setup_actions_config('a')
 
 
 def test_validate_username():

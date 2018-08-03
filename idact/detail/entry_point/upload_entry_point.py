@@ -5,24 +5,21 @@ from fabric.contrib.files import exists
 import fabric.decorators
 from fabric.operations import run, put
 
-from idact.detail.auth.authenticate import authenticate
-from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
 from idact.detail.helper.get_random_file_name import get_random_file_name
-from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.log.get_logger import get_logger
+from idact.detail.nodes.node_internal import NodeInternal
 
 ENTRY_POINT_LOCATION = "~/.idact/entry_points"
 ENTRY_POINT_FILE_NAME_LENGTH = 32
 
 
 def upload_entry_point(contents: str,
-                       config: ClientClusterConfig) -> str:
+                       node: NodeInternal) -> str:
     """Uploads the entry point file and returns its path.
 
         :param contents: Script contents.
 
-        :param config: Cluster config.
+        :param node: Node to upload the entry point to.
 
     """
     log = get_logger(__name__)
@@ -47,12 +44,10 @@ def upload_entry_point(contents: str,
         real_path = run("echo {file_path}".format(file_path=file_path))
         file = BytesIO(contents.encode('ascii'))
         put(file, real_path, mode=0o700)
+        run("cat {real_path} > /dev/null".format(
+            real_path=real_path))
         result.append(real_path)
 
-    with raise_on_remote_fail(exception=RuntimeError):
-        with authenticate(host=config.host,
-                          port=config.port,
-                          config=config):
-            fabric.tasks.execute(task)
+    node.run_task(task)
 
     return result[0]

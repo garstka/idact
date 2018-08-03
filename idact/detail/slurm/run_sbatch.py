@@ -55,7 +55,8 @@ def format_sbatch_allocation_request(args: SbatchArguments,
 
 
 def prepare_sbatch_allocation_request(args: SbatchArguments,
-                                      config: ClientClusterConfig) -> \
+                                      config: ClientClusterConfig,
+                                      node: NodeImpl) -> \
     Tuple[str, str]:  # noqa
     """Uploads the entry point script and returns the formatted sbatch
        command.
@@ -64,13 +65,15 @@ def prepare_sbatch_allocation_request(args: SbatchArguments,
 
         :param config: Cluster config.
 
+        :param node: Node to upload entry point to.
+
     """
 
     entry_point_script_contents = \
         get_entry_point_script_contents(config=config)
     entry_point_script = upload_entry_point(
         contents=entry_point_script_contents,
-        config=config)
+        node=node)
 
     return format_sbatch_allocation_request(
         args,
@@ -91,7 +94,8 @@ def run_sbatch(args: SbatchArguments,
 
     request, entry_point_script_path = prepare_sbatch_allocation_request(
         args=args,
-        config=node.config)
+        config=node.config,
+        node=node)
     log.debug("Allocation request: %s", request)
     output = node.run_impl(request,
                            install_keys=True)

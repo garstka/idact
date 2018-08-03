@@ -7,6 +7,7 @@ from bitmath import MiB
 from idact import show_cluster, Walltime
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.deploy_generic import deploy_generic
+from idact.detail.nodes.node_internal import NodeInternal
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
@@ -34,9 +35,15 @@ def test_generic_deployment():
             nodes.wait(timeout=10)
             assert nodes.running()
 
-            command = "echo ABC && sleep 3 && echo DEF && sleep 15 && echo GHI"
+            script_contents = ("echo ABC"
+                               " && sleep 3"
+                               " && echo DEF"
+                               " && sleep 15"
+                               " && echo GHI")
+
+            assert isinstance(node, NodeInternal)
             deployment = deploy_generic(node=node,
-                                        command=command,
+                                        script_contents=script_contents,
                                         capture_output_seconds=4)
             print(deployment)
 

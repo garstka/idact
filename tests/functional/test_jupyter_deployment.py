@@ -14,7 +14,7 @@ from tests.helpers.test_users import get_test_user_password, USER_6
 from tests.helpers.testing_environment import TEST_CLUSTER
 
 
-def test_jupyter_hub_deployment():
+def test_jupyter_deployment():
     user = USER_6
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())

@@ -5,62 +5,78 @@ from fabric.context_managers import cd
 from fabric.operations import run
 
 from idact.core.jupyter_deployment import JupyterDeployment
+from idact.detail.deployment.create_deployment_dir import create_runtime_dir
 from idact.detail.deployment.deploy_generic import deploy_generic
-from idact.detail.deployment.deployment_properties import \
-    DEPLOYMENT_ID_LENGTH, DEPLOYMENT_RUNTIME_DIR_FORMAT
+from idact.detail.deployment.get_deployment_script_contents import \
+    get_deployment_script_contents
 from idact.detail.helper.get_free_remote_port import get_free_remote_port
-from idact.detail.helper.get_random_file_name import get_random_file_name
 from idact.detail.helper.get_remote_file import get_remote_file
 from idact.detail.helper.retry import retry
 from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
+from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
 
 def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
-    """Deploys a Jupyter Hub server on the node, and creates a tunnel
+    """Deploys a Jupyter Notebook server on the node, and creates a tunnel
        to local_port.
 
         :param node: Node to deploy Jupyter on.
 
         :param local_port: Local tunnel binding port.
     """
-    deployment_id = get_random_file_name(length=DEPLOYMENT_ID_LENGTH)
-    formatted_runtime_dir = DEPLOYMENT_RUNTIME_DIR_FORMAT.format(
-        deployment_id=deployment_id)
+    log = get_logger(__name__)
 
-    node.run('mkdir -p {}'.format(formatted_runtime_dir))
-    runtime_dir = node.run("realpath {}".format(formatted_runtime_dir))
-
+    runtime_dir = create_runtime_dir(node=node)
     remote_port = get_free_remote_port(node=node)
-    command = ('export JUPYTER_RUNTIME_DIR="{runtime_dir}"'
-               ' && jupyter notebook'
-               ' --ip 0.0.0.0'
-               ' --port "{remote_port}"'
-               ' --no-browser').format(runtime_dir=runtime_dir,
-                                       remote_port=remote_port)
+
+    deployment_commands = []
+    deployment_commands.append(
+        'export JUPYTER_RUNTIME_DIR="{runtime_dir}"'.format(
+            runtime_dir=runtime_dir))
+
+    deployment_commands.append(
+        'jupyter notebook'
+        ' --ip 0.0.0.0'
+        ' --port "{remote_port}"'
+        ' --no-browser'.format(remote_port=remote_port))
+
+    script_contents = get_deployment_script_contents(
+        deployment_commands=deployment_commands,
+        setup_actions=node.config.setup_actions.jupyter)
+
+    log.debug("Deployment script contents: %s", script_contents)
     deployment = deploy_generic(node=node,
-                                command=command,
+                                script_contents=script_contents,
                                 capture_output_seconds=5)
 
-    @fabric.decorators.task
-    def load_nbserver_json():
-        with cd(runtime_dir):
-            nbserver_json_path = run("echo $PWD/nbserver-*.json")
+    try:
+        @fabric.decorators.task
+        def load_nbserver_json():
+            with cd(runtime_dir):
+                nbserver_json_path = run("realpath $PWD/nbserver-*.json") \
+                    .splitlines()[0]
+            run("cat '{nbserver_json_path}' > /dev/null".format(
+                nbserver_json_path=nbserver_json_path))
             nbserver_json_str = get_remote_file(nbserver_json_path)
             nbserver_json = json.loads(nbserver_json_str)
             return int(nbserver_json['port']), nbserver_json['token']
 
-    access_node = node
-    actual_port, token = retry(
-        lambda: access_node.run_task(task=load_nbserver_json),
-        retries=5,
-        seconds_between_retries=3)
+        access_node = node
+        actual_port, token = retry(
+            lambda: access_node.run_task(task=load_nbserver_json),
+            retries=5,
+            seconds_between_retries=3)
 
-    tunnel = node.tunnel(there=actual_port,
-                         here=local_port)
+        tunnel = node.tunnel(there=actual_port,
+                             here=local_port)
 
-    return JupyterDeploymentImpl(node=node,
-                                 deployment=deployment,
-                                 tunnel=tunnel,
-                                 token=token,
-                                 runtime_dir=runtime_dir)
+        return JupyterDeploymentImpl(node=node,
+                                     deployment=deployment,
+                                     tunnel=tunnel,
+                                     token=token,
+                                     runtime_dir=runtime_dir)
+
+    except Exception as e:  # noqa, pylint: disable=broad-except
+        deployment.cancel()
+        raise e

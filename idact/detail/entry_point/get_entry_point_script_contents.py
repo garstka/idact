@@ -8,10 +8,7 @@ COMPUTE_NODE_AUTHORIZED_KEYS = ".ssh/authorized_keys.idact"
 
 
 def get_entry_point_script_contents(config: ClientClusterConfig) -> str:
-    """Formats a full entry point command as the second tuple element.
-       First tuple element is top-level environment set-up,
-       i.e. to be executed before sbatch.
-       Returned entry point will work correctly when enclosed in apostrophes.
+    """Formats a full entry point script and returns its contents.
 
        If the entry point deploys an sshd server, its port will be written
        to a file at PORT_INFO_LOCATION, named according to

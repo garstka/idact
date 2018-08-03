@@ -1,10 +1,13 @@
 from typing import Optional
 
 from idact.core.auth import AuthMethod
+from idact.detail.config.client.setup_actions_config import SetupActionsConfig
 from idact.detail.config.validation.validate_hostname import validate_hostname
 from idact.detail.config.validation.validate_bool import validate_bool
 from idact.detail.config.validation.validate_key_path import validate_key_path
 from idact.detail.config.validation.validate_port import validate_port
+from idact.detail.config.validation.validate_setup_actions_config import \
+    validate_setup_actions_config
 from idact.detail.config.validation.validate_username import validate_username
 
 
@@ -25,6 +28,8 @@ class ClientClusterConfig:
        :param install_key: True, if the key should be installed on cluster
                            before use.
 
+       :param setup_actions: Commands to run before deployment.
+
     """
 
     def __init__(self,
@@ -34,7 +39,15 @@ class ClientClusterConfig:
                  auth: AuthMethod,
                  key: Optional[str] = None,
                  install_key: bool = True,
-                 disable_sshd: bool = False):
+                 disable_sshd: bool = False,
+                 setup_actions: Optional[SetupActionsConfig] = None):
+        if install_key is None:
+            install_key = True
+        if disable_sshd is None:
+            disable_sshd = False
+        if setup_actions is None:
+            setup_actions = SetupActionsConfig()
+
         self._host = validate_hostname(host)
         self._port = validate_port(port)
         self._user = validate_username(user)
@@ -42,6 +55,7 @@ class ClientClusterConfig:
         self._key = validate_key_path(key)
         self._install_key = validate_bool(install_key, 'install_key')
         self._disable_sshd = validate_bool(disable_sshd, 'disable_sshd')
+        self._setup_actions = validate_setup_actions_config(setup_actions)
 
     @property
     def host(self) -> str:
@@ -78,6 +92,10 @@ class ClientClusterConfig:
     @property
     def disable_sshd(self) -> bool:
         return self._disable_sshd
+
+    @property
+    def setup_actions(self) -> SetupActionsConfig:
+        return self._setup_actions
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
