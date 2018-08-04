@@ -4,8 +4,9 @@ import sys
 
 class LoggerProvider:
     """Stores global log level and provides loggers with
-       proper level and handler.
-       Log level is managed by :class:`.Environment`.
+        proper level and handler.
+
+        Log level is managed by :class:`.Environment`.
 
     """
     _state = {}
@@ -29,7 +30,7 @@ class LoggerProvider:
     def get_logger(self, name: str) -> logging.Logger:
         """Returns a new logger.
 
-            :param name: __name__ of the caller.
+            :param name: Logger name.
 
         """
         logger = logging.getLogger(name)

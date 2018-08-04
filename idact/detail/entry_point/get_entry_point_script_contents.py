@@ -8,13 +8,15 @@ COMPUTE_NODE_AUTHORIZED_KEYS = ".ssh/authorized_keys.idact"
 
 
 def get_entry_point_script_contents(config: ClusterConfigImpl) -> str:
-    """Formats a full entry point script and returns its contents.
+    """Formats an entry point script and returns its contents.
 
-       If the entry point deploys an sshd server, its port will be written
-       to a file at PORT_INFO_LOCATION, named according to
-       PORT_INFO_FILE_FORMAT.
+        The entry point script can either deploy an ssh server, or do nothing.
+        If it deploys sshd, it will save its port in a file at
+        :attr:`.PORT_INFO_LOCATION`, named according to
+        :attr:`.PORT_INFO_FILE_FORMAT`.
 
         :param config: Cluster config.
+
     """
 
     if config.disable_sshd:

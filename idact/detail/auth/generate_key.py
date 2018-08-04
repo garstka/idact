@@ -12,11 +12,14 @@ RSA_BITS = 4096
 
 def generate_key(host: str, key_type: KeyType = KeyType.RSA) -> str:
     """Generates a new private-public key pair and returns the path
-       to the private key.
+        to the private key.
+
+        Private key is saved in a directory determined by
+        :func:`get_free_private_key_location`.
 
         :param host: Host name for identification purposes.
 
-        :param key_type: Key type to generate
+        :param key_type: Key type to generate.
 
     """
     if key_type != KeyType.RSA:

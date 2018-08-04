@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Installs srun mock. See :mod:`.srun_mock`.
+"""Installs `srun` mock. See :mod:`.srun_mock`.
 
 """
 

@@ -5,15 +5,19 @@ Core classes
 ------------
 
 .. figure:: diagrams/core.png
-    :scale: 60 %
+    :scale: 50 %
     :alt: Core class diagram
     :figclass: align-center
 
-:py:mod:`idact.core` classes:
+:py:mod:`idact` core classes:
  - :py:class:`.AuthMethod`
  - :py:class:`.Cluster`
+ - :py:class:`.ClusterConfig`
+ - :py:class:`.JupyterDeployment`
+ - :py:class:`.KeyType`
  - :py:class:`.Node`
  - :py:class:`.Nodes`
+ - :py:class:`.SetupActionsConfig`
  - :py:class:`.Tunnel`
  - :py:class:`.Walltime`
 
@@ -27,6 +31,10 @@ Core implementation classes
 
 Core implementation classes:
  - :py:class:`.ClusterImpl`
+ - :py:class:`.FirstHopTunnel`
+ - :py:class:`.NodeInternal`
+ - :py:class:`.MultiHopTunnel`
+ - :py:class:`.JupyterDeploymentImpl`
  - :py:class:`.NodeImpl`
  - :py:class:`.NodesImpl`
 
@@ -45,6 +53,18 @@ Allocation detail classes:
  - :py:class:`.SlurmAllocation`
  - :py:class:`.SqueueResult`
 
+Deployment detail classes
+-------------------------
+
+.. figure:: diagrams/detail-deployment.png
+    :scale: 50 %
+    :alt: Deployment detail class diagram
+    :figclass: align-center
+
+Deployment detail classes:
+ - :py:class:`.GenericDeployment`
+ - :py:class:`.SshdPortInfo`
+
 Config detail classes
 ---------------------
 
@@ -54,8 +74,9 @@ Config detail classes
     :figclass: align-center
 
 Config detail classes:
- - :py:class:`.ClientClusterConfig`
  - :py:class:`.ClientConfig`
+ - :py:class:`.ClusterConfigImpl`
+ - :py:class:`.SetupActionsConfigImpl`
 
 Other detail classes
 --------------------
@@ -69,6 +90,6 @@ Other detail classes:
  - :py:class:`.Binding`
  - :py:class:`.Environment`
  - :py:class:`.EnvironmentProvider`
- - :py:class:`.FirstHopTunnel`
- - :py:class:`.MultiHopTunnel`
+ - :py:class:`.GetpassExecutedError`
+ - :py:class:`.LoggerProvider`
  - :py:class:`.PasswordCache`

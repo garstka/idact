@@ -14,6 +14,7 @@ For internals see :py:mod:`idact.detail`.
    api/idact
    diagrams
    testing_setup
+   notebooks
    api/tests
    scripts
    license

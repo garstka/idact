@@ -35,7 +35,8 @@ class NodeInternal(Node):
             :param task: Fabric task to run.
 
             :param install_keys: If True, shared SSH keys will be installed
-                after authentication (see :func:`.install_shared_home_key`).
+                            after authentication (see :func:`.install_key`,
+                            :func:`.install_shared_home_key`).
 
         """
         pass

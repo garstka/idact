@@ -5,11 +5,11 @@ from idact.detail.nodes.node_impl import NodeImpl
 
 def get_access_node(config: ClusterConfigImpl) -> NodeImpl:
     """Returns the cluster access node, identified
-       by :attr:`.ClientClusterConfig.host`.
+        by :attr:`.ClusterConfig.host`.
 
-       An access node is expected to be available without allocation.
+        An access node is expected to be available without allocation.
 
-       :param config: Client cluster config.
+        :param config: Client cluster config.
 
     """
     node = NodeImpl(config=config)

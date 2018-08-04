@@ -3,7 +3,7 @@ from typing import List
 
 def get_deployment_script_contents(deployment_commands: List[str],
                                    setup_actions: List[str]) -> str:
-    """Formats a full command deployment script and returns its contents.
+    """Formats a full deployment script and returns its contents.
 
         :param deployment_commands: Main actions for deployment.
 

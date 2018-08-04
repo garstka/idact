@@ -28,12 +28,18 @@ class GenericDeployment:
 
     @property
     def output(self) -> str:
-        """Console output after running the program."""
+        """Console output captured for a few seconds after running
+            the program.
+        """
         return self._output
 
     def cancel(self):
         """Kills the program and all its child processes.
-           Fails, if the top level process is still running after timeout.
+            Raises an exception if the top level process is still running
+            after :attr:`.CANCEL_TIMEOUT` seconds.
+
+            :raises RuntimeError: If the program is still running.
+
         """
         tree = ' '.join([str(pid)
                          for pid

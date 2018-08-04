@@ -4,11 +4,12 @@ from typing import Tuple
 class Binding:
     """Ssh tunnel binding.
 
-        :param address: | IPv4 address or hostname.
-                        | Can be empty for local binding.
+        :param address: IPv4 address or hostname. Can be empty for local
+                        binding.
 
-        :param port:    | Port number.
-                        | Zero for a local binding means any free port.
+        :param port:    Port number. Zero for a local binding means any
+                        free port.
+
     """
 
     def __init__(self, address: str, port: int):

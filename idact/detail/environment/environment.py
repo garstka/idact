@@ -36,11 +36,11 @@ class Environment:
                     name: str,
                     config: ClusterConfigImpl) -> Cluster:
         """Adds a cluster to config and cluster list.
-           Returns the added :class:`.Cluster`.
+            Returns the added :class:`.Cluster`.
 
-            :param name:          Cluster name.
+             :param name:   Cluster name.
 
-            :param config: Client-side cluster config.
+             :param config: Client-side cluster config.
         """
 
         self.config.add_cluster(name=name, config=config)
@@ -50,9 +50,12 @@ class Environment:
         return cluster
 
     def set_log_level(self, level: int):
-        """Sets the log level for idact. See :func:`.set_log_level`.
+        """Sets the log level for idact.
 
-            :param level
+            See :func:`.set_log_level`.
+
+            :param level: Log level.
+
         """
         self._config.log_level = level
         set_fabric_log_level(level=level)

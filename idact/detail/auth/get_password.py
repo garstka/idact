@@ -6,7 +6,7 @@ from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl
 
 
-def get_password(config: ClusterConfigImpl):
+def get_password(config: ClusterConfigImpl) -> str:
     """Obtains the password from user input or password cache.
 
         :param config: Cluster config.

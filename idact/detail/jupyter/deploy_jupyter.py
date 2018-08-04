@@ -19,11 +19,12 @@ from idact.detail.nodes.node_internal import NodeInternal
 
 def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
     """Deploys a Jupyter Notebook server on the node, and creates a tunnel
-       to local_port.
+        to a local port.
 
-        :param node: Node to deploy Jupyter on.
+        :param node: Node to deploy Jupyter Notebook on.
 
         :param local_port: Local tunnel binding port.
+
     """
     log = get_logger(__name__)
 

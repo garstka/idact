@@ -67,7 +67,7 @@ class Walltime:
         """Creates a Walltime instance from a string.
 
            Accepted format: [days-]hours:minutes:seconds
-           (see :const:`.WALLTIME_REGEX`).
+           (see :const:`.Walltime.WALLTIME_REGEX`).
 
            :param value: String to parse.
         """

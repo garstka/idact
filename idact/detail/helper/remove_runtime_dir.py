@@ -4,13 +4,14 @@ from idact.detail.log.get_logger import get_logger
 
 def remove_runtime_dir(node: Node, runtime_dir: str):
     """Removes a runtime dir for deployment.
-       Removes all files in it that do not start with a dot.
-       Does not remove nested directories.
-       On failure, produces a warning.
+
+        Removes all files in it that do not start with a dot.
+        Does not remove nested directories. On failure, produces a warning.
 
         :param node: Node to run commands on.
 
-        :param path: Path to the deployment dir.
+        :param runtime_dir: Path to the deployment dir.
+
     """
     try:
         node.run("rm -f {runtime_dir}/*"

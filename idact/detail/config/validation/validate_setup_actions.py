@@ -7,9 +7,15 @@ VALID_SETUP_ACTIONS_DESCRIPTION = 'List of strings.'
 
 
 def validate_setup_actions(value, label: Optional[str] = None) -> List[str]:
-    """Key path is optional, non-empty string.
+    """Returns the parameter, if it's a valid setup actions entry, otherwise
+        raises an exception.
+
+        A valid setup actions entry is a list of strings.
 
         :param path: Object to validate.
+
+        :raises TypeError: On wrong type.
+
     """
 
     if isinstance(value, list) and all([isinstance(i, str) for i in value]):

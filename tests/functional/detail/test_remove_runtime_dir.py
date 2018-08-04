@@ -1,4 +1,4 @@
-from contextlib import ExitStack, contextmanager
+from contextlib import ExitStack
 
 import pytest
 from bitmath import MiB
@@ -81,8 +81,7 @@ def check_will_not_remove_nested_dirs(node: Node):
         node.run("ls dir4/file2")
 
 
-@contextmanager
-def setup_remove_runtime_dir_test(user: str):
+def test_remove_runtime_dir_test():
     user = USER_15
     with ExitStack() as stack:
         stack.enter_context(set_up_key_location())

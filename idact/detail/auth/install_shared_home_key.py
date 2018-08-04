@@ -13,10 +13,12 @@ SHARED_HOST_KEY_PATH = "~/.ssh/ssh_host_rsa_key"
 
 def install_shared_home_key():
     """Installs shared home public key and host key on access node
-       in order to allow public key authentication between the access node
-       and cluster nodes.
-       If any of the keys was not generated, it will be at this point.
-       Expects password authentication to have already been performed.
+        in order to allow public key authentication between the access node
+        and cluster nodes.
+
+        If any of the keys was not generated, it will be generated at this
+        point.
+        Expects password authentication to have already been performed.
     """
     log = get_logger(__name__)
 

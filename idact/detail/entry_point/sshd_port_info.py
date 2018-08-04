@@ -9,10 +9,12 @@ NODE_DEFAULT_PORT = 22
 
 
 class SshdPortInfo:
-    """Determines sshd listening port based on log file contents.
-       See :func:`.get_entry_point_script_contents`.
+    """Determines the sshd listening port based on the contents of a file
+        written to by entry points.
 
-        :param File contents.
+        See :func:`.get_entry_point_script_contents`.
+
+        :param contents: File contents.
 
     """
 
@@ -33,8 +35,8 @@ class SshdPortInfo:
             log.warning("No deployed sshd servers were reported.")
 
     def get_port(self, host: str) -> int:
-        """Returns a ssh port for the host.
-           Tries to provide defaults if not found.
+        """Returns the ssh access port for the host.
+            Tries to provide defaults if none found.
 
             :param host: Host to find the ssh port for.
 

@@ -8,8 +8,10 @@ from idact.detail.environment.environment_serialization import \
 class EnvironmentProvider:
     """Creates and stores the global environment.
 
-        :param initial_environment: Use this environment instead of loading
-                                    from a file on first access."""
+        :param initial_environment: Optionally use this environment instead
+                                    of loading from a file on first access.
+
+    """
 
     _state = {}
 

@@ -17,7 +17,7 @@ def allocate_slurm_nodes(args: SbatchArguments,
                          config: ClusterConfigImpl) -> Nodes:
     """Tries to allocate nodes using Slurm.
 
-       :param args:   sbatch arguments.
+       :param args:   `sbatch` arguments.
 
        :param config: Config for the cluster to allocate nodes on.
 

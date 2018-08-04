@@ -59,7 +59,7 @@ def prepare_sbatch_allocation_request(args: SbatchArguments,
                                       node: NodeImpl) -> \
     Tuple[str, str]:  # noqa
     """Uploads the entry point script and returns the formatted sbatch
-       command.
+        command.
 
         :param args: Arguments for sbatch.
 
@@ -83,7 +83,7 @@ def prepare_sbatch_allocation_request(args: SbatchArguments,
 def run_sbatch(args: SbatchArguments,
                node: NodeImpl) -> Tuple[int, str]:
     """Runs sbatch on the given node. Returns the job id and the path
-       to the entry point script.
+        to the entry point script.
 
         :param args: Arguments to use for allocation.
 

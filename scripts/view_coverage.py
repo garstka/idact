@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Generates coverage and opens report in browser,
-   unless --no-show option is set."""
+"""Generates coverage and opens the report page in browser,
+   unless :command:`--no-show` option is set."""
 
 import os
 import subprocess as sub

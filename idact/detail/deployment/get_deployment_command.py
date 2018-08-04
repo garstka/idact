@@ -9,9 +9,9 @@ TIME_TO_OUTPUT_PID = 1
 def get_deployment_command(script_path: str,
                            capture_output_seconds: int = 1) -> str:
     """Returns a command that runs the given script in a background
-       bash process after returning its PID.
+        process and returns its PID.
 
-        :param script_path: Path to the already uploaded script.
+        :param script_path: Path to the script to run.
 
         :param capture_output_seconds: Time to capture initial command output.
 

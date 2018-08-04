@@ -20,7 +20,7 @@ class SlurmAllocation(Allocation):
                             was requested.
 
         :param nodes: Nodes to update with information after the job state
-                      changes to RUNNING.
+                      changes to `RUNNING`.
 
         :param entry_point_script_path: Entry point file to remove after
                                         job starts.

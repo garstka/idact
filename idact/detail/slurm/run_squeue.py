@@ -12,7 +12,7 @@ from idact.detail.slurm.squeue_result import SqueueResult
 
 
 def extract_squeue_format_A(value: str) -> int:
-    """Extracts the job id %A from squeue output.
+    """Extracts the job id `%A` from `squeue` output.
 
         :param value: Job id as string.
     """
@@ -20,7 +20,7 @@ def extract_squeue_format_A(value: str) -> int:
 
 
 def extract_squeue_format_D(value: str) -> int:
-    """Extracts the node count %D from squeue output.
+    """Extracts the node count `%D` from `squeue` output.
 
         :param value: Node count as string.
     """
@@ -29,7 +29,7 @@ def extract_squeue_format_D(value: str) -> int:
 
 def extract_squeue_format_L(now: datetime.datetime,
                             value: str) -> Optional[datetime.datetime]:
-    """Extracts time left %L from squeue output and returns finish time.
+    """Extracts time left `%L` from `squeue` output and returns finish time.
 
         :param now: Current time.
 
@@ -52,7 +52,7 @@ def extract_squeue_format_L(now: datetime.datetime,
 
 
 def extract_squeue_format_r(value: str) -> Optional[str]:
-    """Extracts the job reason code %r from squeue output.
+    """Extracts the job reason code `%r` from `squeue` output.
 
         :param value: Job reason code.
     """
@@ -62,10 +62,10 @@ def extract_squeue_format_r(value: str) -> Optional[str]:
 
 
 def extract_squeue_format_R(value: str, node: Node) -> Optional[List[str]]:
-    """Extracts the job node list %R from squeue output, and calls scontrol
-       to extract each hostname.
+    """Extracts the job node list `%R` from `squeue` output, and calls `scontrol`
+        to extract each hostname.
 
-        :param value: Job node list in a compact format, e.g. node[1-7]
+        :param value: Job node list in a compact format, e.g. `node[1-7]`.
 
         :param node:  Node to call scontrol on.
     """
@@ -78,23 +78,25 @@ def extract_squeue_format_R(value: str, node: Node) -> Optional[List[str]]:
 
 
 def extract_squeue_format_T(value: str) -> str:
-    """Extracts job state code %T from squeue output.
+    """Extracts job state code `%T` from `squeue` output.
 
-        :param: Job state code."""
+        :param: Job state code.
+    """
     return value
 
 
 def extract_squeue_line(now: datetime.datetime,
                         line: str,
                         node: Node) -> Optional[SqueueResult]:
-    """Extracts information from squeue output line,
-       where format is %A|%D|%L|%r|%R|%T.
+    """Extracts information from `squeue` output line,
+        where format is `%A|%D|%L|%r|%R|%T`.
 
         :param now: Current time for calculating job finish time.
 
-        :param line: Squeue output line.
+        :param line: `squeue` output line.
 
-        :param node: Node to run scontrol on.
+        :param node: Node to run `scontrol` on.
+
     """
     if not line:
         return None
@@ -119,9 +121,9 @@ def extract_squeue_line(now: datetime.datetime,
 
 
 def run_squeue(node: Node) -> Dict[int, SqueueResult]:
-    """Runs squeue and extracts job results.
+    """Runs `squeue` and extracts job statuses as results.
 
-        :param node: Node to run squeue on.
+        :param node: Node to run `squeue` on.
     """
 
     now = utc_now()

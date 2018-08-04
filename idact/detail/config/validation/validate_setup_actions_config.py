@@ -7,9 +7,13 @@ VALID_SETUP_ACTIONS_CONFIG_DESCRIPTION = 'Instance of SetupActionsConfig.'
 
 
 def validate_setup_actions_config(setup_actions) -> SetupActionsConfigImpl:
-    """Key path is optional, non-empty string.
+    """Returns the parameter, if it's a :class:`.SetupActionsConfigImpl`
+        instance, otherwise raises an exception.
 
         :param path: Object to validate.
+
+        :raises TypeError: On wrong type.
+
     """
 
     if isinstance(setup_actions, SetupActionsConfigImpl):

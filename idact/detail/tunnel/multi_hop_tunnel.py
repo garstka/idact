@@ -4,9 +4,10 @@ from idact.core.tunnel import Tunnel
 
 
 class MultiHopTunnel(Tunnel):
-    """Tunnel consisting of multiple segments.
+    """Tunnel consisting of one or multiple segments.
 
-        :param tunnels: Tunnel segements, at least one.
+        :param tunnels: Tunnel segments.
+
     """
 
     def __init__(self, tunnels: List[Tunnel]):

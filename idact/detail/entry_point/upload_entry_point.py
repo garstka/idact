@@ -15,7 +15,7 @@ ENTRY_POINT_FILE_NAME_LENGTH = 32
 
 def upload_entry_point(contents: str,
                        node: NodeInternal) -> str:
-    """Uploads the entry point file and returns its path.
+    """Uploads the entry point script and returns its path.
 
         :param contents: Script contents.
 

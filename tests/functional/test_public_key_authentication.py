@@ -21,9 +21,9 @@ from tests.helpers.testing_environment import TEST_CLUSTER
 
 def test_able_to_reach_nodes_from_access_node_without_password():
     """It should be possible to connect to compute nodes from the access node,
-       even when using password-based authentication, because remote, shared
-       public key is authorized after initial connection. Password is still
-       used between the client and the access node."""
+        even when using password-based authentication, because remote, shared
+        public key is authorized after initial connection. Password is still
+        used between the client and the access node."""
     user = USER_10
     with ExitStack() as stack:
         stack.enter_context(set_up_key_location())
@@ -105,7 +105,7 @@ def check_remote_key_and_node_access(user: str):
         nodes.cancel()
 
 
-def generate_missing_key_prompttest_generate_and_install_key_on_access_node():
+def test_generate_and_install_key_on_access_node():
     with ExitStack() as stack:
         user = USER_8
         stack.enter_context(clear_environment(user))

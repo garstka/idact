@@ -9,11 +9,15 @@ __COMPILED = re.compile(pattern=VALID_USERNAME_REGEX)
 
 
 def validate_username(username) -> str:
-    """Valid username is a string matching VALID_USERNAME_REGEX.
-       If username is invalid, raises a ValueError or TypeError.
-       Otherwise, returns username.
+    """Returns the parameter, if it's a valid username, otherwise raises
+        an exception
+
+        A valid username is a string matching :attr:`.VALID_USERNAME_REGEX`.
 
         :param username: Object to validate.
+
+        :raises ValueError: On regex mismatch.
+
     """
     if not __COMPILED.match(username):
         raise ValueError(validation_error_message(

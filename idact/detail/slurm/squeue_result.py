@@ -3,26 +3,27 @@ from typing import Optional, List
 
 
 class SqueueResult:
-    """A row extracted from the output of squeue.
+    """A row extracted from the output of `squeue`.
 
         :param job_id:     Unique job id.
-                           Corresponds to the %A format parameter.
+                           Corresponds to the `%A` format parameter.
 
         :param end_time:   Expected UTC job end time.
-                           None for a running job means no limit.
-                           Based on the time limit: %L format parameter.
+                           `None` for a running job means no limit.
+                           Based on the time limit: `%L` format parameter.
 
         :param node_count: Count of the allocated nodes.
-                           Corresponds to the %D format parameter.
+                           Corresponds to the `%D` format parameter.
 
         :param node_list:  List of the allocated nodes.
-                           Corresponds to the %R format parameter.
+                           Corresponds to the `%R` format parameter.
 
         :param reason:     Reason for the current job state.
-                           Corresponds to the %r format parameter.
+                           Corresponds to the `%r` format parameter.
 
-        :param state:      Long job state code, e.g. RUNNING, PENDING.
-                           Corresponds to the %T format parameter.
+        :param state:      Long job state code, e.g. `RUNNING`, `PENDING`.
+                           Corresponds to the `%T` format parameter.
+
     """
 
     def __init__(self,

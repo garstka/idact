@@ -19,8 +19,9 @@ def get_host_strings(host: str,
                      port: int,
                      config: ClusterConfigImpl) -> Tuple[str, str]:
     """Returns host strings for the gateway and target host.
-       If the target host is the access node, there is no gateway.
-       Otherwise, the access node is the gateway.
+
+        If the target host is the access node, there is no gateway.
+        Otherwise, the access node is the gateway.
 
         :param host: Connection target.
 
@@ -42,8 +43,8 @@ def get_host_strings(host: str,
 
 
 def install_key_using_password_authentication(config: ClusterConfigImpl):
-    """Authenticates with a password and tries to install public key
-       using the default authorized_keys file.
+    """Authenticates with a password and tries to install public key,
+        using the default authorized_keys file.
 
         :param config: Cluster config.
 
@@ -61,9 +62,9 @@ def install_key_using_password_authentication(config: ClusterConfigImpl):
 
 
 def install_keys_using_current_authentication(access_node: str,
-                                              config: ClusterConfigImpl):  # noqa, pylint: disable=line-too-long
-    """Installs keys for authentication between the access node,
-       and cluster nodes. Uses current authentication.
+                                              config: ClusterConfigImpl):
+    """Installs keys for authentication between the access node
+        and cluster nodes. Uses current authentication.
 
         :param access_node: The access node.
 
@@ -116,6 +117,7 @@ def authenticate(host: str,
             if config.install_key:
                 install_key_using_password_authentication(config=config)
                 env.key_filename = config.key
+                config.install_key = False
 
         access_node = get_host_string(config=config)
         if install_shared_keys:

@@ -5,11 +5,17 @@ VALID_LOG_LEVEL_DESCRIPTION = 'An integer greater or equal to 0.'
 
 
 def validate_log_level(log_level) -> int:
-    """Valid log level is a positive integer.
-       If the log level is invalid, raises a ValueError or TypeError.
-       Otherwise, returns the log level
+    """Returns the parameter, if it's a valid log level, otherwise raises
+        an exception.
+
+        Valid log level is a positive integer.
 
         :param log_level: Object to validate.
+
+        :raises TypeError: On wrong type.
+
+        :raises ValueError: On negative integer.
+
     """
     if not isinstance(log_level, int):
         raise TypeError(validation_error_message(

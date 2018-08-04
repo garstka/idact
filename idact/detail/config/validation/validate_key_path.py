@@ -7,9 +7,17 @@ VALID_PATH_DESCRIPTION = 'Non-empty string.'
 
 
 def validate_key_path(path) -> Optional[str]:
-    """Key path is optional, non-empty string.
+    """Returns the parameter if it's a valid key path config entry, otherwise
+        raises an exception.
+
+        Key path is optional, non-empty string.
 
         :param path: Object to validate.
+
+        :raises TypeError: On wrong type.
+
+        :raises ValueError: On empty string.
+
     """
     if path is None:
         return path

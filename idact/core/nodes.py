@@ -43,7 +43,7 @@ class Node(ABC):
                         local_port: int = 8080) -> JupyterDeployment:
         """Deploys a Jupyter notebook on the node..
 
-            :param here: Local notebook access port.
+            :param local_port: Local notebook access port.
         """
         pass
 
@@ -72,7 +72,7 @@ class Nodes(Sequence):
 
     @abstractmethod
     def running(self) -> bool:
-        """Returns true if the nodes are running."""
+        """Returns True if the nodes are running."""
         pass
 
     @abstractmethod

@@ -8,7 +8,10 @@ DEPLOYMENT_RUNTIME_DIR_FORMAT = "~/.idact/runtime/{deployment_id}"
 def create_runtime_dir(node: NodeInternal) -> str:
     """Creates and returns the path to a random dir on node.
 
-        :param Node to create a runtime dir on.
+        The created dir is a subdir of `~/.idact/runtime`, see
+        :attr:`.DEPLOYMENT_RUNTIME_DIR_FORMAT`.
+
+        :param node: Node to create a runtime dir on.
 
     """
     deployment_id = get_random_file_name(length=DEPLOYMENT_ID_LENGTH)

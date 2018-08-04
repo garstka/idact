@@ -11,6 +11,7 @@ class NodesImpl(Nodes):  # pylint: disable=too-many-ancestors
         :param nodes: Nodes to be part of the collection.
 
         :param allocation: Allocation request for the nodes.
+
     """
 
     def __init__(self,

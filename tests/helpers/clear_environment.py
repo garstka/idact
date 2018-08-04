@@ -9,6 +9,11 @@ from tests.helpers.clear_home import clear_home
 
 @contextmanager
 def clear_environment(user: str):
+    """Clears the environment, but does not add any clusters.
+
+        :param user: User, whose home dir should be cleaned.
+
+    """
     # pylint: disable=protected-access
     saved_state = EnvironmentProvider._state
     EnvironmentProvider._state = None

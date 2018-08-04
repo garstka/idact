@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Builds sphinx docs and opens index in browser
-   unless --no-show option is set."""
+"""Builds sphinx docs and opens the index page in browser
+   unless :command:`--no-show` option is set."""
 
 import os
 import subprocess as sub

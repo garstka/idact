@@ -3,19 +3,21 @@ from contextlib import contextmanager
 
 
 class GetpassExecutedError(RuntimeError):
+    """Exception raised when :func:`.getpass` is executed unexpectedly."""
     pass
 
 
 def fake_getpass(*_):
-    """Raises GetpassExecutedError when getpass.getpass is called."""
+    """Raises :class:`.GetpassExecutedError` when :func:`getpass.getpass`
+        is called."""
     raise GetpassExecutedError("Authentication fail:"
                                " Unexpected call to getpass occurred.")
 
 
 @contextmanager
 def disable_getpass():
-    """Disables getpass being unconditionally called by Fabric after
-       authentication fails."""
+    """Context manager that disables :func:`.getpass` being unconditionally
+        called by Fabric after authentication fails."""
     store = getpass.getpass
     getpass.getpass = fake_getpass
     try:

@@ -18,8 +18,8 @@ from idact.detail.log.get_logger import get_logger
 
 def try_getting_public_key_from_config(config: ClusterConfigImpl,
                                        log: logging.Logger) -> Optional[str]:
-    """Returns the public key path from config, or None, if a new pair
-       should be generated.
+    """Returns the public key path from config, or `None`, if a new pair
+        should be generated.
 
         :param config: Cluster config.
 
@@ -54,7 +54,7 @@ def try_getting_public_key_from_config(config: ClusterConfigImpl,
 
 
 def read_public_key(public_key_path: str) -> str:
-    """Loads the public key from file or raises an error.
+    """Loads the public key from file or raises a `RuntimeError`.
 
         :param public_key_path: Path to the public key.
 
@@ -70,14 +70,15 @@ def read_public_key(public_key_path: str) -> str:
 
 def install_key(config: ClusterConfigImpl,
                 authorized_keys: Optional[str] = None):
-    """Installs public key on access node.
-       If it was not generated or it's missing, generates one.
-       Expects password authentication to have already been performed.
+    """Installs the public key on the access node.
+
+        If it was not generated or it's missing, generates one.
+        Expects password authentication to have already been performed.
 
         :param config: Cluster config for connection.
 
         :param authorized_keys: Path to authorized_keys.
-                                Default: ~/.ssh/authorized_keys
+                                Default: `~/.ssh/authorized_keys`
     """
     log = get_logger(__name__)
 
@@ -119,4 +120,3 @@ def install_key(config: ClusterConfigImpl,
 
     with raise_on_remote_fail(exception=RuntimeError):
         fabric.tasks.execute(task)
-    config.install_key = False

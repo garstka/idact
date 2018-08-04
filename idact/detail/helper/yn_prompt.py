@@ -10,14 +10,16 @@ VALIDATE_NO_DEFAULT = re.compile(r'^[yYnN]$')
 
 def yn_prompt(text: str, default: Optional[bool] = True) -> bool:
     """Asks the user a yes/no question.
-       Returns True if the answer was y/Y, or False if the answer was n/N.
-       Reprints prompt on invalid answer.
-       Accepts automatic answers from Fabric's env.prompts.
+
+        Returns `True` if the answer was `y`/`Y`, or `False` if the answer
+        was `n`/`N`.
+        Reprints prompt on invalid answer.
+        Accepts automatic answers from Fabric's :attr:`.env.prompts`.
 
         :param text: Prompt value.
 
-        :param default: Default value: can be True (yes), False (no),
-                        or None (user must choose explicitly).
+        :param default: Default value: can be `True` (yes), `False` (no),
+                        or `None` (user must choose explicitly).
 
     """
     prompt_suffix = {True: ' [Y/n] ',

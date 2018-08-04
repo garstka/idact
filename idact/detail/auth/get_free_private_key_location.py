@@ -27,7 +27,7 @@ def get_key_suffix(length: int) -> str:
 def get_key_path(location: str,
                  prefix: str,
                  suffix: str):
-    """Returns the new private key path.
+    """Constructs the key path from components.
 
         :param location: Key directory.
 
@@ -43,7 +43,7 @@ def try_generate_unique_path(suffix_length: int,
                              location: str,
                              prefix: str) -> Optional[str]:
     """Tries to generate a unique file name.
-       Returns None if the file already exists.
+        Returns None if the file already exists.
 
         :param suffix_length: File name suffix length.
 
@@ -73,6 +73,9 @@ def try_generate_unique_path(suffix_length: int,
 
 def get_free_private_key_location(key_type: KeyType) -> str:
     """Returns a path for a new private key.
+
+        The parent directory is determined by the environment variable
+        `IDACT_KEY_LOCATION`. If it's not set, `~/.ssh` is used.
 
         :param key_type: Generated key type.
 

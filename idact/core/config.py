@@ -1,7 +1,11 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :class:`.SetupActionsConfig`, :class:`.ClusterConfig`.
+"""
+
 from abc import ABC, abstractmethod
-
 from typing import Optional, List
-
 from idact.core.auth import AuthMethod
 
 

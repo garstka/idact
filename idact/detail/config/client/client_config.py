@@ -12,7 +12,10 @@ from idact.detail.config.validation.validate_log_level \
 class ClientConfig:
     """Client-side config.
 
-       :param clusters: Cluster connection config.
+        :param clusters: Map of cluster config by cluster name.
+
+        :param log_level: Log level, see :func:`.set_log_level`.
+
     """
 
     def __init__(self,
@@ -26,12 +29,12 @@ class ClientConfig:
 
     @property
     def clusters(self) -> Dict[str, ClusterConfigImpl]:
-        """Cluster config by name."""
+        """Map of cluster config by cluster name."""
         return self._clusters
 
     @property
     def log_level(self) -> int:
-        """Log level for idact and Fabric."""
+        """Log level for `idact` and Fabric."""
         return self._log_level
 
     @log_level.setter

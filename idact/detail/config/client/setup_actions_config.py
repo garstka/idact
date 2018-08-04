@@ -6,9 +6,10 @@ from idact.detail.config.validation.validate_setup_actions import \
 
 
 class SetupActionsConfigImpl(SetupActionsConfig):
-    """Commands to run before deployment.
+    """Implements :class:`.SetupActionsConfig`: commands to run before
+        deployment.
 
-        :param jupyter: See :meth:`.SetupActionsConfigImpl.jupyter`
+        For parameter description, see :class:`.SetupActionsConfig`.
 
     """
 

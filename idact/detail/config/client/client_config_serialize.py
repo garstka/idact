@@ -10,7 +10,7 @@ from idact.detail.log.get_logger import get_logger
 
 
 def serialize_client_config_to_json(config: ClientConfig) -> dict:
-    """Serializes a :class:`ClientConfig` to json.
+    """Serializes :class:`.ClientConfig` to json.
 
         :param config: The object to serialize.
     """
@@ -30,9 +30,9 @@ def serialize_client_config_to_json(config: ClientConfig) -> dict:
 
 
 def use_defaults_in_missing_fields(data: dict) -> bool:
-    """Sets missing field values to None, so :class:`.ClientConfig`
-       and its components can fill out defaults.
-       Returns True, if dict was modified.
+    """Sets missing field values to `None`, so :class:`.ClientConfig`
+        and its components can fill out the defaults.
+        Returns `True`, if any changes were made.
 
         :param data: json to deserialize.
 
@@ -55,7 +55,7 @@ def use_defaults_in_missing_fields(data: dict) -> bool:
 
 
 def deserialize_client_config_from_json(data: dict) -> ClientConfig:
-    """Deserializes :class:`ClientConfig` from json.
+    """Deserializes :class:`.ClientConfig` from json.
 
         :param data: json to deserialize.
     """

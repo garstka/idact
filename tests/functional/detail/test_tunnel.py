@@ -14,11 +14,12 @@ from tests.helpers.test_users import USER_3, get_test_user_password
 def run_tunnel_test_for_bindings(bindings: List[Binding]):
     """Runs a tunneling test for a binding sequence.
 
-       Runs a Python server in a separate thread through ssh, then creates
-       a multi-hop tunnel, and finally performs a HTTP request to the local
-       address.
+        Runs a Python server in a separate thread through ssh, then creates
+        a multi-hop tunnel, and finally performs a HTTP request to the local
+        address.
 
         :param bindings: Sequence of tunnel bindings.
+
     """
     hostname = get_testing_host()
     port = get_testing_port()

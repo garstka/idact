@@ -16,10 +16,12 @@ from idact.detail.log.get_logger import get_logger
 
 def fetch_port_info(allocation_id: int,
                     config: ClusterConfigImpl) -> str:
-    """Fetches the file containing ssh ports.
-       Returns an empty string, if not found.
+    """Fetches the contents of file containing sshd deployment ports.
+        Returns an empty string, if not found.
 
         :param allocation_id: Allocation id, e.g. Slurm job id.
+
+        :param config: Cluster config.
 
     """
     log = get_logger(__name__)

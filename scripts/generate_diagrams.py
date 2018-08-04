@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates diagrams using pyreverse and graphviz."""
+"""Generates diagrams using `pyreverse` and `graphviz`."""
 
 import os
 import pathlib
@@ -23,17 +23,24 @@ COMMAND_CONVERT_TO_PNG = ("dot"
                           " -o {out_path}"
                           " classes_idact.dot")
 
-DIAGRAMS_TO_GENERATE = {"core": "idact/core",
-                        "detail-core": " idact/detail/nodes"
-                                       " idact/detail/cluster_impl.py",
-                        "detail-allocation": "idact/detail/allocation"
-                                             " idact/detail/slurm",
-                        "detail-config": "idact/detail/config",
-                        "detail-other": "idact/detail/auth"
-                                        " idact/detail/environment"
-                                        " idact/detail/helper"
-                                        " idact/detail/tunnel"
-                                        " idact/cli.py"}
+DIAGRAMS_TO_GENERATE = {
+    "core": "idact/core",
+    "detail-core": " idact/detail/nodes"
+                   " idact/detail/cluster_impl.py"
+                   " idact/detail/jupyter/jupyter_deployment_impl.py"
+                   " idact/detail/tunnel/first_hop_tunnel.py"
+                   " idact/detail/tunnel/multi_hop_tunnel.py",
+    "detail-allocation": "idact/detail/allocation"
+                         " idact/detail/slurm",
+    "detail-config": "idact/detail/config",
+    "detail-deployment": "idact/detail/deployment"
+                         " idact/detail/entry_point",
+    "detail-other": "idact/detail/auth"
+                    " idact/detail/environment"
+                    " idact/detail/helper"
+                    " idact/detail/log"
+                    " idact/detail/tunnel/binding.py"
+                    " idact/cli.py"}
 
 WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
 

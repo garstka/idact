@@ -16,6 +16,14 @@ from tests.helpers.testing_environment import TEST_KEY_LOCATION, \
 
 @contextmanager
 def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
+    """Clears the environment and adds the testing cluster.
+
+        :param user: User to connect to the cluster as,
+                     and whose home dir should be cleaned.
+
+        :param auth: Authentication method to use.
+
+    """
     # pylint: disable=protected-access
     saved_state = EnvironmentProvider._state
     EnvironmentProvider._state = None

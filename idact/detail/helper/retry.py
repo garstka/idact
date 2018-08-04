@@ -6,13 +6,16 @@ from idact.detail.log.get_logger import get_logger
 
 
 def retry(fun: Callable, retries: int, seconds_between_retries: int) -> Any:
-    """Retries function call, if it throws an exception.
+    """Retries the function call, if it throws an exception.
+
+        Returns the function return value, if it does not throw.
+        If all retries fail, re-raises the last raised exception.
 
         :param fun:   Function to call.
 
-        :param times: Times to call the function.
+        :param retries: Number of retries.
 
-        :param seconds_between_retries: Time between calls.
+        :param seconds_between_retries: Time to sleep before each retry.
 
     """
     log = get_logger(__name__)

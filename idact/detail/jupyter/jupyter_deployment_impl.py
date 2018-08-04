@@ -8,7 +8,7 @@ from idact.detail.helper.remove_runtime_dir import remove_runtime_dir
 
 
 class JupyterDeploymentImpl(JupyterDeployment):
-    """Jupyter notebook deployment on a node.
+    """Jupyter Notebook deployment on a node.
 
         :param node: Node the server was deployed on.
 

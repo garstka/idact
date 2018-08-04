@@ -21,7 +21,7 @@ from idact.detail.tunnel.build_tunnel import build_tunnel
 
 
 class NodeImpl(NodeInternal):
-    """Cluster node interface.
+    """Implementation of cluster node interface.
 
         :param config: Client cluster config.
 

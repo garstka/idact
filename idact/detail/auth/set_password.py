@@ -1,19 +1,22 @@
 from contextlib import contextmanager
 
+from typing import Optional
+
 
 class PasswordCache:
-    """Caches a host password."""
-    _password = None
+    """Caches the host password."""
+    _password = None  # type: Optional[str]
 
     @property
-    def password(self):
+    def password(self) -> Optional[str]:
         """Current cached password."""
         return self._password
 
 
 @contextmanager
 def set_password(password: str):
-    """Sets the host password for the context manager block.
+    """Context manager that sets the host password for the context manager
+        block.
 
         :param password: Password to use.
     """

@@ -5,11 +5,12 @@ from idact.core.tunnel import Tunnel
 
 class FirstHopTunnel(Tunnel):
     """Direct tunnel to the gateway, or any node accessible from localhost.
-       Uses pure Python tunneling with sshtunnel.
+        Uses pure Python tunneling with `sshtunnel`.
 
-        :param forwarder: sshtunnel forwarder.
+        :param forwarder: `sshtunnel` forwarder.
 
-        :param there: remote binding port.
+        :param there: Remote binding port.
+
     """
 
     def __init__(self, forwarder: SSHTunnelForwarder, there: int):

@@ -4,12 +4,13 @@ from idact.core.nodes import Node
 
 
 def ptree(pid: int, node: Node) -> List[int]:
-    """Returns a list containing this PID
-       and all its offspring, using pgrep.
+    """Returns a list containing this PID and all its offspring, by running
+        `pgrep` repeatedly.
 
         :param pid: Parent process pid.
 
         :param node: Node to run pgrep on.
+
     """
     result = node.run("pgrep -P {pid}; exit 0".format(pid=pid))
     if not result:

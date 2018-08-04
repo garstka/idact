@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Runs all tests, flake8 and Pylint."""
+"""Runs all tests, `flake8` and `Pylint`."""
 
 import os
 import subprocess

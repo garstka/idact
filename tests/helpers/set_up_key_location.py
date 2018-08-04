@@ -7,7 +7,12 @@ from tests.helpers.reset_environment import TEST_KEY_LOCATION
 
 @contextmanager
 def set_up_key_location():
-    """Sets up the target directory for generated SSH keys."""
+    """A context manager that sets up the target directory for generated
+        SSH keys, and removes it afterwards.
+
+        :raises AssertionError: If the directory already exists.
+
+    """
 
     test_key_location = TEST_KEY_LOCATION
     os.environ['IDACT_KEY_LOCATION'] = test_key_location
