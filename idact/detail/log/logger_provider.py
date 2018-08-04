@@ -16,7 +16,7 @@ class LoggerProvider:
             self.__dict__ = LoggerProvider._state
             return
 
-        self.log_level = logging.DEBUG
+        self.log_level = logging.INFO
 
         handler = logging.StreamHandler(stream=sys.stdout)
         formatter = logging.Formatter(

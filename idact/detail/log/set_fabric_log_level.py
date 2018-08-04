@@ -12,5 +12,10 @@ def set_fabric_log_level(level: int):
 
     """
     show = level <= DEBUG
-    for group in ['warnings', 'running', 'user', 'output', 'exceptions']:
+    for group in ['warnings',
+                  'running',
+                  'user',
+                  'output',
+                  'exceptions',
+                  'aborts']:
         fabric.state.output[group] = show
