@@ -5,10 +5,11 @@ import pytest
 from bitmath import MiB
 from fabric.context_managers import settings
 
-from idact import AuthMethod, add_cluster, show_cluster, Walltime
+from idact import AuthMethod, add_cluster, show_cluster, Walltime, Node
 from idact.core.auth import KeyType
 from idact.detail.auth.generate_key import generate_key
 from idact.detail.auth.set_password import set_password
+from idact.detail.nodes.node_internal import NodeInternal
 from tests.helpers.clear_environment import clear_environment
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment, \
@@ -19,11 +20,12 @@ from tests.helpers.test_users import USER_8, get_test_user_password, USER_9, \
 from tests.helpers.testing_environment import TEST_CLUSTER
 
 
-def test_able_to_reach_nodes_from_access_node_without_password():
-    """It should be possible to connect to compute nodes from the access node,
-        even when using password-based authentication, because remote, shared
-        public key is authorized after initial connection. Password is still
-        used between the client and the access node."""
+def test_able_to_reach_nodes_when_using_password_based_authentication():
+    """It should be possible to connect to compute nodes even when using
+        password-based authentication, because local public key is authorized
+        for the compute nodes after initial connection.
+        However, direct connection from access node should fail.
+        Password is still used between the client and the access node."""
     user = USER_10
     with ExitStack() as stack:
         stack.enter_context(set_up_key_location())
@@ -43,15 +45,28 @@ def test_able_to_reach_nodes_from_access_node_without_password():
         try:
             nodes.wait(timeout=10)
 
+            compute_node = nodes[0]
+            assert isinstance(compute_node, NodeInternal)
+
+            public_key_value = get_public_key_value()
+
+            # Local key was installed for the deployed sshd, allowing access
+            # between the access node and compute nodes.
             assert nodes[0].run('whoami') == user
 
-            # Remote key was installed, allowing access between nodes
-            # without password.
-            assert node.run("ssh c1"
-                            " -o UserKnownHostsFile=/dev/null"
-                            " -o StrictHostKeyChecking=no"
-                            " -o LogLevel=ERROR"
-                            " whoami", timeout=1) == user
+            # Local key was not installed for the access node
+            with pytest.raises(RuntimeError):
+                node.run(
+                    "grep '{public_key_value}' ~/.ssh/authorized_keys".format(
+                        public_key_value=public_key_value))
+
+            # But it was installed for compute nodes.
+            node.run(
+                "grep '{public_key_value}'"
+                " ~/.ssh/authorized_keys.idact".format(
+                    public_key_value=public_key_value))
+
+            check_direct_access_from_access_node_does_not_work(nodes[0])
         finally:
             nodes.cancel()
 
@@ -69,6 +84,20 @@ def get_public_key_value() -> str:
         return file.read()
 
 
+def check_direct_access_from_access_node_does_not_work(node: Node):
+    """Direct access from the access node does not work,
+        because remote public key is not installed, only the local key."""
+    assert isinstance(node, NodeInternal)
+    with pytest.raises(RuntimeError):
+        node.run("ssh {host}"
+                 " -o UserKnownHostsFile=/dev/null"
+                 " -o StrictHostKeyChecking=no"
+                 " -o LogLevel=ERROR"
+                 " -p {port}"
+                 " whoami".format(host=node.host,
+                                  port=node.port), timeout=1)
+
+
 def check_remote_key_and_node_access(user: str):
     public_key_value = get_public_key_value()
 
@@ -81,6 +110,11 @@ def check_remote_key_and_node_access(user: str):
     node.run("grep '{public_key_value}' ~/.ssh/authorized_keys".format(
         public_key_value=public_key_value))
 
+    with pytest.raises(RuntimeError):
+        node.run(
+            "grep '{public_key_value}' ~/.ssh/authorized_keys.idact".format(
+                public_key_value=public_key_value))
+
     nodes = cluster.allocate_nodes(nodes=2,
                                    cores=1,
                                    memory_per_node=MiB(100),
@@ -89,17 +123,14 @@ def check_remote_key_and_node_access(user: str):
 
     try:
         nodes.wait(timeout=10)
+        node.run(
+            "grep '{public_key_value}' ~/.ssh/authorized_keys.idact".format(
+                public_key_value=public_key_value))
 
         # Access to node without password works.
         assert nodes[0].run('whoami') == user
 
-        # Remote key was installed, allowing access between nodes
-        # without password.
-        assert node.run("ssh c1"
-                        " -o UserKnownHostsFile=/dev/null"
-                        " -o StrictHostKeyChecking=no"
-                        " -o LogLevel=ERROR"
-                        " whoami", timeout=1) == user
+        check_direct_access_from_access_node_does_not_work(nodes[0])
 
     finally:
         nodes.cancel()

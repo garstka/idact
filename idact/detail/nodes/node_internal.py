@@ -46,3 +46,15 @@ class NodeInternal(Node):
     def config(self) -> ClusterConfigImpl:
         """Client cluster config."""
         pass
+
+    @property
+    @abstractmethod
+    def host(self) -> Optional[str]:
+        """Hostname of the cluster node."""
+        pass
+
+    @property
+    @abstractmethod
+    def port(self) -> Optional[int]:
+        """SSH port of the cluster node."""
+        pass

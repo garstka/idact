@@ -163,3 +163,11 @@ class NodeImpl(NodeInternal):
     @property
     def config(self) -> ClusterConfigImpl:
         return self._config
+
+    @property
+    def host(self) -> Optional[str]:
+        return self._host
+
+    @property
+    def port(self) -> Optional[int]:
+        return self._port
