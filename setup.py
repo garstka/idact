@@ -10,7 +10,9 @@ with open('README.rst') as readme_file:
 REQUIREMENTS = ['click>=6.7',
                 'fabric3>=1.14',
                 'bitmath>=1.3.1.2',
-                'python-dateutil>=2.7.2']
+                'python-dateutil>=2.7.2',
+                'sshtunnel>=0.1.4',
+                'paramiko>=2.4.1']
 
 setup(
     author="Matt Garstka",
