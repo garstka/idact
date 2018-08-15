@@ -10,6 +10,8 @@ def validate_bool(value, label: Optional[str] = None) -> bool:
 
         :param value: Object to validate.
 
+        :param label: Object label for error message.
+
         :raises TypeError: On wrong type.
 
     """

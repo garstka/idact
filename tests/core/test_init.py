@@ -9,6 +9,8 @@ from idact.core.environment import load_environment, save_environment
 from idact.core.tunnel import Tunnel
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.config import ClusterConfig, SetupActionsConfig
+from idact.core.dask_deployment import DaskDeployment, DaskDiagnostics
+from idact.core.deploy_dask import deploy_dask
 from idact import _IMPORTED
 from idact import add_cluster as add_cluster2
 from idact import show_cluster as show_cluster2
@@ -26,6 +28,9 @@ from idact import KeyType as KeyType2
 from idact import set_log_level as set_log_level2
 from idact import ClusterConfig as ClusterConfig2
 from idact import SetupActionsConfig as SetupActionsConfig2
+from idact import DaskDiagnostics as DaskDiagnostics2
+from idact import DaskDeployment as DaskDeployment2
+from idact import deploy_dask as deploy_dask2
 
 IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (show_cluster, show_cluster2),
@@ -42,7 +47,10 @@ IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (KeyType, KeyType2),
                           (set_log_level, set_log_level2),
                           (ClusterConfig, ClusterConfig2),
-                          (SetupActionsConfig, SetupActionsConfig2)]
+                          (SetupActionsConfig, SetupActionsConfig2),
+                          (DaskDiagnostics, DaskDiagnostics2),
+                          (DaskDeployment, DaskDeployment2),
+                          (deploy_dask, deploy_dask2)]
 
 CORE_IMPORTS = [add_cluster,
                 load_environment,
@@ -59,14 +67,17 @@ CORE_IMPORTS = [add_cluster,
                 KeyType,
                 set_log_level,
                 ClusterConfig,
-                SetupActionsConfig]
+                SetupActionsConfig,
+                DaskDiagnostics,
+                DaskDeployment,
+                deploy_dask]
 
 
 def test_aliases():
     """Tests classes and functions imported from the core package
        to the top level package.
     """
-    assert len(_IMPORTED) == 16
+    assert len(_IMPORTED) == 19
 
     for core, main in IMPORT_PAIRS_CORE_MAIN:
         assert core is main

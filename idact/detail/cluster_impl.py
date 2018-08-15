@@ -10,7 +10,6 @@ from idact.detail.config.client. \
     client_cluster_config import ClusterConfigImpl
 from idact.detail.nodes.get_access_node import get_access_node
 from idact.detail.slurm.allocate_slurm_nodes import allocate_slurm_nodes
-from idact.detail.slurm.sbatch_arguments import SbatchArguments
 
 
 class ClusterImpl(Cluster):
@@ -47,9 +46,8 @@ class ClusterImpl(Cluster):
                                           memory_per_node=memory_per_node,
                                           walltime=walltime,
                                           native_args=native_args)
-        args = SbatchArguments(params=parameters)
 
-        return allocate_slurm_nodes(args=args,
+        return allocate_slurm_nodes(parameters=parameters,
                                     config=self._config)
 
     def get_access_node(self) -> Node:

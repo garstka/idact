@@ -27,13 +27,17 @@ DIAGRAMS_TO_GENERATE = {
     "core": "idact/core",
     "detail-core": " idact/detail/nodes"
                    " idact/detail/cluster_impl.py"
+                   " idact/detail/dask/dask_deployment_impl.py"
+                   " idact/detail/dask/dask_diagnostics_impl.py"
                    " idact/detail/jupyter/jupyter_deployment_impl.py"
                    " idact/detail/tunnel/first_hop_tunnel.py"
                    " idact/detail/tunnel/multi_hop_tunnel.py",
     "detail-allocation": "idact/detail/allocation"
                          " idact/detail/slurm",
     "detail-config": "idact/detail/config",
-    "detail-deployment": "idact/detail/deployment"
+    "detail-deployment": "idact/detail/dask/dask_scheduler_deployment.py"
+                         " idact/detail/dask/dask_worker_deployment.py"
+                         " idact/detail/deployment"
                          " idact/detail/entry_point",
     "detail-other": "idact/detail/auth"
                     " idact/detail/environment"

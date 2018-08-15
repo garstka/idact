@@ -5,6 +5,7 @@
 """
 from typing import Optional, Union
 
+from idact.core.config import SetupActionsConfig
 from idact.core.auth import AuthMethod, KeyType
 from idact.core.cluster import Cluster
 from idact.detail.auth.generate_key import generate_key
@@ -21,7 +22,9 @@ def add_cluster(name: str,
                 auth: Optional[AuthMethod] = None,
                 key: Union[None, str, KeyType] = None,
                 install_key: bool = True,
-                disable_sshd: bool = False) -> Cluster:
+                disable_sshd: bool = False,
+                setup_actions: Optional[SetupActionsConfig] = None,
+                scratch: Optional[str] = None) -> Cluster:
     """Adds a new cluster.
 
         :param name:
@@ -47,6 +50,16 @@ def add_cluster(name: str,
             Should be set to True, if the cluster allows ssh connection
             to compute nodes out of the box.
             Default: False
+        :param setup_actions:
+            Commands to run before deployment.
+            Default: None
+        :param setup_actions:
+            Commands to run before deployment.
+            Default: None
+        :param scratch:
+            Absolute path to a high-performance filesystem for temporary
+            computation data, or an environment variable that contains it.
+            Default: $HOME
        """
     log = get_logger(__name__)
     environment = EnvironmentProvider().environment
@@ -70,6 +83,8 @@ def add_cluster(name: str,
                                auth=auth,
                                key=key,
                                install_key=install_key,
-                               disable_sshd=disable_sshd)
+                               disable_sshd=disable_sshd,
+                               setup_actions=setup_actions,
+                               scratch=scratch)
     return environment.add_cluster(name=name,
                                    config=config)

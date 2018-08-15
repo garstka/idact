@@ -7,7 +7,8 @@ from idact.detail.nodes.node_internal import NodeInternal
 
 def deploy_generic(node: NodeInternal,
                    script_contents: str,
-                   capture_output_seconds: int) -> GenericDeployment:
+                   capture_output_seconds: int,
+                   runtime_dir: str) -> GenericDeployment:
     """Deploys a program on the node.
 
         :param node: Node to deploy the program on.
@@ -15,6 +16,9 @@ def deploy_generic(node: NodeInternal,
         :param script_contents: Deployment script contents.
 
         :param capture_output_seconds: Seconds to wait for command output.
+
+        :param runtime_dir: Runtime dir to remove.
+
     """
 
     script_path = upload_entry_point(contents=script_contents,
@@ -26,4 +30,5 @@ def deploy_generic(node: NodeInternal,
     pid = int(lines[0])
     return GenericDeployment(node=node,
                              pid=pid,
-                             output='\n'.join(lines[1:]))
+                             output='\n'.join(lines[1:]),
+                             runtime_dir=runtime_dir)

@@ -62,6 +62,10 @@ def test_client_cluster_config_create():
     assert config.auth == AuthMethod.ASK
     assert config.key is None
     assert config.install_key
+    assert not config.disable_sshd
+    assert config.setup_actions.jupyter == []
+    assert config.setup_actions.dask == []
+    assert config.scratch == "$HOME"
 
 
 def test_client_config_validation_is_used():
@@ -115,7 +119,9 @@ def test_client_config_serialize():
                          'key': None,
                          'installKey': True,
                          'disableSshd': False,
-                         'setupActions': {'jupyter': []}}
+                         'setupActions': {'jupyter': [],
+                                          'dask': []},
+                         'scratch': '$HOME'}
         },
         'logLevel': INFO
     }
@@ -133,7 +139,9 @@ def test_client_config_deserialize():
                          'key': None,
                          'installKey': True,
                          'disableSshd': False,
-                         'setupActions': {'jupyter': []}}
+                         'setupActions': {'jupyter': [],
+                                          'dask': []},
+                         'scratch': '$HOME'}
         },
         'logLevel': DEBUG
     }
@@ -158,7 +166,9 @@ def test_client_config_serialize_public_key():
                          'key': '/home/user/.ssh/id_rsa',
                          'installKey': False,
                          'disableSshd': False,
-                         'setupActions': {'jupyter': ['echo a']}}
+                         'setupActions': {'jupyter': ['echo a'],
+                                          'dask': []},
+                         'scratch': '$HOME'}
         }, 'logLevel': INFO}
     assert serialize_client_config_to_json(client_config) == expected_json
 
@@ -173,7 +183,9 @@ def test_client_config_deserialize_public_key():
                          'key': '/home/user/.ssh/id_rsa',
                          'installKey': False,
                          'disableSshd': False,
-                         'setupActions': {'jupyter': ['echo a']}}
+                         'setupActions': {'jupyter': ['echo a'],
+                                          'dask': []},
+                         'scratch': '$HOME'}
         },
         'logLevel': INFO
     }
@@ -191,7 +203,9 @@ EXPECTED_DEFAULT_JSON = {
                      'key': None,
                      'installKey': True,
                      'disableSshd': False,
-                     'setupActions': {'jupyter': []}}
+                     'setupActions': {'jupyter': [],
+                                      'dask': []},
+                     'scratch': '$HOME'}
     },
     'logLevel': INFO
 }

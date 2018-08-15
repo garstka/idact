@@ -68,9 +68,11 @@ def prepare_sbatch_allocation_request(args: SbatchArguments,
         :param node: Node to upload entry point to.
 
     """
-
+    log = get_logger(__name__)
     entry_point_script_contents = \
         get_entry_point_script_contents(config=config)
+    log.debug("Entry point script contents: %s", entry_point_script_contents)
+
     entry_point_script = upload_entry_point(
         contents=entry_point_script_contents,
         node=node)

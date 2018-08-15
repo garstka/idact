@@ -5,6 +5,7 @@ from fabric.context_managers import cd
 from fabric.operations import run
 
 from idact.core.jupyter_deployment import JupyterDeployment
+from idact.detail.deployment.cancel_on_failure import cancel_on_failure
 from idact.detail.deployment.create_deployment_dir import create_runtime_dir
 from idact.detail.deployment.deploy_generic import deploy_generic
 from idact.detail.deployment.get_deployment_script_contents import \
@@ -49,9 +50,10 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
     log.debug("Deployment script contents: %s", script_contents)
     deployment = deploy_generic(node=node,
                                 script_contents=script_contents,
-                                capture_output_seconds=5)
+                                capture_output_seconds=5,
+                                runtime_dir=runtime_dir)
 
-    try:
+    with cancel_on_failure(deployment):
         @fabric.decorators.task
         def load_nbserver_json():
             with cd(runtime_dir):
@@ -63,9 +65,8 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
             nbserver_json = json.loads(nbserver_json_str)
             return int(nbserver_json['port']), nbserver_json['token']
 
-        access_node = node
         actual_port, token = retry(
-            lambda: access_node.run_task(task=load_nbserver_json),
+            lambda: node.run_task(task=load_nbserver_json),
             retries=5,
             seconds_between_retries=3)
 
@@ -75,9 +76,4 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
         return JupyterDeploymentImpl(node=node,
                                      deployment=deployment,
                                      tunnel=tunnel,
-                                     token=token,
-                                     runtime_dir=runtime_dir)
-
-    except Exception as e:  # noqa, pylint: disable=broad-except
-        deployment.cancel()
-        raise e
+                                     token=token)

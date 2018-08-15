@@ -12,7 +12,9 @@ def validate_setup_actions(value, label: Optional[str] = None) -> List[str]:
 
         A valid setup actions entry is a list of strings.
 
-        :param path: Object to validate.
+        :param value: Object to validate.
+
+        :param label: Object label for error message.
 
         :raises TypeError: On wrong type.
 

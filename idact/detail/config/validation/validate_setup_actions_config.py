@@ -10,7 +10,7 @@ def validate_setup_actions_config(setup_actions) -> SetupActionsConfigImpl:
     """Returns the parameter, if it's a :class:`.SetupActionsConfigImpl`
         instance, otherwise raises an exception.
 
-        :param path: Object to validate.
+        :param setup_actions: Object to validate.
 
         :raises TypeError: On wrong type.
 

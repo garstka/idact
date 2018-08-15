@@ -13,6 +13,8 @@ Core classes
  - :py:class:`.AuthMethod`
  - :py:class:`.Cluster`
  - :py:class:`.ClusterConfig`
+ - :py:class:`.DaskDeployment`
+ - :py:class:`.DaskDiagnostics`
  - :py:class:`.JupyterDeployment`
  - :py:class:`.KeyType`
  - :py:class:`.Node`
@@ -31,6 +33,8 @@ Core implementation classes
 
 Core implementation classes:
  - :py:class:`.ClusterImpl`
+ - :py:class:`.DaskDeploymentImpl`
+ - :py:class:`.DaskDiagnosticsImpl`
  - :py:class:`.FirstHopTunnel`
  - :py:class:`.NodeInternal`
  - :py:class:`.MultiHopTunnel`
@@ -62,6 +66,8 @@ Deployment detail classes
     :figclass: align-center
 
 Deployment detail classes:
+ - :py:class:`.DaskSchedulerDeployment`
+ - :py:class:`.DaskWorkerDeployment`
  - :py:class:`.GenericDeployment`
  - :py:class:`.SshdPortInfo`
 

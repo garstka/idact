@@ -9,8 +9,6 @@ def get_deployment_script_contents(deployment_commands: List[str],
 
         :param setup_actions: Setup actions from config.
 
-        :param config: Cluster config.
-
     """
 
     setup_actions_str = ('\n'.join(setup_actions + [''])

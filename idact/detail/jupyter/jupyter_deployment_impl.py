@@ -1,10 +1,12 @@
 import webbrowser
+from contextlib import ExitStack
 
 from idact.core.tunnel import Tunnel
 from idact.core.nodes import Node
 from idact.core.jupyter_deployment import JupyterDeployment
+from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from idact.detail.deployment.generic_deployment import GenericDeployment
-from idact.detail.helper.remove_runtime_dir import remove_runtime_dir
+from idact.detail.tunnel.close_tunnel_on_exit import close_tunnel_on_exit
 
 
 class JupyterDeploymentImpl(JupyterDeployment):
@@ -18,21 +20,17 @@ class JupyterDeploymentImpl(JupyterDeployment):
 
         :param token: Authentication token.
 
-        :param runtime_dir: Runtime dir to remove.
-
     """
 
     def __init__(self,
                  node: Node,
                  deployment: GenericDeployment,
                  tunnel: Tunnel,
-                 token: str,
-                 runtime_dir: str):
+                 token: str):
         self._node = node
         self._deployment = deployment
         self._tunnel = tunnel
         self._token = token
-        self._runtime_dir = runtime_dir
 
     @property
     def local_port(self) -> int:
@@ -44,14 +42,9 @@ class JupyterDeploymentImpl(JupyterDeployment):
             token=self._token))
 
     def cancel(self):
-        try:
-            self._tunnel.close()
-        finally:
-            try:
-                self._deployment.cancel()
-            finally:
-                remove_runtime_dir(node=self._node,
-                                   runtime_dir=self._runtime_dir)
+        with ExitStack() as stack:
+            stack.enter_context(cancel_on_exit(self._deployment))
+            stack.enter_context(close_tunnel_on_exit(self._tunnel))
 
     def __str__(self):
         return "JupyterDeployment({local_port} -> {node})".format(

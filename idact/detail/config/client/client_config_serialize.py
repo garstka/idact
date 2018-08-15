@@ -24,7 +24,9 @@ def serialize_client_config_to_json(config: ClientConfig) -> dict:
                    'installKey': cluster_config.install_key,
                    'disableSshd': cluster_config.disable_sshd,
                    'setupActions': {
-                       'jupyter': cluster_config.setup_actions.jupyter}}
+                       'jupyter': cluster_config.setup_actions.jupyter,
+                       'dask': cluster_config.setup_actions.dask},
+                   'scratch': cluster_config.scratch}
             for name, cluster_config in config.clusters.items()},
         'logLevel': config.log_level}
 
@@ -46,10 +48,11 @@ def use_defaults_in_missing_fields(data: dict) -> bool:
             modified.append(True)
 
     for cluster in data['clusters'].values():
-        for key in ['key', 'installKey', 'disableSshd']:
+        for key in ['key', 'installKey', 'disableSshd', 'scratch']:
             default(cluster, key, None)
         default(cluster, 'setupActions', {})
         default(cluster['setupActions'], 'jupyter', None)
+        default(cluster['setupActions'], 'dask', None)
 
     return len(modified) != 0
 
@@ -75,7 +78,9 @@ def deserialize_client_config_from_json(data: dict) -> ClientConfig:
             install_key=value['installKey'],
             disable_sshd=value['disableSshd'],
             setup_actions=SetupActionsConfigImpl(
-                jupyter=value['setupActions']['jupyter'])
+                jupyter=value['setupActions']['jupyter'],
+                dask=value['setupActions']['dask']),
+            scratch=value['scratch']
         ) for name, value in data['clusters'].items()}
     return ClientConfig(clusters=clusters,
                         log_level=data['logLevel'])

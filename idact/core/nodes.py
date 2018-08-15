@@ -9,6 +9,8 @@ from collections.abc import Sequence
 
 from typing import Optional
 
+import bitmath
+
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.tunnel import Tunnel
 
@@ -45,6 +47,20 @@ class Node(ABC):
 
             :param local_port: Local notebook access port.
         """
+        pass
+
+    @property
+    @abstractmethod
+    def cores(self) -> Optional[int]:
+        """Returns the allocated node core count.
+            Returns None for a node that was not allocated."""
+        pass
+
+    @property
+    @abstractmethod
+    def memory(self) -> Optional[bitmath.Byte]:
+        """Returns the allocated node memory limit.
+            Returns None for a node that was not allocated."""
         pass
 
 

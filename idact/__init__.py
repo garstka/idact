@@ -8,6 +8,8 @@ Top-level package for Interactive Data Analysis Convenience Tools.
 """
 from idact.core.auth import AuthMethod, KeyType
 from idact.core.config import ClusterConfig, SetupActionsConfig
+from idact.core.dask_deployment import DaskDiagnostics, DaskDeployment
+from idact.core.deploy_dask import deploy_dask
 from idact.core.environment import load_environment, save_environment
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Nodes, Node
@@ -37,7 +39,10 @@ _IMPORTED = {add_cluster,
              KeyType,
              set_log_level,
              ClusterConfig,
-             SetupActionsConfig}
+             SetupActionsConfig,
+             DaskDiagnostics,
+             DaskDeployment,
+             deploy_dask}
 """List of the public API members imported into the top level package
    for convenience."""
 

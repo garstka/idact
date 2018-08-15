@@ -1,6 +1,7 @@
 import datetime
 from typing import Optional, Any, Callable
 
+import bitmath
 import fabric.operations
 import fabric.tasks
 import fabric.decorators
@@ -32,6 +33,8 @@ class NodeImpl(NodeInternal):
         self._config = config
         self._host = None  # type: Optional[str]
         self._port = None  # type: Optional[int]
+        self._cores = None  # type: Optional[int]
+        self._memory = None  # type: Optional[int]
         self._allocated_until: Optional[datetime.datetime] = None
 
     def _ensure_allocated(self):
@@ -93,12 +96,18 @@ class NodeImpl(NodeInternal):
     def make_allocated(self,
                        host: str,
                        port: int,
+                       cores: Optional[int],
+                       memory: Optional[bitmath.Byte],
                        allocated_until: Optional[datetime.datetime]):
         """Updates the allocation info.
 
             :param host: Hostname of the cluster node.
 
             :param port: SSH port of the cluster node.
+
+            :param cores: Allocated core count.
+
+            :param memory: Allocated memory.
 
             :param allocated_until: Timestamp for job termination. Must be UTC
                                     or contain timezone info.
@@ -108,12 +117,16 @@ class NodeImpl(NodeInternal):
         """
         self._host = host
         self._port = port
+        self._cores = cores
+        self._memory = memory
         self._allocated_until = allocated_until
 
     def make_cancelled(self):
         """Updates the allocation info after the allocation was cancelled."""
         self._host = None
         self._port = None
+        self._cores = None
+        self._memory = None
         self._allocated_until = None
 
     def __str__(self):
@@ -133,7 +146,8 @@ class NodeImpl(NodeInternal):
         try:
             here = here if here is not None else 0
             validate_port(there)
-            validate_port(here)
+            if here != 0:
+                validate_port(here)
 
             self._ensure_allocated()
 
@@ -171,3 +185,11 @@ class NodeImpl(NodeInternal):
     @property
     def port(self) -> Optional[int]:
         return self._port
+
+    @property
+    def cores(self) -> Optional[int]:
+        return self._cores
+
+    @property
+    def memory(self) -> Optional[bitmath.Byte]:
+        return self._memory

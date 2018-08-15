@@ -12,7 +12,9 @@ REQUIREMENTS = ['click>=6.7',
                 'bitmath>=1.3.1.2',
                 'python-dateutil>=2.7.2',
                 'sshtunnel>=0.1.4',
-                'paramiko>=2.4.1']
+                'paramiko>=2.4.1',
+                'dask>=0.18.2',
+                'distributed>=1.22.0']
 
 setup(
     author="Matt Garstka",

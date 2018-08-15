@@ -10,6 +10,7 @@ from idact.detail.config.validation.validate_key_path import validate_key_path
 from idact.detail.config.validation.validate_log_level \
     import validate_log_level
 from idact.detail.config.validation.validate_port import validate_port
+from idact.detail.config.validation.validate_scratch import validate_scratch
 from idact.detail.config.validation.validate_setup_actions import \
     validate_setup_actions
 from idact.detail.config.validation.validate_setup_actions_config import \
@@ -139,6 +140,53 @@ def test_validate_port():
         validate_port(2 ** 16)
     with pytest.raises(ValueError):
         validate_port(2 ** 17)
+
+
+def test_validate_scratch():
+    assert validate_scratch('/') == '/'
+    assert validate_scratch('/dir') == '/dir'
+    assert validate_scratch('/a/') == '/a/'
+    assert validate_scratch('/a/b') == '/a/b'
+    assert validate_scratch('/a/b c d/ e f ') == '/a/b c d/ e f '
+
+    with pytest.raises(ValueError):
+        validate_scratch('')
+    with pytest.raises(ValueError):
+        validate_scratch(' /dir')
+    with pytest.raises(ValueError):
+        validate_scratch('dir')
+
+    assert validate_scratch('$HOME') == '$HOME'
+    assert validate_scratch('$VAR') == '$VAR'
+    assert validate_scratch('$var') == '$var'
+    assert validate_scratch('$VAR1') == '$VAR1'
+    assert validate_scratch('$var2') == '$var2'
+
+    with pytest.raises(ValueError):
+        validate_scratch(' $HOME')
+    with pytest.raises(ValueError):
+        validate_scratch('$HOME ')
+    with pytest.raises(ValueError):
+        validate_scratch(' $VAR')
+    with pytest.raises(ValueError):
+        validate_scratch('$')
+    with pytest.raises(ValueError):
+        validate_scratch('$1')
+    with pytest.raises(ValueError):
+        validate_scratch('$ VAR')
+    with pytest.raises(ValueError):
+        validate_scratch('$$VAR')
+    with pytest.raises(ValueError):
+        validate_scratch('$VAR VAR')
+    with pytest.raises(ValueError):
+        validate_scratch('$VAR_VAR')
+    with pytest.raises(ValueError):
+        validate_scratch('$VAR=VAR')
+
+    with pytest.raises(TypeError):
+        validate_scratch(12)
+    with pytest.raises(TypeError):
+        validate_scratch(True)
 
 
 def test_validate_setup_actions():

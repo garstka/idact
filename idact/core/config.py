@@ -23,6 +23,17 @@ class SetupActionsConfig:
     def jupyter(self, value: List[str]):
         pass
 
+    @property
+    @abstractmethod
+    def dask(self) -> List[str]:
+        """Commands to run before deployment of Dask."""
+        pass
+
+    @dask.setter
+    @abstractmethod
+    def dask(self, value: List[str]):
+        pass
+
 
 class ClusterConfig(ABC):
     """Client-side cluster config."""
@@ -83,4 +94,11 @@ class ClusterConfig(ABC):
     @abstractmethod
     def setup_actions(self) -> SetupActionsConfig:
         """Commands to run before deployment."""
+        pass
+
+    @property
+    @abstractmethod
+    def scratch(self) -> str:
+        """Absolute path to a high-performance filesystem for temporary
+           computation data, or an environment variable that contains it."""
         pass

@@ -15,5 +15,7 @@ def get_access_node(config: ClusterConfigImpl) -> NodeImpl:
     node = NodeImpl(config=config)
     node.make_allocated(host=config.host,
                         port=config.port,
+                        cores=None,
+                        memory=None,
                         allocated_until=None)
     return node

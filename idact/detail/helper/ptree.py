@@ -16,7 +16,7 @@ def ptree(pid: int, node: Node) -> List[int]:
     if not result:
         return [pid]
     child_pids = [int(child_pid)
-                  for child_pid in result.split(' ')]
+                  for child_pid in result.splitlines()]
 
     rest = [ptree(child_pid, node)
             for child_pid in child_pids]
