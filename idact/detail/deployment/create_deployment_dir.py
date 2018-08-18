@@ -1,3 +1,5 @@
+"""This module contains a function for creating a runtime dir on a cluster."""
+
 from idact.detail.helper.get_random_file_name import get_random_file_name
 from idact.detail.nodes.node_internal import NodeInternal
 

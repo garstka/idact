@@ -18,11 +18,13 @@ COMMANDS_INSTALL_PYTHON = [
 
 
 def main():
+    """Main script function."""
     try:
         docker_exec = DOCKER_EXEC.format(
             SLURM_CONTAINER=os.environ['SLURM_CONTAINER'])
 
         def call(command):
+            """Alias for check_call."""
             sub.check_call(docker_exec + command, shell=True)
 
         print("Installing Python 3.6...")

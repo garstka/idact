@@ -1,3 +1,6 @@
+"""This module contains functions for installing the public key on a cluster.
+"""
+
 import logging
 import os
 from io import BytesIO
@@ -98,6 +101,8 @@ def install_key(config: ClusterConfigImpl,
 
     @fabric.decorators.task
     def task():
+        """Creates the .ssh dir with proper permissions. Adds the public key
+            to the authorized keys file if it's not been added already."""
         run("mkdir -p ~/.ssh")
         run("chmod 700 ~/.ssh")
         run("touch '{authorized_keys_path}'".format(

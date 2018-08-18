@@ -1,3 +1,6 @@
+"""This module contains a context manager that closes an SSH tunnel on
+    failure."""
+
 from contextlib import contextmanager
 
 from idact.core.tunnel import Tunnel

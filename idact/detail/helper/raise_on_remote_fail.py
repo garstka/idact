@@ -1,3 +1,6 @@
+"""This module contains a context manager for setting the Fabric exception
+    to throw on remote command failure."""
+
 from contextlib import contextmanager
 
 from fabric.state import env

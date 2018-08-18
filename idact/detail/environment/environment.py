@@ -1,3 +1,5 @@
+"""This module contains the implementation of an idact environment."""
+
 from typing import Optional, Dict
 
 from idact.core.cluster import Cluster

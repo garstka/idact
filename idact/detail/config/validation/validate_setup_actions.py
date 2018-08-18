@@ -1,3 +1,5 @@
+"""This module contains a function for validating a setup actions list."""
+
 from typing import Optional, List
 
 from idact.detail.config.validation.validation_error_message import \

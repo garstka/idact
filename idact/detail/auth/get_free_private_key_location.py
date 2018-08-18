@@ -1,3 +1,6 @@
+"""This module contains functionality for determining a free private key
+    location."""
+
 import os
 import random
 import string

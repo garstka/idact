@@ -1,3 +1,5 @@
+"""This module contains a function for uploading an entry point script."""
+
 from io import BytesIO
 
 import fabric.tasks
@@ -28,6 +30,8 @@ def upload_entry_point(contents: str,
 
     @fabric.decorators.task
     def task():
+        """Creates the entry point dir and file.
+            Fails if it couldn't be created."""
         run("mkdir -p {entry_point_location}".format(
             entry_point_location=ENTRY_POINT_LOCATION))
 

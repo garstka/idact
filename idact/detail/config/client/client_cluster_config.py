@@ -1,3 +1,5 @@
+"""This module contains the implementation of the cluster config interface."""
+
 from typing import Optional
 
 from idact.core.auth import AuthMethod
@@ -114,3 +116,6 @@ class ClusterConfigImpl(ClusterConfig):
                     key=repr(self._key),
                     install_key=self._install_key,
                     disable_sshd=self._disable_sshd)
+
+    def __repr__(self):
+        return str(self)

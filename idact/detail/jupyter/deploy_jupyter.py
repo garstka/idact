@@ -1,3 +1,5 @@
+"""This module contains a function for deploying Jupyter notebook."""
+
 import json
 
 import fabric.decorators
@@ -56,6 +58,7 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
     with cancel_on_failure(deployment):
         @fabric.decorators.task
         def load_nbserver_json():
+            """Loads notebook parameters from a json file."""
             with cd(runtime_dir):
                 nbserver_json_path = run("realpath $PWD/nbserver-*.json") \
                     .splitlines()[0]

@@ -1,3 +1,6 @@
+"""This module contains the implementation of the allocation interface
+    for Slurm."""
+
 import datetime
 from time import sleep
 from typing import Optional, List

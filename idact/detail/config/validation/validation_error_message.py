@@ -1,3 +1,6 @@
+"""This module contains a function for generating a validation error message.
+"""
+
 from typing import Optional
 
 

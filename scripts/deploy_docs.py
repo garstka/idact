@@ -45,7 +45,10 @@ COMMIT_MESSAGE = ("Deploy docs for branch {git_branch},"
 
 
 def main():
+    """Main script function."""
+
     def call(command):
+        """Alias for shell check_call."""
         sub.check_call(command, shell=True)
 
     try:

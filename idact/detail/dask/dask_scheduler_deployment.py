@@ -1,3 +1,5 @@
+"""This module contains the implementation of a Dask scheduler deployment."""
+
 from contextlib import ExitStack
 
 from idact.core.tunnel import Tunnel

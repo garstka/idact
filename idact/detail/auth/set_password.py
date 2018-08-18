@@ -1,3 +1,5 @@
+"""This module contains functionality for adding a password to cache."""
+
 from contextlib import contextmanager
 
 from typing import Optional

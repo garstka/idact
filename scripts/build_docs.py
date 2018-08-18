@@ -48,6 +48,7 @@ MODULES_TO_APIDOC = ['idact',
 
 
 def main(argv):
+    """Main script function."""
     try:
         no_show = len(argv) == 2 and argv[1] == '--no-show'
 

@@ -1,3 +1,5 @@
+"""This module contains a function for creating a runtime dir on a cluster."""
+
 from idact.detail.deployment.generic_deployment import GenericDeployment
 from idact.detail.deployment.get_deployment_command import \
     get_deployment_command

@@ -1,3 +1,6 @@
+"""This module contains a function for retrying a function call on exception.
+"""
+
 from time import sleep
 
 from typing import Callable, Any

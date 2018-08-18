@@ -48,18 +48,22 @@ class Walltime:
 
     @property
     def days(self) -> int:
+        """Number of days."""
         return self._days
 
     @property
     def hours(self) -> int:
+        """Number of hours."""
         return self._hours
 
     @property
     def minutes(self) -> int:
+        """Number of minutes."""
         return self._minutes
 
     @property
     def seconds(self) -> int:
+        """Number of seconds."""
         return self._seconds
 
     @staticmethod

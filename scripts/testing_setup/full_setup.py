@@ -26,6 +26,7 @@ COMMANDS = [i.format(python=PYTHON) for i in
 
 
 def main():
+    """Main script function."""
     try:
         os.chdir(WORKING_DIR)
         for command in COMMANDS:

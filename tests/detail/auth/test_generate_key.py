@@ -8,6 +8,7 @@ from tests.helpers.set_up_key_location import set_up_key_location
 
 
 def check_key_pair(host: str, path: str):
+    """Checks the beginning and end of the private and public keys."""
     with open(path, 'r') as file:
         lines = file.read().splitlines()
     assert lines[0] == '-----BEGIN RSA PRIVATE KEY-----'
@@ -27,6 +28,7 @@ def check_key_pair(host: str, path: str):
 
 
 def test_generate_key_when_location_is_free():
+    """Key location is free."""
     random.seed(571303)
 
     assert RSA_BITS == 4096
@@ -51,6 +53,7 @@ def test_generate_key_when_location_is_free():
 
 
 def test_generate_key_when_location_is_taken():
+    """Key location is taken, must fall back."""
     random.seed(571303)
     with set_up_key_location():
         def get_expected_path(file_name: str) -> str:

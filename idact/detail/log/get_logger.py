@@ -1,3 +1,6 @@
+"""This module contains a function for getting a logger from a global provider.
+"""
+
 import logging
 
 from idact.detail.log.logger_provider import LoggerProvider

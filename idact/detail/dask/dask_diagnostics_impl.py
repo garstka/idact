@@ -1,3 +1,6 @@
+"""This module contains the implementation of the Dask diagnostics interface.
+"""
+
 import webbrowser
 from typing import List
 

@@ -1,3 +1,6 @@
+"""This module contains a function for generating a host key for sshd
+    deployment."""
+
 from fabric.contrib.files import exists
 from fabric.operations import run
 import fabric.decorators
@@ -14,7 +17,7 @@ def install_shared_home_key():
         public key authentication between the access node and cluster nodes
         after sshd deployment.
 
-        If any of the keys was not generated, it will be generated at this
+        If the key was not generated, it will be generated at this
         point.
         Expects authentication to have already been performed.
     """
@@ -22,6 +25,8 @@ def install_shared_home_key():
 
     @fabric.decorators.task
     def task():
+        """Creates the .ssh dir with proper permissions and generates the host
+            key if it's not been generated already."""
         run("mkdir -p ~/.ssh")
         run("chmod 700 ~/.ssh")
         if not exists(SHARED_HOST_KEY_PATH):

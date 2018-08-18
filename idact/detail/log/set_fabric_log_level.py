@@ -1,3 +1,5 @@
+"""This module contains a function for setting the log level for Fabric."""
+
 from logging import DEBUG
 
 import fabric.state

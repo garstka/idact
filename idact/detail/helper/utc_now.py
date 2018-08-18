@@ -1,3 +1,5 @@
+"""This module contains a helper function for returning current datetime."""
+
 import datetime
 import dateutil.tz
 

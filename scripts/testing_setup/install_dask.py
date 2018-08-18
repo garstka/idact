@@ -12,6 +12,7 @@ COMMAND_INSTALL_DASK = "pip3.6 install dask distributed bokeh"
 
 
 def main():
+    """Main script function."""
     try:
         docker_exec = DOCKER_EXEC.format(
             SLURM_CONTAINER=os.environ['SLURM_CONTAINER'])

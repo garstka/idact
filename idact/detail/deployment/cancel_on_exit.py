@@ -1,3 +1,5 @@
+"""This module contains a context manager for calling cancel on exit."""
+
 from contextlib import contextmanager
 
 from typing import Any

@@ -1,3 +1,5 @@
+"""This module contains a function for validating a boolean config entry."""
+
 from typing import Optional
 
 from idact.detail.config.validation.validation_error_message import \

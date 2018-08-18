@@ -52,6 +52,7 @@ OUTPUT_DIR = os.path.join(WORKING_DIR, 'docs/diagrams')
 
 
 def main():
+    """Main script function."""
     try:
         os.chdir(WORKING_DIR)
 

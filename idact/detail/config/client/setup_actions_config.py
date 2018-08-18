@@ -1,3 +1,6 @@
+"""This module contains the implementation of the setup actions config
+    interface."""
+
 from typing import List, Optional
 
 from idact.core.config import SetupActionsConfig

@@ -1,3 +1,9 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :class:`.DaskDiagnostics`, :class:`.DaskDeployment`.
+"""
+
 from abc import ABC, abstractmethod
 
 from typing import List

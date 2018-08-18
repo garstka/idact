@@ -1,3 +1,6 @@
+"""This module contains a way to disable :func:`.getpass`, in order to prevent
+    password-authentication attempts by lower level libraries."""
+
 import getpass
 from contextlib import contextmanager
 

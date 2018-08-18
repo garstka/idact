@@ -1,3 +1,9 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :func:`.deploy_dask`.
+"""
+
 from contextlib import ExitStack
 from typing import Sequence
 

@@ -13,6 +13,7 @@ CLEAR_COMMAND = CLEAR_COMMAND.format(
 
 
 def main():
+    """Main script function."""
     try:
         clear_command = CLEAR_COMMAND.format(
             SLURM_SSH_PORT=os.environ['SLURM_SSH_PORT'])

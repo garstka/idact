@@ -1,5 +1,7 @@
-import shlex
+"""This module contains a function for generating a Dask scheduler deployment
+    script."""
 
+import shlex
 import bitmath
 
 from idact.core.config import ClusterConfig

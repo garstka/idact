@@ -1,3 +1,6 @@
+"""This module contains functionality for serializing and deserializing config.
+"""
+
 from typing import Any, Optional
 
 from idact.core.auth import AuthMethod
@@ -43,6 +46,7 @@ def use_defaults_in_missing_fields(data: dict) -> bool:
     modified = []
 
     def default(data_to_check: dict, key: str, value: Optional[Any]):
+        """Provides a default value for the dict, if it's missing."""
         if key not in data_to_check:
             data_to_check[key] = value
             modified.append(True)

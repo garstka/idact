@@ -1,3 +1,5 @@
+"""This module contains the implementation of a Dask worker deployment."""
+
 from contextlib import ExitStack
 
 from idact.core.tunnel import Tunnel

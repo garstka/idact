@@ -1,3 +1,6 @@
+"""This module contains the implementation of an SSH tunnel binding parameter.
+"""
+
 from typing import Tuple
 
 

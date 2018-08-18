@@ -1,3 +1,5 @@
+"""This module contains the implementation of a global environment provider."""
+
 from typing import Optional
 
 from idact.detail.environment.environment import Environment

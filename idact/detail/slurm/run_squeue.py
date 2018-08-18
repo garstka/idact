@@ -1,3 +1,5 @@
+"""This module contains functionality for running squeue on a node."""
+
 import datetime
 import shlex
 from typing import Dict, Optional, List

@@ -1,3 +1,6 @@
+"""This module contains the implementation of an object for reading contents
+    of an sshd port info file."""
+
 from collections import defaultdict
 
 from idact.detail.log.get_logger import get_logger

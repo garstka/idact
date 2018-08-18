@@ -14,6 +14,7 @@ APPEND_PORT_COMMAND = "sed -i '$ a\\Port {port}' /etc/ssh/sshd_config"
 
 
 def main():
+    """Main script function."""
     try:
         prefix = PREFIX.format(SLURM_CONTAINER=os.environ['SLURM_CONTAINER'])
         sub.check_call(prefix + INSTALL_COMMAND, shell=True)

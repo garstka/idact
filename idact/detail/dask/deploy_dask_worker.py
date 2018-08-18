@@ -1,3 +1,5 @@
+"""This module contains functionality for deploying a Dask worker."""
+
 import re
 from contextlib import ExitStack
 
@@ -80,6 +82,8 @@ def deploy_dask_worker(node: NodeInternal,
 
         @fabric.decorators.task
         def validate_worker_started_from_log():
+            """Checks that the worker has started correctly based on
+                the log file."""
             output = get_remote_file(remote_path=log_file)
             log.debug("Log file: %s", output)
             validate_worker_started(output=output)

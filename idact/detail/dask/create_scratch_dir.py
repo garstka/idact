@@ -1,3 +1,6 @@
+"""This module contains functionality for creating a scratch directory
+    on a cluster."""
+
 import shlex
 
 from idact.detail.nodes.node_internal import NodeInternal

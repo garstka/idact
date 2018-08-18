@@ -1,3 +1,5 @@
+"""This module contains the implementation of a global logger provider."""
+
 import logging
 import sys
 

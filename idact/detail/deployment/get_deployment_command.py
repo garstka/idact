@@ -1,3 +1,6 @@
+"""This module contains a function for building a command that runs
+    a deployment script."""
+
 import re
 import shlex
 

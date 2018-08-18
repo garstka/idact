@@ -1,3 +1,5 @@
+"""This module contains the implementation of the client config interface."""
+
 from logging import INFO
 from typing import Dict, Optional
 

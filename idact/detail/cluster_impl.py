@@ -1,3 +1,5 @@
+"""This module contains the implementation of the cluster interface."""
+
 from typing import Union, Optional, Dict
 
 import bitmath

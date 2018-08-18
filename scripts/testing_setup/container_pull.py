@@ -10,6 +10,7 @@ PULL_CONTAINER_COMMAND = "docker pull {SLURM_IMAGE}"
 
 
 def main():
+    """Main script function."""
     try:
         sub.check_call(PULL_CONTAINER_COMMAND.format(
             SLURM_IMAGE=os.environ['SLURM_IMAGE']), shell=True)

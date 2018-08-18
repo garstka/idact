@@ -18,6 +18,7 @@ SET_PASS_COMMAND = "echo -e 'pass-{i}\\npass-{i}' | passwd --stdin user-{i}"
 
 
 def main():
+    """Main script function."""
     try:
         prefix = PREFIX.format(SLURM_CONTAINER=os.environ['SLURM_CONTAINER'])
         user_count = int(USER_COUNT.format(

@@ -1,3 +1,5 @@
+"""This module contains a function for generating random file names."""
+
 import random
 import string
 

@@ -1,3 +1,5 @@
+"""This module contains the implementation of the cluster node interface."""
+
 import datetime
 from typing import Optional, Any, Callable
 
@@ -61,6 +63,7 @@ class NodeImpl(NodeInternal):
         try:
             @fabric.decorators.task
             def task():
+                """Runs the command with a timeout."""
                 return fabric.operations.run(command,
                                              pty=False,
                                              timeout=timeout)

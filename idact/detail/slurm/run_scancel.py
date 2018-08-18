@@ -1,3 +1,5 @@
+"""This module contains a function for running scancel on a node."""
+
 from idact.core.nodes import Node
 
 

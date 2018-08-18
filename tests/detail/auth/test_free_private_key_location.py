@@ -14,6 +14,7 @@ from tests.helpers.set_up_key_location import set_up_key_location
 
 
 def test_get_key_suffix():
+    """Different length suffix generation."""
     random.seed(571303)
     assert KEY_NAME_SUFFIX_LENGTH == 2
     assert get_key_suffix(2) == 'in'
@@ -30,6 +31,7 @@ def test_get_key_suffix():
 
 
 def test_get_key_path():
+    """Key path building."""
     expected = ['/home/user/id_rsa_123',
                 '/home/user\\id_rsa_123']
     assert get_key_path(location='/home/user',
@@ -41,6 +43,7 @@ def test_get_key_path():
 
 
 def test_try_generate_unique_path_when_location_is_free():
+    """Free paths, can fail."""
     random.seed(571303)
     result_paths = []
     with set_up_key_location():
@@ -63,6 +66,7 @@ def test_try_generate_unique_path_when_location_is_free():
 
 
 def test_try_generate_unique_path_when_location_is_taken():
+    """Some paths are taken, can fail."""
     with set_up_key_location():
         def try_generate() -> Optional[str]:
             return try_generate_unique_path(
@@ -102,6 +106,7 @@ def test_try_generate_unique_path_when_location_is_taken():
 
 
 def test_get_free_private_key_location_when_location_is_free():
+    """Free paths."""
     random.seed(571303)
     result_paths = []
     with set_up_key_location():
@@ -122,6 +127,7 @@ def test_get_free_private_key_location_when_location_is_free():
 
 
 def test_get_free_private_key_location_when_location_is_taken():
+    """Some paths are taken, use fallbacks."""
     random.seed(571303)
     assert KEY_NAME_SUFFIX_RETRIES == 4
     with set_up_key_location():
@@ -147,6 +153,7 @@ def test_get_free_private_key_location_when_location_is_taken():
 
 
 def test_get_free_private_key_location_when_all_locations_are_taken():
+    """All generated file paths are taken, even with fallbacks."""
     random.seed(571303)
 
     with set_up_key_location():

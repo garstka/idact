@@ -1,3 +1,5 @@
+"""This module contains functionality for running sbatch on a node."""
+
 import shlex
 
 from typing import Optional, Dict, Tuple

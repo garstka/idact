@@ -1,3 +1,5 @@
+"""This module contains a function for displaying a yes/no prompt."""
+
 import re
 from typing import Optional
 

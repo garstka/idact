@@ -1,3 +1,5 @@
+"""This module contains a function for getting the access node interface."""
+
 from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl
 from idact.detail.nodes.node_impl import NodeImpl

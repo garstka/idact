@@ -1,3 +1,5 @@
+"""This module contains a function that builds an SSH tunnel."""
+
 from typing import List, Optional
 
 from sshtunnel import SSHTunnelForwarder

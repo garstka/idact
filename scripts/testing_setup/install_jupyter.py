@@ -18,11 +18,13 @@ COMMANDS_INSTALL_JUPYTER_LAB = ["pip3.6 install jupyterlab"]
 
 
 def main():
+    """Main script function."""
     try:
         docker_exec = DOCKER_EXEC.format(
             SLURM_CONTAINER=os.environ['SLURM_CONTAINER'])
 
         def call(command):
+            """Alias for check_call."""
             sub.check_call(docker_exec + command, shell=True)
 
         print("Installing Jupyter...")

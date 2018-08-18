@@ -14,6 +14,7 @@ COMMAND = "bash -c \"echo -e 'y\\n' |" \
 
 
 def main():
+    """Main script function."""
     try:
         prefix = PREFIX.format(SLURM_CONTAINER=os.environ['SLURM_CONTAINER'])
         for key_type in KEY_TYPES:

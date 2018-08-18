@@ -1,3 +1,6 @@
+"""This module contains the implementation of the interface for a collection
+    of nodes."""
+
 from typing import List, Optional
 
 from idact.core.nodes import Nodes, Node

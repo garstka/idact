@@ -1,3 +1,5 @@
+"""This module contains the internal cluster node interface."""
+
 from abc import abstractmethod
 
 from typing import Optional, Callable, Any

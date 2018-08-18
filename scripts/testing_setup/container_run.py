@@ -25,6 +25,7 @@ UPDATE_HOSTS_COMMAND = ('docker exec {SLURM_CONTAINER} bash -c "'
 
 
 def main():
+    """Main script function."""
     try:
         sub.check_call(PULL_CONTAINER_COMMAND.format(
             SLURM_IMAGE=os.environ['SLURM_IMAGE']), shell=True)

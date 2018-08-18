@@ -1,3 +1,6 @@
+"""This module contains functions for serializing and deserializing
+    the environment."""
+
 import json
 import os
 from typing import Optional

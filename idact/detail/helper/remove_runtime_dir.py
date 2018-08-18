@@ -1,3 +1,5 @@
+"""This module contains functions for removing a runtime dir."""
+
 from contextlib import contextmanager
 
 from idact.core.nodes import Node

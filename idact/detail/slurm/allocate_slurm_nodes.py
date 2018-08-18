@@ -1,3 +1,5 @@
+"""This module contains a function for allocating Slurm nodes."""
+
 from time import sleep
 
 from idact.core.nodes import Nodes

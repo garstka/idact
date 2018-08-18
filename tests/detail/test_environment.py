@@ -1,3 +1,5 @@
+"""Tests for the environment."""
+
 from idact.core.cluster import Cluster
 from idact.core.auth import AuthMethod
 from idact.detail.config.client.client_cluster_config \
@@ -8,6 +10,7 @@ from idact.detail.environment.environment_provider import EnvironmentProvider
 
 
 def test_create_environment():
+    """Creating the environment and adding a cluster."""
     cluster1 = ClusterConfigImpl(host='host1',
                                  port=22,
                                  user='user1',
@@ -32,6 +35,7 @@ def test_create_environment():
 
 
 def test_environment_provider():
+    """Creating and resetting the environment."""
     cluster1 = ClusterConfigImpl(host='host1',
                                  port=22,
                                  user='user1',

@@ -18,6 +18,7 @@ COMMANDS = ["docker stop {SLURM_CONTAINER}",
 
 
 def main():
+    """Main script function."""
     try:
         os.chdir(WORKING_DIR)
 

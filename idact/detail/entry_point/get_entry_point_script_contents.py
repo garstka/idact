@@ -1,3 +1,6 @@
+"""This module contains a function for generating an entry point script for
+    the workload manager."""
+
 from idact.detail.auth.install_shared_home_key import SHARED_HOST_KEY_PATH
 from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl

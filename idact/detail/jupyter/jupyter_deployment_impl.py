@@ -1,3 +1,6 @@
+"""This module contains the implementation of a Jupyter deployment interface.
+"""
+
 import webbrowser
 from contextlib import ExitStack
 

@@ -29,6 +29,7 @@ def run(command):
 
 
 def main():
+    """Main script function."""
     os.chdir(WORKING_DIR)
 
     codes = [(command, run(command))

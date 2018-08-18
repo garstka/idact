@@ -1,3 +1,6 @@
+"""This module contains a context manager that performs node authentication
+    according to the configuration."""
+
 from contextlib import contextmanager
 from typing import Tuple
 

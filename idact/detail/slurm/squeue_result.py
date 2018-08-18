@@ -1,3 +1,6 @@
+"""This module contains the implementation of a data class for an squeue
+    result."""
+
 import datetime
 from typing import Optional, List
 
@@ -42,24 +45,30 @@ class SqueueResult:
 
     @property
     def job_id(self) -> int:
+        """Job id."""
         return self._job_id
 
     @property
     def end_time(self) -> Optional[datetime.datetime]:
+        """Expected job end time."""
         return self._end_time
 
     @property
     def node_count(self) -> int:
+        """Allocated node count."""
         return self._node_count
 
     @property
     def node_list(self) -> Optional[List[str]]:
+        """Allocated node list."""
         return self._node_list
 
     @property
     def reason(self) -> Optional[str]:
+        """Reason for the current job state."""
         return self._reason
 
     @property
     def state(self) -> str:
+        """Job state code."""
         return self._state

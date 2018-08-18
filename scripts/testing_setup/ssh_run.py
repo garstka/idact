@@ -11,6 +11,7 @@ RUN_COMMAND = "/usr/sbin/sshd -D"
 
 
 def main():
+    """Main script function."""
     try:
         prefix = PREFIX.format(SLURM_CONTAINER=os.environ['SLURM_CONTAINER'])
         sub.check_call(prefix + RUN_COMMAND, shell=True)

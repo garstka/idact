@@ -1,3 +1,5 @@
+"""This module contains a function for listing a process tree recursively."""
+
 from typing import List
 
 from idact.core.nodes import Node

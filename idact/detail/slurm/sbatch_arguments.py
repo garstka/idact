@@ -1,3 +1,5 @@
+"""This module contains functionality for preparing sbatch arguments."""
+
 from typing import Dict, Optional
 
 from idact.detail.allocation.allocation_parameters import AllocationParameters
@@ -99,8 +101,10 @@ class SbatchArguments:
 
     @property
     def native_args(self) -> Dict[str, Optional[str]]:
+        """Native sbatch arguments."""
         return self._native_args
 
     @property
     def args(self) -> Dict[str, Optional[str]]:
+        """Supported sbatch arguments."""
         return self._args

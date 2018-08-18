@@ -1,3 +1,6 @@
+"""This module contains a function for fetching a file with sshd deployment
+    ports from cluster."""
+
 from io import BytesIO
 
 import fabric.decorators
@@ -30,6 +33,7 @@ def fetch_port_info(allocation_id: int,
 
     @fabric.decorators.task
     def task():
+        """Reads the port info file if it exists."""
         port_info_file = PORT_INFO_FILE_FORMAT.format(
             allocation_id=allocation_id)
 

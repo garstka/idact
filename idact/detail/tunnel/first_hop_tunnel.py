@@ -1,3 +1,5 @@
+"""This module contains the implementation of a single hop SSH tunnel."""
+
 from sshtunnel import SSHTunnelForwarder
 
 from idact.core.tunnel import Tunnel
@@ -33,6 +35,7 @@ class FirstHopTunnel(Tunnel):
 
     @property
     def forwarder(self) -> SSHTunnelForwarder:
+        """SSH tunnel forwarder from the :mod:`sshtunnel` module."""
         return self._forwarder
 
     def __str__(self):

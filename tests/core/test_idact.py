@@ -1,3 +1,5 @@
+"""Sample CLI test."""
+
 from click.testing import CliRunner
 
 from idact import cli

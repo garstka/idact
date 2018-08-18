@@ -20,6 +20,7 @@ WORKING_DIR = os.path.realpath(os.path.dirname(__file__))
 
 
 def main():
+    """Main script function."""
     try:
         os.chdir(WORKING_DIR)
 

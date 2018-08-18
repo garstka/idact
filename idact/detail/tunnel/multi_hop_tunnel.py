@@ -1,3 +1,5 @@
+"""This module contains the implementation of a multi hop SSH tunnel."""
+
 from typing import List
 
 from idact.core.tunnel import Tunnel

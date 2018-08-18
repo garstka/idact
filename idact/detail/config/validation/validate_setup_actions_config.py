@@ -1,3 +1,6 @@
+"""This module contains a function for validating a setup actions config entry.
+"""
+
 from idact.detail.config.client.setup_actions_config import \
     SetupActionsConfigImpl
 from idact.detail.config.validation.validation_error_message import \

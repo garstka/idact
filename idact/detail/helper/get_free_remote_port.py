@@ -1,3 +1,6 @@
+"""This module contains functions for obtaining free port numbers
+    on a cluster."""
+
 from typing import List
 
 from idact.core.nodes import Node

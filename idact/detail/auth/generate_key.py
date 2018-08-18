@@ -1,3 +1,5 @@
+"""This module contains a function for generating SSH keys."""
+
 import datetime
 
 from paramiko import RSAKey

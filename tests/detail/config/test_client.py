@@ -1,3 +1,5 @@
+"""Tests for client config."""
+
 from logging import INFO, DEBUG
 
 import pytest

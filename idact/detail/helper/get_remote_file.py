@@ -1,3 +1,6 @@
+"""This module contains a function for downloading a file from cluster
+    in a Fabric task."""
+
 from io import BytesIO
 
 from fabric.operations import get

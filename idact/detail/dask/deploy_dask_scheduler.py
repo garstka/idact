@@ -1,3 +1,5 @@
+"""This module contains functionality for deploying a Dask scheduler."""
+
 import re
 from contextlib import ExitStack
 
@@ -74,6 +76,7 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
 
         @fabric.decorators.task
         def extract_address_from_log() -> str:
+            """Extracts scheduler address from a log file."""
             output = get_remote_file(remote_path=log_file)
             log.debug("Log file: %s", output)
             return extract_address_from_output(output=output)

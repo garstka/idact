@@ -1,3 +1,6 @@
+"""This module contains a function for getting a password from cache,
+    or by prompting the user."""
+
 from getpass import getpass
 
 from idact.detail.auth.get_host_string import get_host_string

@@ -1,3 +1,6 @@
+"""This module contains a function for building the access node host string
+    from config."""
+
 from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl
 

@@ -1,3 +1,5 @@
+"""This module contains the implementation of a generic deployment."""
+
 from idact.core.nodes import Node
 from idact.detail.helper.ptree import ptree
 from idact.detail.helper.remove_runtime_dir import remove_runtime_dir_on_exit
@@ -50,6 +52,8 @@ class GenericDeployment:
         """
 
         def cancel_task():
+            """Kills a list of processes, waits and fails if all are still
+                running after a timeout."""
             tree = ' '.join([str(pid)
                              for pid
                              in ptree(pid=self._pid, node=self._node)])
