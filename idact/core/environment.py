@@ -14,7 +14,9 @@ from idact.detail.environment.environment_serialization import \
 def load_environment(path: Optional[str] = None):
     """Loads the environment from file.
 
-       :param path: Path to environment file. Default: ~/.idact.conf
+       :param path: Path to environment file.
+                    Default: IDACT_CONFIG_PATH environment variable,
+                             or ~/.idact.conf
     """
     environment = deserialize_environment_from_file(path=path)
     EnvironmentProvider().environment = environment
@@ -23,7 +25,9 @@ def load_environment(path: Optional[str] = None):
 def save_environment(path: Optional[str] = None):
     """Saves the environment to file.
 
-       :param path: Path to environment file. Default: ~/.idact.conf
+       :param path: Path to environment file.
+                    Default: IDACT_CONFIG_PATH environment variable,
+                             or ~/.idact.conf
     """
     environment = EnvironmentProvider().environment
     serialize_environment_to_file(environment=environment,

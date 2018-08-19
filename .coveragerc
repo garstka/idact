@@ -6,3 +6,4 @@ omit =
 exclude_lines =
     pragma: no cover
     @abstract
+    raise NotImplementedError

@@ -1,4 +1,5 @@
 import logging
+import os
 from contextlib import contextmanager
 
 from idact.core.set_log_level import set_log_level
@@ -19,6 +20,7 @@ def clear_environment(user: str):
     EnvironmentProvider._state = None
     EnvironmentProvider(initial_environment=Environment())
     set_log_level(logging.DEBUG)
+    os.environ['IDACT_CONFIG_PATH'] = './idact.test.conf'
     try:
         yield
     finally:

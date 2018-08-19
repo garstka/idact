@@ -51,7 +51,7 @@ class SshdPortInfo:
         log.warning(
             "Unable to find unique sshd server for %s", host)
         if self._hosts:
-            log.info("Assuming sandbox, defaulting to first found.")
+            log.warning("Assuming sandbox, defaulting to first found.")
             port = self._hosts[next(iter(self._hosts.keys()))][0]
             log.info("First found: %d", port)
             return port

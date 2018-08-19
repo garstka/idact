@@ -8,6 +8,7 @@ from fabric.context_managers import settings
 from idact import AuthMethod, add_cluster, show_cluster, Walltime, Node
 from idact.core.auth import KeyType
 from idact.detail.auth.generate_key import generate_key
+from idact.detail.auth.get_public_key_location import get_public_key_location
 from idact.detail.auth.set_password import set_password
 from idact.detail.nodes.node_internal import NodeInternal
 from tests.helpers.clear_environment import clear_environment
@@ -16,7 +17,7 @@ from tests.helpers.reset_environment import reset_environment, \
     get_testing_host, get_testing_port
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import USER_8, get_test_user_password, USER_9, \
-    USER_10, USER_11, USER_14, USER_12
+    USER_10, USER_11, USER_14, USER_12, USER_21
 from tests.helpers.testing_environment import TEST_CLUSTER
 
 
@@ -266,3 +267,30 @@ def test_generate_and_install_key_no_sshd():
                     disable_sshd=True)
 
         check_remote_key_and_node_access(user=user)
+
+
+def test_empty_public_key_causes_runtime_error():
+    with ExitStack() as stack:
+        user = USER_21
+        stack.enter_context(clear_environment(user))
+        stack.enter_context(set_up_key_location())
+        stack.enter_context(disable_pytest_stdin())
+
+        key = generate_key(host=get_testing_host(),
+                           key_type=KeyType.RSA)
+
+        # Clear the public key.
+        with open(get_public_key_location(key), 'w'):
+            pass
+
+        cluster = add_cluster(name=TEST_CLUSTER,
+                              user=user,
+                              host=get_testing_host(),
+                              port=get_testing_port(),
+                              auth=AuthMethod.PUBLIC_KEY,
+                              key=key)
+
+        node = cluster.get_access_node()
+        with set_password(get_test_user_password(user)):
+            with pytest.raises(RuntimeError):
+                node.run('whoami')

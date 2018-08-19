@@ -58,17 +58,33 @@ class ClusterConfigImpl(ClusterConfig):
     def host(self) -> str:
         return self._host
 
+    @host.setter
+    def host(self, value: str):
+        self._host = value
+
     @property
     def port(self) -> int:
         return self._port
+
+    @port.setter
+    def port(self, value: int):
+        self._port = value
 
     @property
     def user(self) -> str:
         return self._user
 
+    @user.setter
+    def user(self, value: str):
+        self._user = value
+
     @property
     def auth(self) -> AuthMethod:
         return self._auth
+
+    @auth.setter
+    def auth(self, value: AuthMethod):
+        self._auth = value
 
     @property
     def key(self) -> Optional[str]:
@@ -90,6 +106,10 @@ class ClusterConfigImpl(ClusterConfig):
     def disable_sshd(self) -> bool:
         return self._disable_sshd
 
+    @disable_sshd.setter
+    def disable_sshd(self, value: bool):
+        self._disable_sshd = value
+
     @property
     def setup_actions(self) -> SetupActionsConfigImpl:
         return self._setup_actions
@@ -97,6 +117,10 @@ class ClusterConfigImpl(ClusterConfig):
     @property
     def scratch(self) -> str:
         return self._scratch
+
+    @scratch.setter
+    def scratch(self, value: str):
+        self._scratch = value
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__

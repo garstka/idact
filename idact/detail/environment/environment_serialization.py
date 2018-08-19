@@ -20,11 +20,13 @@ def serialize_environment_to_file(environment: Environment,
 
         :param environment: Environment to save.
 
-        :param path:        Output file path. Default: `~/.idact.conf`.
+        :param path: Output file path.
+                     Default: IDACT_CONFIG_PATH environment variable,
+                              or ~/.idact.conf
 
     """
     if path is None:
-        path = DEFAULT_ENVIRONMENT_PATH
+        path = os.environ.get('IDACT_CONFIG_PATH', DEFAULT_ENVIRONMENT_PATH)
 
     data = serialize_client_config_to_json(environment.config)
     with open(path, 'w') as file:
@@ -32,27 +34,30 @@ def serialize_environment_to_file(environment: Environment,
 
 
 def deserialize_environment_from_file(path: Optional[str] = None,
-                                      raise_if_missing: bool = False):
+                                      ignore_if_missing: bool = False):
     """Loads the environment from file.
 
         See :func:`.load_environment`.
 
-        :param path:             Environment file path. Default: ~/.idact.conf
+        :param path: Environment file path.
+                     Default: IDACT_CONFIG_PATH environment variable,
+                              or ~/.idact.conf
 
-        :param raise_if_missing: Raise :class:`.ValueError` if the file is
-                                 missing. Default: `False`.
+        :param ignore_if_missing: Do not raise :class:`.ValueError` if the file
+                                  is missing. Default: `False`.
 
-        :raises ValueError: On missing file if `raise_if_missing` is set.
+        :raises ValueError: On missing file if `ignore_if_missing` is not set
+                            (default).
 
     """
     if path is None:
-        path = DEFAULT_ENVIRONMENT_PATH
+        path = os.environ.get('IDACT_CONFIG_PATH', DEFAULT_ENVIRONMENT_PATH)
 
     if not os.path.isfile(path):
-        if raise_if_missing:
-            raise ValueError("Not a valid environment file: {}".format(path))
-        else:
+        if ignore_if_missing:
             return Environment()
+        else:
+            raise ValueError("Not a valid environment file: {}".format(path))
 
     with open(path, 'r') as file:
         data = json.load(file)

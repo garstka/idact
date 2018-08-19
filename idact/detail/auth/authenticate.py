@@ -104,8 +104,9 @@ def authenticate(host: str,
 
     """
     if config.auth not in [AuthMethod.ASK, AuthMethod.PUBLIC_KEY]:
-        raise ValueError("Authentication method not implemented: '{}'.".format(
-            config.auth))
+        raise NotImplementedError(
+            "Authentication method not implemented: '{}'.".format(
+                config.auth))
 
     env.always_use_pty = False
     previous_gateway, previous_host = env.gateway, env.host_string

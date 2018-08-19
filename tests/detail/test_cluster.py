@@ -13,3 +13,5 @@ def test_cluster_create():
                                               user='user',
                                               auth=AuthMethod.ASK)
     ClusterImpl(config=client_cluster_config)
+
+    assert str(client_cluster_config) == repr(client_cluster_config)

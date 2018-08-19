@@ -44,10 +44,20 @@ class ClusterConfig(ABC):
         """Cluster hostname."""
         pass
 
+    @host.setter
+    @abstractmethod
+    def host(self, value: str):
+        pass
+
     @property
     @abstractmethod
     def port(self) -> int:
         """Cluster SSH port number."""
+        pass
+
+    @port.setter
+    @abstractmethod
+    def port(self, value: int):
         pass
 
     @property
@@ -56,10 +66,20 @@ class ClusterConfig(ABC):
         """Cluster user to log in and run commands as."""
         pass
 
+    @user.setter
+    @abstractmethod
+    def user(self, value: str):
+        pass
+
     @property
     @abstractmethod
     def auth(self) -> AuthMethod:
         """Authentication method."""
+        pass
+
+    @auth.setter
+    @abstractmethod
+    def auth(self, value: AuthMethod):
         pass
 
     @property
@@ -70,6 +90,7 @@ class ClusterConfig(ABC):
         pass
 
     @key.setter
+    @abstractmethod
     def key(self, value: Optional[str]):
         pass
 
@@ -90,6 +111,11 @@ class ClusterConfig(ABC):
         """Disables sshd server as an entry point for all nodes."""
         pass
 
+    @disable_sshd.setter
+    @abstractmethod
+    def disable_sshd(self, value: bool):
+        pass
+
     @property
     @abstractmethod
     def setup_actions(self) -> SetupActionsConfig:
@@ -101,4 +127,9 @@ class ClusterConfig(ABC):
     def scratch(self) -> str:
         """Absolute path to a high-performance filesystem for temporary
            computation data, or an environment variable that contains it."""
+        pass
+
+    @scratch.setter
+    @abstractmethod
+    def scratch(self, value: str):
         pass

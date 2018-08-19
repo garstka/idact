@@ -29,6 +29,7 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
     EnvironmentProvider._state = None
 
     os.environ['IDACT_KEY_LOCATION'] = TEST_KEY_LOCATION
+    os.environ['IDACT_CONFIG_PATH'] = './idact.test.conf'
 
     cluster = ClusterConfigImpl(
         host=get_testing_host(),

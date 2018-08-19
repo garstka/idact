@@ -12,6 +12,11 @@ PULL_CONTAINER_COMMAND = "docker pull {SLURM_IMAGE}"
 RUN_COMMAND = "docker run -d -p {SLURM_SSH_PORT}:22 -it -h ernie " \
               "--name {SLURM_CONTAINER} {SLURM_IMAGE}"
 
+ADD_MEMORY_COMMAND = "docker exec {SLURM_CONTAINER} " \
+                     "sed -i" \
+                     " 's/RealMemory=1000/RealMemory=2000/g'" \
+                     " /etc/slurm/slurm.conf"
+
 SLEEP_BEFORE_RESTART = 10
 
 RESTART_COMMAND = "docker exec {SLURM_CONTAINER} " \
@@ -34,6 +39,9 @@ def main():
             SLURM_SSH_PORT=os.environ['SLURM_SSH_PORT'],
             SLURM_CONTAINER=os.environ['SLURM_CONTAINER'],
             SLURM_IMAGE=os.environ['SLURM_IMAGE']), shell=True)
+
+        sub.check_call(ADD_MEMORY_COMMAND.format(
+            SLURM_CONTAINER=os.environ['SLURM_CONTAINER']), shell=True)
 
         time.sleep(SLEEP_BEFORE_RESTART)
 

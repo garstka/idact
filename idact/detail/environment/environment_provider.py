@@ -30,7 +30,8 @@ class EnvironmentProvider:
            Tries to load it from file if there is none.
         """
         if self._environment is None:
-            self.environment = deserialize_environment_from_file()
+            self.environment = deserialize_environment_from_file(
+                ignore_if_missing=True)
         return self._environment
 
     @environment.setter
