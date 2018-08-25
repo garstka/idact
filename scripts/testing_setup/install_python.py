@@ -8,13 +8,16 @@ import traceback
 
 DOCKER_EXEC = "docker exec {SLURM_CONTAINER} "
 
+MAJOR, MINOR = sys.version_info[0:2]
+
 COMMANDS_INSTALL_PYTHON = [
     "yum -y install https://centos7.iuscommunity.org/ius-release.rpm",
     "yum -y install"
     " sqlite-devel"
-    " python36u"
-    " python36u-pip"
-    " python36u-devel"]
+    " python{major}{minor}u"
+    " python{major}{minor}u-pip"
+    " python{major}{minor}u-devel".format(major=MAJOR,
+                                          minor=MINOR)]
 
 
 def main():
@@ -27,7 +30,8 @@ def main():
             """Alias for check_call."""
             sub.check_call(docker_exec + command, shell=True)
 
-        print("Installing Python 3.6...")
+        print("Installing Python {major}.{minor}...".format(major=MAJOR,
+                                                            minor=MINOR))
         for i in COMMANDS_INSTALL_PYTHON:
             call(i)
 

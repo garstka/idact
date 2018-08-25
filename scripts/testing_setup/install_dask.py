@@ -6,9 +6,14 @@ import subprocess as sub
 import sys
 import traceback
 
+MAJOR, MINOR = sys.version_info[0:2]
+
 DOCKER_EXEC = "docker exec {SLURM_CONTAINER} "
 
-COMMAND_INSTALL_DASK = "pip3.6 install dask distributed bokeh"
+COMMAND_INSTALL_DASK = (
+    "python{major}.{minor} -mpip install dask distributed bokeh".format(
+        major=MAJOR,
+        minor=MINOR))
 
 
 def main():

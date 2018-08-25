@@ -6,15 +6,26 @@ import subprocess as sub
 import sys
 import traceback
 
+MAJOR, MINOR = sys.version_info[0:2]
+
 DOCKER_EXEC = "docker exec {SLURM_CONTAINER} "
 
-COMMANDS_INSTALL_JUPYTER = ["pip3.6 install jupyter"]
+COMMANDS_INSTALL_JUPYTER = [
+    "python{major}.{minor} -mpip install jupyter".format(
+        major=MAJOR,
+        minor=MINOR)]
 
-COMMANDS_INSTALL_JUPYTER_HUB = ["yum -y install npm",
-                                "npm install -y -g configurable-http-proxy",
-                                "pip3.6 install jupyterhub"]
+COMMANDS_INSTALL_JUPYTER_HUB = [
+    "yum -y install npm",
+    "npm install -y -g configurable-http-proxy",
+    "python{major}.{minor} -mpip install jupyterhub".format(
+        major=MAJOR,
+        minor=MINOR)]
 
-COMMANDS_INSTALL_JUPYTER_LAB = ["pip3.6 install jupyterlab"]
+COMMANDS_INSTALL_JUPYTER_LAB = [
+    "pip{major}.{minor} install jupyterlab".format(
+        major=MAJOR,
+        minor=MINOR)]
 
 
 def main():

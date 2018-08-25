@@ -37,7 +37,7 @@ class NodeImpl(NodeInternal):
         self._port = None  # type: Optional[int]
         self._cores = None  # type: Optional[int]
         self._memory = None  # type: Optional[int]
-        self._allocated_until: Optional[datetime.datetime] = None
+        self._allocated_until = None  # type: Optional[datetime.datetime]
 
     def _ensure_allocated(self):
         """Raises an exception if the node is not allocated."""

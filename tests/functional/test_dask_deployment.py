@@ -1,12 +1,14 @@
+import sys
 from contextlib import ExitStack, contextmanager
 from pprint import pprint
 
+import dask.distributed
 import fabric.network
 import pytest
 import requests
 from bitmath import MiB
 
-from idact import show_cluster, Walltime, Nodes
+from idact import show_cluster, Walltime, Nodes, Node
 from idact.core.deploy_dask import deploy_dask
 from idact.detail.auth.set_password import set_password
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
@@ -16,6 +18,54 @@ from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import get_test_user_password, USER_18, \
     USER_17, USER_20, USER_24
 from tests.helpers.testing_environment import TEST_CLUSTER
+
+
+def check_submission_works(node: Node, client: dask.distributed.Client):
+    print("Testing task submission.")
+
+    local_version = sys.version_info[0:3]
+    print("Local version: {}".format(local_version))
+
+    python_executable = "python{major}.{minor}".format(major=local_version[0],
+                                                       minor=local_version[1])
+
+    print(
+        "Will try to find out the version"
+        " of python executable: {python_executable}".format(
+            python_executable=python_executable))
+    print("If this fails, make sure the testing setup was"
+          " created by the same, or close Python version"
+          " (major and minor version components must match).")
+
+    command = (
+        "{python_executable} -c 'import sys;"
+        " print(\"\\n\".join("
+        "[str(i) for i in sys.version_info[0:3]]))'".format(
+            python_executable=python_executable))
+
+    remote_version = node.run(command).splitlines()
+
+    print("Remote version: {}".format(remote_version))
+
+    if local_version != remote_version:
+        print("Python version mismatch: local {} vs remote {}".format(
+            local_version, remote_version))
+
+    print("If the task submission fails, make sure the testing setup was"
+          " created by the same, or close Python version.")
+    print("Update the local Python installation if possible.")
+    print("If this still doesn't work, update your Dask library.")
+
+    def inc(value):
+        return value + 1
+
+    result_x = client.submit(inc, 10)
+    print(result_x)
+    mapped = client.map(inc, range(100))
+    print(mapped)
+
+    assert result_x.result() == 11
+    assert client.gather(mapped) == list(range(1, 101))
 
 
 @contextmanager
@@ -46,16 +96,7 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
         client = deployment.get_client()
         print(client)
 
-        def inc(value):
-            return value + 1
-
-        result_x = client.submit(inc, 10)
-        print(result_x)
-        mapped = client.map(inc, range(100))
-        print(mapped)
-
-        assert result_x.result() == 11
-        assert client.gather(mapped) == list(range(1, 101))
+        check_submission_works(node=node, client=client)
 
         pprint(deployment.diagnostics.addresses)
 
