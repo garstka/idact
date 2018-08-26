@@ -9,12 +9,13 @@ import pytest
 from idact import show_clusters, show_cluster, add_cluster, \
     AuthMethod, save_environment, load_environment, set_log_level, \
     ClusterConfig
+from idact.core.remove_cluster import remove_cluster
 from idact.detail.auth.set_password import set_password
 from idact.detail.environment.environment_provider import EnvironmentProvider
 from idact.detail.log.logger_provider import LoggerProvider
 from tests.helpers.clear_environment import clear_environment
 from tests.helpers.test_users import USER_2, get_test_user_password, USER_19, \
-    USER_25
+    USER_25, USER_26
 from tests.helpers.testing_environment import TEST_CLUSTER
 
 
@@ -216,3 +217,50 @@ def test_environment_missing_and_defaults():
 
         finally:
             os.remove(os.environ['IDACT_CONFIG_PATH'])
+
+
+def test_environment_add_cluster_and_remove():
+    user = USER_26
+    with ExitStack() as stack:
+        stack.enter_context(clear_environment(user))
+
+        assert show_clusters() == {}
+
+        add_cluster(name=TEST_CLUSTER,
+                    user=user,
+                    host='localhost')
+
+        add_cluster(name='fake cluster',
+                    user=user,
+                    host='localhost2')
+
+        assert len(show_clusters()) == 2
+
+        cluster = show_cluster('fake cluster')
+
+        assert cluster.config.host == 'localhost2'
+
+        remove_cluster('fake cluster')
+
+        assert len(show_clusters()) == 1
+
+        add_cluster(name='fake cluster',
+                    user=user,
+                    host='localhost3')
+
+        cluster2 = show_cluster('fake cluster')
+
+        assert cluster.config.host == 'localhost2'
+        assert cluster2.config.host == 'localhost3'
+
+        cluster3 = show_cluster(TEST_CLUSTER)
+
+        assert cluster3.config.host == 'localhost'
+
+        remove_cluster('fake cluster')
+        remove_cluster(TEST_CLUSTER)
+
+        assert show_clusters() == {}
+
+        with pytest.raises(KeyError):
+            remove_cluster('fake cluster')

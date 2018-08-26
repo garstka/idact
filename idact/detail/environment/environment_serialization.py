@@ -8,6 +8,7 @@ from typing import Optional
 from idact.detail.config.client.client_config_serialize import \
     deserialize_client_config_from_json, serialize_client_config_to_json
 from idact.detail.environment.environment import Environment
+from idact.detail.environment.environment_impl import EnvironmentImpl
 
 DEFAULT_ENVIRONMENT_PATH = os.path.expanduser('~/.idact.conf')
 
@@ -34,7 +35,7 @@ def serialize_environment_to_file(environment: Environment,
 
 
 def deserialize_environment_from_file(path: Optional[str] = None,
-                                      ignore_if_missing: bool = False):
+                                      ignore_if_missing: bool = False) -> Environment:  # noqa, pylint: disable=line-too-long
     """Loads the environment from file.
 
         See :func:`.load_environment`.
@@ -55,7 +56,7 @@ def deserialize_environment_from_file(path: Optional[str] = None,
 
     if not os.path.isfile(path):
         if ignore_if_missing:
-            return Environment()
+            return EnvironmentImpl()
         else:
             raise ValueError("Not a valid environment file: {}".format(path))
 
@@ -63,4 +64,4 @@ def deserialize_environment_from_file(path: Optional[str] = None,
         data = json.load(file)
 
     client_config = deserialize_client_config_from_json(data)
-    return Environment(config=client_config)
+    return EnvironmentImpl(config=client_config)

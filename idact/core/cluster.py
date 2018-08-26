@@ -62,6 +62,12 @@ class Cluster(ABC):
 
     @property
     @abstractmethod
+    def name(self) -> str:
+        """Cluster name."""
+        pass
+
+    @property
+    @abstractmethod
     def config(self) -> ClusterConfig:
         """Client-side cluster config."""
         pass

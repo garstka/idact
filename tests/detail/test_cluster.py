@@ -12,6 +12,7 @@ def test_cluster_create():
                                               port=22,
                                               user='user',
                                               auth=AuthMethod.ASK)
-    ClusterImpl(config=client_cluster_config)
+    ClusterImpl(name='cluster',
+                config=client_cluster_config)
 
     assert str(client_cluster_config) == repr(client_cluster_config)

@@ -17,12 +17,16 @@ from idact.detail.slurm.allocate_slurm_nodes import allocate_slurm_nodes
 class ClusterImpl(Cluster):
     """Implementation of the :class:`.Cluster` interface.
 
-       :param config: Client-side cluster config.
+        :param name: Cluster name.
+
+        :param config: Client-side cluster config.
 
     """
 
     def __init__(self,
+                 name: str,
                  config: ClusterConfigImpl):
+        self._name = name
         self._config = config
 
     def allocate_nodes(self,
@@ -56,8 +60,11 @@ class ClusterImpl(Cluster):
         return get_access_node(config=self._config)
 
     @property
+    def name(self) -> str:
+        return self._name
+
+    @property
     def config(self) -> ClusterConfigImpl:
-        """Returns the client-side cluster config."""
         return self._config
 
     def __eq__(self, other):

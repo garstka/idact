@@ -8,7 +8,7 @@ class LoggerProvider:
     """Stores global log level and provides loggers with
         proper level and handler.
 
-        Log level is managed by :class:`.Environment`.
+        Log level is managed by :class:`.EnvironmentImpl`.
 
     """
     _state = {}

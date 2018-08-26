@@ -5,7 +5,7 @@ from idact.core.auth import AuthMethod
 from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
-from idact.detail.environment.environment import Environment
+from idact.detail.environment.environment_impl import EnvironmentImpl
 from idact.detail.environment.environment_provider import EnvironmentProvider
 
 
@@ -16,7 +16,7 @@ def test_create_environment():
                                  user='user1',
                                  auth=AuthMethod.ASK)
     config = ClientConfig(clusters={'cluster1': cluster1})
-    environment = Environment(config=config)
+    environment = EnvironmentImpl(config=config)
 
     assert environment.config is config
     assert len(environment.config.clusters) == 1
@@ -41,7 +41,7 @@ def test_environment_provider():
                                  user='user1',
                                  auth=AuthMethod.ASK)
     config = ClientConfig(clusters={'cluster1': cluster1})
-    environment = Environment(config=config)
+    environment = EnvironmentImpl(config=config)
 
     EnvironmentProvider._state = None  # pylint: disable=protected-access
     environment_provider = EnvironmentProvider(initial_environment=environment)
@@ -53,7 +53,7 @@ def test_environment_provider():
                                  user='user2',
                                  auth=AuthMethod.ASK)
     config2 = ClientConfig(clusters={'cluster2': cluster2})
-    environment2 = Environment(config=config2)
+    environment2 = EnvironmentImpl(config=config2)
     environment_provider2 = EnvironmentProvider(
         initial_environment=environment2)
 

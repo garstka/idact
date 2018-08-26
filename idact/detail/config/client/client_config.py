@@ -59,5 +59,13 @@ class ClientConfig:
 
         self._clusters[validate_cluster_name(name)] = config
 
+    def remove_cluster(self, name: str):
+        """Removes a new cluster from config.
+
+            :param name: Cluster name.
+
+        """
+        self._clusters.pop(name)
+
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
