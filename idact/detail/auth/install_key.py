@@ -10,16 +10,15 @@ from fabric.operations import run, get
 import fabric.decorators
 import fabric.tasks
 
+from idact.core.config import ClusterConfig
 from idact.detail.auth.generate_key import generate_key
 from idact.detail.auth.get_public_key_location import get_public_key_location
-from idact.detail.config.client.client_cluster_config \
-    import ClusterConfigImpl
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.yn_prompt import yn_prompt
 from idact.detail.log.get_logger import get_logger
 
 
-def try_getting_public_key_from_config(config: ClusterConfigImpl,
+def try_getting_public_key_from_config(config: ClusterConfig,
                                        log: logging.Logger) -> Optional[str]:
     """Returns the public key path from config, or `None`, if a new pair
         should be generated.
@@ -71,7 +70,7 @@ def read_public_key(public_key_path: str) -> str:
         return public_key_lines[0]
 
 
-def install_key(config: ClusterConfigImpl,
+def install_key(config: ClusterConfig,
                 authorized_keys: Optional[str] = None):
     """Installs the public key on the access node.
 

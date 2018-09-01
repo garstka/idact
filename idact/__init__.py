@@ -10,7 +10,8 @@ from idact.core.auth import AuthMethod, KeyType
 from idact.core.config import ClusterConfig, SetupActionsConfig
 from idact.core.dask_deployment import DaskDiagnostics, DaskDeployment
 from idact.core.deploy_dask import deploy_dask
-from idact.core.environment import load_environment, save_environment
+from idact.core.environment import load_environment, save_environment, \
+    pull_environment, push_environment
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Nodes, Node
 from idact.core.remove_cluster import remove_cluster
@@ -44,7 +45,9 @@ _IMPORTED = {add_cluster,
              DaskDiagnostics,
              DaskDeployment,
              deploy_dask,
-             remove_cluster}
+             remove_cluster,
+             pull_environment,
+             push_environment}
 """List of the public API members imported into the top level package
    for convenience."""
 

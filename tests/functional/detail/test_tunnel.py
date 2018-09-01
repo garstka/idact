@@ -37,7 +37,8 @@ def run_tunnel_test_for_bindings(bindings: List[Binding]):
                               ssh_username=user,
                               ssh_password=get_test_user_password(user))
 
-        server = start_dummy_server_thread(server_port=server_port)
+        server = start_dummy_server_thread(user=user,
+                                           server_port=server_port)
 
         assert tunnel.here == local_port
         assert tunnel.there == server_port

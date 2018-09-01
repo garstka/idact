@@ -37,12 +37,3 @@ class FirstHopTunnel(Tunnel):
     def forwarder(self) -> SSHTunnelForwarder:
         """SSH tunnel forwarder from the :mod:`sshtunnel` module."""
         return self._forwarder
-
-    def __str__(self):
-        return "{class_name}({here}:{there})".format(
-            class_name=self.__class__.__name__,
-            here=self.here,
-            there=self.there)
-
-    def __repr__(self):
-        return str(self)

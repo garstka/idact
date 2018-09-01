@@ -33,6 +33,18 @@ USER_23 = 'user-23'
 USER_24 = 'user-24'
 USER_25 = 'user-25'
 USER_26 = 'user-26'
+USER_27 = 'user-27'
+USER_28 = 'user-28'
+USER_29 = 'user-29'
+USER_30 = 'user-30'
+USER_31 = 'user-31'
+USER_32 = 'user-32'
+USER_33 = 'user-33'
+USER_34 = 'user-34'
+USER_35 = 'user-35'
+USER_36 = 'user-36'
+USER_37 = 'user-37'
+USER_38 = 'user-38'
 
 
 def get_test_user_password(user: str) -> str:

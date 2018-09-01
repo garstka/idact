@@ -6,21 +6,20 @@ from typing import Tuple
 
 from fabric.state import env
 
+from idact.core.config import ClusterConfig
 from idact.core.auth import AuthMethod
 from idact.detail.auth.disable_getpass import disable_getpass
 from idact.detail.auth.get_host_string import get_host_string
 from idact.detail.auth.get_password import get_password
 from idact.detail.auth.install_key import install_key
 from idact.detail.auth.install_shared_home_key import install_shared_home_key
-from idact.detail.config.client.client_cluster_config \
-    import ClusterConfigImpl
 from idact.detail.entry_point.get_entry_point_script_contents import \
     COMPUTE_NODE_AUTHORIZED_KEYS
 
 
 def get_host_strings(host: str,
                      port: int,
-                     config: ClusterConfigImpl) -> Tuple[str, str]:
+                     config: ClusterConfig) -> Tuple[str, str]:
     """Returns host strings for the gateway and target host.
 
         If the target host is the access node, there is no gateway.
@@ -45,7 +44,7 @@ def get_host_strings(host: str,
     return env_gateway, env_host_string
 
 
-def install_key_using_password_authentication(config: ClusterConfigImpl):
+def install_key_using_password_authentication(config: ClusterConfig):
     """Authenticates with a password and tries to install public key,
         using the default authorized_keys file.
 
@@ -65,7 +64,7 @@ def install_key_using_password_authentication(config: ClusterConfigImpl):
 
 
 def install_keys_using_current_authentication(access_node: str,
-                                              config: ClusterConfigImpl):
+                                              config: ClusterConfig):
     """Installs keys for authentication between the access node
         and cluster nodes. Uses current authentication.
 
@@ -89,7 +88,7 @@ def install_keys_using_current_authentication(access_node: str,
 @contextmanager
 def authenticate(host: str,
                  port: int,
-                 config: ClusterConfigImpl,
+                 config: ClusterConfig,
                  install_shared_keys: bool = False):
     """Authenticates the user in Fabric.
 

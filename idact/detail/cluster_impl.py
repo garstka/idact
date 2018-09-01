@@ -9,7 +9,7 @@ from idact.core.nodes import Nodes, Node
 from idact.core.walltime import Walltime
 from idact.detail.allocation.allocation_parameters import AllocationParameters
 from idact.detail.config.client. \
-    client_cluster_config import ClusterConfigImpl
+    client_cluster_config import ClusterConfigImpl, ClusterConfig
 from idact.detail.nodes.get_access_node import get_access_node
 from idact.detail.slurm.allocate_slurm_nodes import allocate_slurm_nodes
 
@@ -25,7 +25,7 @@ class ClusterImpl(Cluster):
 
     def __init__(self,
                  name: str,
-                 config: ClusterConfigImpl):
+                 config: ClusterConfig):
         self._name = name
         self._config = config
 

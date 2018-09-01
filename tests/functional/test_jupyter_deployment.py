@@ -27,6 +27,7 @@ def deploy_jupyter(nodes: Nodes):
         local_port = 2223
         deployment = node.deploy_notebook(local_port=local_port)
         print(deployment)
+        assert str(deployment) == repr(deployment)
 
         assert deployment.local_port == local_port
 

@@ -5,6 +5,7 @@
 """
 
 from idact.detail.environment.environment_provider import EnvironmentProvider
+from idact.detail.log.logger_provider import LoggerProvider
 
 
 def set_log_level(level: int):
@@ -19,3 +20,4 @@ def set_log_level(level: int):
     """
     environment = EnvironmentProvider().environment
     environment.set_log_level(level=level)
+    LoggerProvider().log_level = level

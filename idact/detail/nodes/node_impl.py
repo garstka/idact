@@ -10,10 +10,9 @@ import fabric.decorators
 from fabric.exceptions import CommandTimeout
 from fabric.state import env
 
+from idact.core.config import ClusterConfig
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.detail.auth.authenticate import authenticate
-from idact.detail.config.client.client_cluster_config \
-    import ClusterConfigImpl
 from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.utc_now import utc_now
@@ -31,7 +30,7 @@ class NodeImpl(NodeInternal):
     """
 
     def __init__(self,
-                 config: ClusterConfigImpl):
+                 config: ClusterConfig):
         self._config = config
         self._host = None  # type: Optional[str]
         self._port = None  # type: Optional[int]
@@ -178,7 +177,7 @@ class NodeImpl(NodeInternal):
                               local_port=local_port)
 
     @property
-    def config(self) -> ClusterConfigImpl:
+    def config(self) -> ClusterConfig:
         return self._config
 
     @property

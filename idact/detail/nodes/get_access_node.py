@@ -1,11 +1,9 @@
 """This module contains a function for getting the access node interface."""
-
-from idact.detail.config.client.client_cluster_config \
-    import ClusterConfigImpl
+from idact.core.config import ClusterConfig
 from idact.detail.nodes.node_impl import NodeImpl
 
 
-def get_access_node(config: ClusterConfigImpl) -> NodeImpl:
+def get_access_node(config: ClusterConfig) -> NodeImpl:
     """Returns the cluster access node, identified
         by :attr:`.ClusterConfig.host`.
 

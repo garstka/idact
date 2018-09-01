@@ -3,8 +3,7 @@
 from logging import INFO
 from typing import Dict, Optional
 
-from idact.detail.config.client. \
-    client_cluster_config import ClusterConfigImpl
+from idact.core.config import ClusterConfig
 from idact.detail.config.validation. \
     validate_cluster_name import validate_cluster_name
 from idact.detail.config.validation.validate_log_level \
@@ -21,7 +20,7 @@ class ClientConfig:
     """
 
     def __init__(self,
-                 clusters: Optional[Dict[str, ClusterConfigImpl]] = None,
+                 clusters: Optional[Dict[str, ClusterConfig]] = None,
                  log_level: int = INFO):
         if clusters is None:
             clusters = {}
@@ -30,7 +29,7 @@ class ClientConfig:
         self._log_level = validate_log_level(log_level)
 
     @property
-    def clusters(self) -> Dict[str, ClusterConfigImpl]:
+    def clusters(self) -> Dict[str, ClusterConfig]:
         """Map of cluster config by cluster name."""
         return self._clusters
 
@@ -45,7 +44,7 @@ class ClientConfig:
 
     def add_cluster(self,
                     name: str,
-                    config: ClusterConfigImpl):
+                    config: ClusterConfig):
         """Adds a new cluster to config.
 
             :param name: Cluster name, see validate_cluster_name.

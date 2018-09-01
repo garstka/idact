@@ -38,6 +38,7 @@ def test_environment():
         assert show_cluster(name=TEST_CLUSTER) is cluster
         assert len(show_clusters()) == 1
         assert clusters[TEST_CLUSTER] == cluster
+        assert cluster.name == TEST_CLUSTER
 
         try:
             save_environment(path=test_environment_file)

@@ -6,7 +6,9 @@ from bitmath import MiB
 
 from idact import show_cluster, Walltime, Nodes, AuthMethod
 from idact.detail.auth.set_password import set_password
+from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from idact.detail.helper.retry import retry
+from idact.detail.tunnel.close_tunnel_on_exit import close_tunnel_on_exit
 
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
@@ -16,38 +18,37 @@ from tests.helpers.test_users import get_test_user_password, USER_5, USER_13
 from tests.helpers.testing_environment import TEST_CLUSTER
 
 
-def run_tunnel_test(nodes: Nodes):
+def run_tunnel_test(user: str, nodes: Nodes):
     node = nodes[0]
     server = None
-    tunnel = None
     try:
         nodes.wait(timeout=10)
         assert nodes.running()
+        with ExitStack() as stack:
+            stack.enter_context(cancel_on_exit(nodes))
+            there = 8000
+            here = 2223
+            server = start_dummy_server_thread(user=user, server_port=there)
 
-        there = 8000
-        here = 2223
-        server = start_dummy_server_thread(server_port=there)
+            tunnel = node.tunnel(there=there, here=here)
+            print(tunnel)
+            assert str(tunnel) == repr(tunnel)
 
-        tunnel = node.tunnel(there=there, here=here)
-        print(tunnel)
+            stack.enter_context(close_tunnel_on_exit(tunnel))
+            assert tunnel.here == here
+            assert tunnel.there == there
 
-        assert tunnel.here == here
-        assert tunnel.there == there
+            def access_dummy_server():
+                return requests.get("http://127.0.0.1:{local_port}".format(
+                    local_port=here))
 
-        def access_dummy_server():
-            return requests.get("http://127.0.0.1:{local_port}".format(
-                local_port=here))
-
-        request = retry(access_dummy_server,
-                        retries=3,
-                        seconds_between_retries=2)
-        assert "text/html" in request.headers['Content-type']
+            request = retry(access_dummy_server,
+                            retries=3,
+                            seconds_between_retries=2)
+            assert "text/html" in request.headers['Content-type']
     finally:
-        if tunnel is not None:
-            tunnel.close()
         if server is not None:
             server.join()
-        nodes.cancel()
 
     assert not nodes.running()
     with pytest.raises(RuntimeError):
@@ -70,7 +71,7 @@ def test_node_tunnel():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=30))
-        run_tunnel_test(nodes)
+        run_tunnel_test(user=user, nodes=nodes)
 
 
 def test_node_tunnel_public_key():
@@ -90,4 +91,4 @@ def test_node_tunnel_public_key():
                                            cores=1,
                                            memory_per_node=MiB(100),
                                            walltime=Walltime(minutes=30))
-        run_tunnel_test(nodes)
+        run_tunnel_test(user=user, nodes=nodes)

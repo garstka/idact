@@ -7,7 +7,8 @@ from idact.core.cluster import Cluster
 from idact.core.add_cluster import add_cluster
 from idact.core.show_clusters import show_cluster, show_clusters
 from idact.core.walltime import Walltime
-from idact.core.environment import load_environment, save_environment
+from idact.core.environment import load_environment, save_environment, \
+    pull_environment, push_environment
 from idact.core.tunnel import Tunnel
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.config import ClusterConfig, SetupActionsConfig
@@ -35,6 +36,8 @@ from idact import DaskDiagnostics as DaskDiagnostics2
 from idact import DaskDeployment as DaskDeployment2
 from idact import deploy_dask as deploy_dask2
 from idact import remove_cluster as remove_cluster2
+from idact import pull_environment as pull_environment2
+from idact import push_environment as push_environment2
 
 IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (show_cluster, show_cluster2),
@@ -55,7 +58,9 @@ IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (DaskDiagnostics, DaskDiagnostics2),
                           (DaskDeployment, DaskDeployment2),
                           (deploy_dask, deploy_dask2),
-                          (remove_cluster, remove_cluster2)]
+                          (remove_cluster, remove_cluster2),
+                          (pull_environment, pull_environment2),
+                          (push_environment, push_environment2)]
 
 CORE_IMPORTS = [add_cluster,
                 load_environment,
@@ -76,14 +81,16 @@ CORE_IMPORTS = [add_cluster,
                 DaskDiagnostics,
                 DaskDeployment,
                 deploy_dask,
-                remove_cluster]
+                remove_cluster,
+                pull_environment,
+                push_environment]
 
 
 def test_aliases():
     """Tests classes and functions imported from the core package
        to the top level package.
     """
-    assert len(_IMPORTED) == 20
+    assert len(_IMPORTED) == 22
 
     for core, main in IMPORT_PAIRS_CORE_MAIN:
         assert core is main

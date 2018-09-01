@@ -1,13 +1,11 @@
-from contextlib import ExitStack
-
-from fabric.context_managers import hide
 from fabric.decorators import task
 from fabric.network import disconnect_all
 from fabric.operations import run
+from fabric.state import env
 from fabric.tasks import execute
 
-from idact.detail.auth.set_password import set_password
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
+from tests.helpers.test_users import USER_29, get_test_user_password
 
 
 def test_connection():
@@ -16,14 +14,12 @@ def test_connection():
         return run('squeue')
 
     try:
-        host = 'user-1@localhost:2222'
-        password = 'pass-1'
+        user = USER_29
+        host = "{user}@localhost:2222".format(user=user)
+        password = get_test_user_password(user)
 
-        with ExitStack() as stack:
-            stack.enter_context(hide('everything'))
-            stack.enter_context(disable_pytest_stdin())
-            stack.enter_context(set_password(password))
-
+        with disable_pytest_stdin():
+            env.password = password
             result = execute(task_1, hosts=[host])
             print('Result:')
             print(result)
@@ -32,4 +28,5 @@ def test_connection():
             'JOBID PARTITION     NAME     USER ST       '
             'TIME  NODES NODELIST(REASON)')
     finally:
+        env.password = None
         disconnect_all()

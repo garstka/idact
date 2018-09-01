@@ -2,10 +2,9 @@
 
 from time import sleep
 
+from idact.core.config import ClusterConfig
 from idact.core.nodes import Nodes
 from idact.detail.allocation.allocation_parameters import AllocationParameters
-from idact.detail.config.client.client_cluster_config \
-    import ClusterConfigImpl
 from idact.detail.nodes.get_access_node import get_access_node
 from idact.detail.nodes.node_impl import NodeImpl
 from idact.detail.nodes.nodes_impl import NodesImpl
@@ -17,7 +16,7 @@ from idact.detail.slurm.slurm_allocation import SlurmAllocation
 
 
 def allocate_slurm_nodes(parameters: AllocationParameters,
-                         config: ClusterConfigImpl) -> Nodes:
+                         config: ClusterConfig) -> Nodes:
     """Tries to allocate nodes using Slurm.
 
        :param parameters:   Allocation parameters.
@@ -28,6 +27,8 @@ def allocate_slurm_nodes(parameters: AllocationParameters,
     args = SbatchArguments(params=parameters)
 
     access_node = get_access_node(config=config)
+    print(str(access_node))
+    assert str(access_node) == repr(access_node)
 
     job_id, entry_point_script_path = run_sbatch(args=args,
                                                  node=access_node)

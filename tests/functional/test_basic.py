@@ -43,6 +43,7 @@ def test_basic():
         assert len(nodes) == 2
         assert nodes[0] in nodes
         print(nodes)
+        assert str(nodes) == repr(nodes)
 
         try:
             nodes.wait(timeout=10)
