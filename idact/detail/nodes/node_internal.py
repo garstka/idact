@@ -4,6 +4,8 @@ from abc import abstractmethod
 
 from typing import Optional, Callable, Any
 
+import bitmath
+
 from idact.core.nodes import Node
 from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl
@@ -59,4 +61,18 @@ class NodeInternal(Node):
     @abstractmethod
     def port(self) -> Optional[int]:
         """SSH port of the cluster node."""
+        pass
+
+    @property
+    @abstractmethod
+    def cores(self) -> Optional[int]:
+        """Returns the allocated node core count.
+            Returns None for a node that was not allocated."""
+        pass
+
+    @property
+    @abstractmethod
+    def memory(self) -> Optional[bitmath.Byte]:
+        """Returns the allocated node memory limit.
+            Returns None for a node that was not allocated."""
         pass

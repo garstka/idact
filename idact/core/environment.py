@@ -22,9 +22,9 @@ from idact.detail.log.get_logger import get_logger
 def load_environment(path: Optional[str] = None):
     """Loads the environment from file.
 
-       :param path: Path to environment file.
-                    Default: IDACT_CONFIG_PATH environment variable,
-                             or ~/.idact.conf
+        :param path: Path to environment file.
+                     Default: IDACT_CONFIG_PATH environment variable,
+                     or ~/.idact.conf
     """
     environment = deserialize_environment_from_file(path=path)
     EnvironmentProvider().environment = environment
@@ -33,9 +33,9 @@ def load_environment(path: Optional[str] = None):
 def save_environment(path: Optional[str] = None):
     """Saves the environment to file.
 
-       :param path: Path to environment file.
-                    Default: IDACT_CONFIG_PATH environment variable,
-                             or ~/.idact.conf
+        :param path: Path to environment file.
+                     Default: IDACT_CONFIG_PATH environment variable,
+                     or ~/.idact.conf
     """
     environment = EnvironmentProvider().environment
     serialize_environment_to_file(environment=environment,
@@ -50,7 +50,7 @@ def pull_environment(cluster: Cluster,
 
         :param path: Path to remote environment file.
                      Default: Remote IDACT_CONFIG_PATH environment variable,
-                              or ~/.idact.conf
+                     or ~/.idact.conf
 
     """
     remote_environment = deserialize_environment_from_cluster(cluster=cluster,
@@ -68,7 +68,7 @@ def push_environment(cluster: Cluster, path: Optional[str] = None):
 
         :param path: Path to remote environment file.
                      Default: Remote IDACT_CONFIG_PATH environment variable,
-                              or ~/.idact.conf
+                     or ~/.idact.conf
     """
     log = get_logger(__name__)
     try:

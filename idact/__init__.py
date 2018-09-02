@@ -13,6 +13,7 @@ from idact.core.deploy_dask import deploy_dask
 from idact.core.environment import load_environment, save_environment, \
     pull_environment, push_environment
 from idact.core.jupyter_deployment import JupyterDeployment
+from idact.core.node_resource_status import NodeResourceStatus
 from idact.core.nodes import Nodes, Node
 from idact.core.remove_cluster import remove_cluster
 from idact.core.set_log_level import set_log_level
@@ -47,7 +48,8 @@ _IMPORTED = {add_cluster,
              deploy_dask,
              remove_cluster,
              pull_environment,
-             push_environment}
+             push_environment,
+             NodeResourceStatus}
 """List of the public API members imported into the top level package
    for convenience."""
 

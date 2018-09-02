@@ -48,7 +48,7 @@ def serialize_environment_to_cluster(environment: Environment,
 
         :param path: Remote file path.
                      Default: IDACT_CONFIG_PATH environment variable,
-                              or ~/.idact.conf
+                     or ~/.idact.conf
 
     """
     node = cluster.get_access_node()
@@ -75,7 +75,7 @@ def deserialize_environment_from_cluster(cluster: Cluster,
 
         :param path: Remote file path.
                      Default: Remote IDACT_CONFIG_PATH environment variable,
-                              or ~/.idact.conf
+                     or ~/.idact.conf
 
     """
     node = cluster.get_access_node()

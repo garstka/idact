@@ -12,12 +12,14 @@ from fabric.state import env
 
 from idact.core.config import ClusterConfig
 from idact.core.jupyter_deployment import JupyterDeployment
+from idact.core.node_resource_status import NodeResourceStatus
 from idact.detail.auth.authenticate import authenticate
 from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.utc_now import utc_now
 from idact.detail.jupyter.deploy_jupyter import deploy_jupyter
 from idact.detail.nodes.node_internal import NodeInternal
+from idact.detail.nodes.node_resource_status_impl import NodeResourceStatusImpl
 from idact.detail.tunnel.binding import Binding
 from idact.detail.tunnel.build_tunnel import build_tunnel
 
@@ -195,3 +197,7 @@ class NodeImpl(NodeInternal):
     @property
     def memory(self) -> Optional[bitmath.Byte]:
         return self._memory
+
+    @property
+    def resources(self) -> NodeResourceStatus:
+        return NodeResourceStatusImpl(node=self)

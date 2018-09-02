@@ -15,6 +15,7 @@ from idact.core.config import ClusterConfig, SetupActionsConfig
 from idact.core.dask_deployment import DaskDeployment, DaskDiagnostics
 from idact.core.deploy_dask import deploy_dask
 from idact.core.remove_cluster import remove_cluster
+from idact.core.node_resource_status import NodeResourceStatus
 from idact import _IMPORTED
 from idact import add_cluster as add_cluster2
 from idact import show_cluster as show_cluster2
@@ -38,6 +39,7 @@ from idact import deploy_dask as deploy_dask2
 from idact import remove_cluster as remove_cluster2
 from idact import pull_environment as pull_environment2
 from idact import push_environment as push_environment2
+from idact import NodeResourceStatus as NodeResourceStatus2
 
 IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (show_cluster, show_cluster2),
@@ -60,7 +62,8 @@ IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (deploy_dask, deploy_dask2),
                           (remove_cluster, remove_cluster2),
                           (pull_environment, pull_environment2),
-                          (push_environment, push_environment2)]
+                          (push_environment, push_environment2),
+                          (NodeResourceStatus, NodeResourceStatus2)]
 
 CORE_IMPORTS = [add_cluster,
                 load_environment,
@@ -83,14 +86,15 @@ CORE_IMPORTS = [add_cluster,
                 deploy_dask,
                 remove_cluster,
                 pull_environment,
-                push_environment]
+                push_environment,
+                NodeResourceStatus]
 
 
 def test_aliases():
     """Tests classes and functions imported from the core package
        to the top level package.
     """
-    assert len(_IMPORTED) == 22
+    assert len(_IMPORTED) == 23
 
     for core, main in IMPORT_PAIRS_CORE_MAIN:
         assert core is main

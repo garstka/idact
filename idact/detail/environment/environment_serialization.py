@@ -22,7 +22,7 @@ def serialize_environment_to_file(environment: Environment,
 
         :param path: Output file path.
                      Default: IDACT_CONFIG_PATH environment variable,
-                              or ~/.idact.conf
+                     or ~/.idact.conf
 
     """
     if path is None:
@@ -41,7 +41,7 @@ def deserialize_environment_from_file(path: Optional[str] = None,
 
         :param path: Environment file path.
                      Default: IDACT_CONFIG_PATH environment variable,
-                              or ~/.idact.conf
+                     or ~/.idact.conf
 
         :param ignore_if_missing: Do not raise :class:`.ValueError` if the file
                                   is missing. Default: `False`.
@@ -56,8 +56,7 @@ def deserialize_environment_from_file(path: Optional[str] = None,
     if not os.path.isfile(path):
         if ignore_if_missing:
             return EnvironmentImpl()
-        else:
-            raise ValueError("Not a valid environment file: {}".format(path))
+        raise ValueError("Not a valid environment file: {}".format(path))
 
     with open(path, 'r') as file:
         file_contents = file.read()

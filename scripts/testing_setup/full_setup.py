@@ -22,7 +22,8 @@ COMMANDS = [i.format(python=PYTHON) for i in
              '{python} install_python.py',
              '{python} install_jupyter.py',
              '{python} install_dask.py',
-             '{python} install_srun_mock.py', ]]
+             '{python} install_srun_mock.py',
+             '{python} install_stress.py']]
 
 
 def main():

@@ -9,9 +9,8 @@ from collections.abc import Sequence
 
 from typing import Optional
 
-import bitmath
-
 from idact.core.jupyter_deployment import JupyterDeployment
+from idact.core.node_resource_status import NodeResourceStatus
 from idact.core.tunnel import Tunnel
 
 
@@ -51,16 +50,8 @@ class Node(ABC):
 
     @property
     @abstractmethod
-    def cores(self) -> Optional[int]:
-        """Returns the allocated node core count.
-            Returns None for a node that was not allocated."""
-        pass
-
-    @property
-    @abstractmethod
-    def memory(self) -> Optional[bitmath.Byte]:
-        """Returns the allocated node memory limit.
-            Returns None for a node that was not allocated."""
+    def resources(self) -> NodeResourceStatus:
+        """Returns the node resource status, like CPU and memory usage."""
         pass
 
 

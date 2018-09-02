@@ -83,8 +83,8 @@ def test_allocate_defaults():
             nodes.wait(timeout=10)
             assert nodes.running()
 
-            assert node.cores == 1
-            assert node.memory == bitmath.GiB(1)
+            assert node.resources.cpu_cores == 1
+            assert node.resources.memory_total == bitmath.GiB(1)
             print(node)
 
             assert node.run('whoami') == user
@@ -112,8 +112,8 @@ def test_allocate_with_string_params():
             nodes.wait(timeout=10)
             assert nodes.running()
 
-            assert node.cores == 1
-            assert node.memory == bitmath.MiB(500)
+            assert node.resources.cpu_cores == 1
+            assert node.resources.memory_total == bitmath.MiB(500)
             print(node)
 
             assert node.run('whoami') == user
