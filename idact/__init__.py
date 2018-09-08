@@ -25,7 +25,7 @@ from idact.core.cluster import Cluster
 
 __author__ = """Matt Garstka"""
 __email__ = 'matt.garstka@gmail.com'
-__version__ = '0.1.0'
+__version__ = '0.2'
 
 _IMPORTED = {add_cluster,
              load_environment,

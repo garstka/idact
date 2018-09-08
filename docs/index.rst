@@ -17,6 +17,7 @@ For internals see :py:mod:`idact.detail`.
    notebooks
    api/tests
    scripts
+   changelog
    license
 
 Indices and tables

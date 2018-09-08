@@ -18,6 +18,7 @@ Core classes
  - :py:class:`.JupyterDeployment`
  - :py:class:`.KeyType`
  - :py:class:`.Node`
+ - :py:class:`.NodeResourceStatus`
  - :py:class:`.Nodes`
  - :py:class:`.SetupActionsConfig`
  - :py:class:`.Tunnel`
@@ -37,6 +38,7 @@ Core implementation classes:
  - :py:class:`.DaskDiagnosticsImpl`
  - :py:class:`.FirstHopTunnel`
  - :py:class:`.NodeInternal`
+ - :py:class:`.NodeResourceStatusImpl`
  - :py:class:`.MultiHopTunnel`
  - :py:class:`.JupyterDeploymentImpl`
  - :py:class:`.NodeImpl`

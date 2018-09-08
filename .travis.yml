@@ -38,7 +38,7 @@ script:
   - unbuffer python scripts/view_coverage.py --no-show
 after_success:
   - unbuffer python scripts/testing_setup/full_teardown.py
-  - if [[ $DEPLOY_DOCS -eq 1 ]]; then unbuffer python scripts/deploy_docs.py; fi
+  - if [ $DEPLOY_DOCS -eq 1 ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then unbuffer python scripts/deploy_docs.py; fi
 env:
   global:
     secure: OD71Zl92cLE6wk+P/0P1MxbG6QhsgW4973XpL8FLMP1soe0GcWZREbafy3C60cI8xED0JNeYQ/mgX0I3U5fusnHylix8dt0njSH3pAfrxOxzX13ayIuk7Rl56IdcVXqNfCIvv9mwFEX/oiGbJcF773q0+4SKklhtAD5z7gedbJSLBV+yC/L8BuykE0Yk6asrQmZ9kVGz5FRcBZwpAj0ZwkR0aZIT6Jn9AnamMVRWsSmRC7xOtpxtbDEg8aeEOKY5O6LOFzSdoqQBqrd1Tnvln2wXmJ2wQCI9raeheT1+6WojV6c68kRGlWy0CQRu3bYcPzdXXsNBMhEeGsondhUkuqi6F9j6mAIDGX2IuGwsqIJ9dUJYfTaUBlNawFZm28RfxoHC+t0FHDb7nOm28f3z0yplnyWu+zLTwhgeje5GQORnjWiD47BM36Zb44zC2muvzxJS1CDw6RHGcm+0OAtnW8LNxyW2hLR0eLx7H2Dbkudnn3GspWqv6UJNXJAqUJm7+YA1tVYGSUWOzGa9lLXosoi0BQ9ro6NivcDrjDK08r1qdCIetYhcnh4OKlXkSXsfw4FcaxNp3Qj2t1/R+kAAUfDnjOn8/4Zl/7str11LHimbUutOEynLWZSI5tbKPnLP6t0buVOHsKuaHZHlNtZlss9tNXesNmMGhucbkMtNa4A=
