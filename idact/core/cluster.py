@@ -9,7 +9,8 @@ from typing import Union, Optional, Dict
 
 import bitmath
 
-from idact.core.nodes import Nodes
+from idact.core.config import ClusterConfig
+from idact.core.nodes import Nodes, Node
 from idact.core.walltime import Walltime
 
 
@@ -49,7 +50,24 @@ class Cluster(ABC):
             :param native_args:
                 * Native arguments for the workload manager.
                 * Values are not validated.
-                * Native arguments take precedence over other arguments.
+                * Supported arguments take precedence over native arguments.
                 * Arguments with None as value are treated as flags.
         """
+        pass
+
+    @abstractmethod
+    def get_access_node(self) -> Node:
+        """Returns the cluster head node, which does not require allocation."""
+        pass
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """Cluster name."""
+        pass
+
+    @property
+    @abstractmethod
+    def config(self) -> ClusterConfig:
+        """Client-side cluster config."""
         pass

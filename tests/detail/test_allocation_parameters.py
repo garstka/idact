@@ -1,3 +1,5 @@
+"""Tests for allocation parameters."""
+
 from bitmath import GiB
 
 from idact import Walltime
@@ -5,6 +7,7 @@ from idact.detail.allocation.allocation_parameters import AllocationParameters
 
 
 def test_allocation_parameters_create_empty():
+    """Tests default construction of allocation parameters."""
     params = AllocationParameters()
 
     assert params.all == {'nodes': None,
@@ -15,6 +18,7 @@ def test_allocation_parameters_create_empty():
 
 
 def test_allocation_parameters_create():
+    """Tests construction of allocation parameters."""
     params = AllocationParameters(nodes=1,
                                   cores=2,
                                   memory_per_node=GiB(1),

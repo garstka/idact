@@ -9,15 +9,49 @@ from collections.abc import Sequence
 
 from typing import Optional
 
+from idact.core.jupyter_deployment import JupyterDeployment
+from idact.core.node_resource_status import NodeResourceStatus
+from idact.core.tunnel import Tunnel
+
 
 class Node(ABC):
     """Cluster node interface."""
 
     @abstractmethod
-    def run(self, command: str) -> str:
+    def run(self, command: str, timeout: Optional[int] = None) -> str:
         """Runs a command on the node. Returns the result as string.
 
-            :param command: Command to run."""
+            :param command: Command to run.
+
+            :param timeout: Execution timeout.
+        """
+        pass
+
+    @abstractmethod
+    def tunnel(self,
+               there: int,
+               here: Optional[int] = None) -> Tunnel:
+        """Creates an SSH tunnel from node to localhost.
+
+            :param there: Remote port to tunnel.
+
+            :param here: Local port, or None for any port.
+        """
+        pass
+
+    @abstractmethod
+    def deploy_notebook(self,
+                        local_port: int = 8080) -> JupyterDeployment:
+        """Deploys a Jupyter notebook on the node..
+
+            :param local_port: Local notebook access port.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def resources(self) -> NodeResourceStatus:
+        """Returns the node resource status, like CPU and memory usage."""
         pass
 
 
@@ -45,7 +79,7 @@ class Nodes(Sequence):
 
     @abstractmethod
     def running(self) -> bool:
-        """Returns true if the nodes are running."""
+        """Returns True if the nodes are running."""
         pass
 
     @abstractmethod

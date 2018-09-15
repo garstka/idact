@@ -1,3 +1,6 @@
+"""This module contains the implementation of the interface for a collection
+    of nodes."""
+
 from typing import List, Optional
 
 from idact.core.nodes import Nodes, Node
@@ -11,6 +14,7 @@ class NodesImpl(Nodes):  # pylint: disable=too-many-ancestors
         :param nodes: Nodes to be part of the collection.
 
         :param allocation: Allocation request for the nodes.
+
     """
 
     def __init__(self,
@@ -41,3 +45,6 @@ class NodesImpl(Nodes):  # pylint: disable=too-many-ancestors
     def __str__(self):
         return "Nodes([{}])".format(','.join(
             [str(node) for node in self._nodes]))
+
+    def __repr__(self):
+        return str(self)

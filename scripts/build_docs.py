@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Builds sphinx docs and opens index in browser
-   unless --no-show option is set."""
+"""Builds sphinx docs and opens the index page in browser
+   unless :command:`--no-show` option is set."""
 
 import os
 import subprocess as sub
@@ -44,11 +44,11 @@ DOCS_INDEX_PATH = '{}/_build/html/index.html'.format(DOCS_ROOT)
 
 MODULES_TO_APIDOC = ['idact',
                      'tests',
-                     'scripts',
-                     'testing_setup']
+                     'scripts']
 
 
 def main(argv):
+    """Main script function."""
     try:
         no_show = len(argv) == 2 and argv[1] == '--no-show'
 

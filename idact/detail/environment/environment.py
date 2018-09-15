@@ -1,48 +1,57 @@
-from typing import Optional, Dict
+"""This module contains the implementation of an idact environment."""
+from abc import abstractmethod, ABC
+from typing import Dict
 
 from idact.core.cluster import Cluster
-from idact.detail.cluster_impl import ClusterImpl
 from idact.detail.config.client. \
-    client_cluster_config import ClientClusterConfig
+    client_cluster_config import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
 
 
-class Environment:
-    """User working environment.
-
-        :param config: Client-side configuration. Default: empty.
-    """
-
-    def __init__(self, config: Optional[ClientConfig] = None):
-        self._config = ClientConfig(clusters={}) if not config else config
-        self._clusters = {name: ClusterImpl(client_config=cluster_config)
-                          for name, cluster_config
-                          in self._config.clusters.items()}
+class Environment(ABC):
+    """User working environment."""
 
     @property
+    @abstractmethod
     def config(self) -> ClientConfig:
         """Client-side configuration."""
-        return self._config
+        pass
 
     @property
+    @abstractmethod
     def clusters(self) -> Dict[str, Cluster]:
         """All :class:`.Cluster` objects defined by configuration."""
-        return self._clusters
+        pass
 
+    @abstractmethod
     def add_cluster(self,
                     name: str,
-                    client_config: ClientClusterConfig) -> Cluster:
+                    config: ClusterConfigImpl) -> Cluster:
         """Adds a cluster to config and cluster list.
-           Returns the added :class:`.Cluster`.
+            Returns the added :class:`.Cluster`.
 
-            :param name:          Cluster name.
+             :param name:   Cluster name.
 
-            :param client_config: Client-side cluster config.
+             :param config: Client-side cluster config.
+
         """
+        pass
 
-        self.config.add_cluster(name=name,
-                                config=client_config)
-        cluster = ClusterImpl(client_config=client_config)
-        self.clusters[name] = cluster
+    @abstractmethod
+    def remove_cluster(self, name: str):
+        """Removes the cluster from config and cluster list.
 
-        return cluster
+             :param name:   Cluster name.
+        """
+        pass
+
+    @abstractmethod
+    def set_log_level(self, level: int):
+        """Sets the log level for idact.
+
+            See :func:`.set_log_level`.
+
+            :param level: Log level.
+
+        """
+        pass

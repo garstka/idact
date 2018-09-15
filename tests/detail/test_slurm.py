@@ -15,8 +15,9 @@ def test_sbatch_arguments_create():
 
     sbatch_args = SbatchArguments(params=params)
 
+    assert sbatch_args.native_args == {}
     assert sbatch_args.args == {'--nodes': '1',
-                                '--ntasks-per-node': '2',
+                                '--cpus-per-task': '2',
                                 '--mem': '1048576K',
                                 '--time': '0-00:10:00'}
 
@@ -32,12 +33,13 @@ def test_sbatch_arguments_create_with_native():
 
     sbatch_args = SbatchArguments(params=params)
 
+    assert sbatch_args.native_args == {'--mem': '8G',
+                                       '--arg1': 'def',
+                                       '--arg2': None}
     assert sbatch_args.args == {'--nodes': '1',
-                                '--ntasks-per-node': '2',
-                                '--mem': '8G',
-                                '--time': '0-00:10:00',
-                                '--arg1': 'def',
-                                '--arg2': None}
+                                '--cpus-per-task': '2',
+                                '--mem': '1048576K',
+                                '--time': '0-00:10:00'}
 
 
 def test_sbatch_arguments_missing_required():
@@ -71,18 +73,28 @@ def test_format_sbatch_allocation_request():
 
     args = SbatchArguments(params=params)
 
-    formatted = format_sbatch_allocation_request(args=args)
-    assert formatted == ("sbatch"
-                         " --arg1 'def; rm -rf /abc &&'"
-                         " --arg2"
-                         " --arg3 'a b c'"
-                         " '--arg4 ||' 3"
-                         " --mem 8G"
-                         " --nodes 1"
-                         " --ntasks-per-node 2"
-                         " --time 0-00:10:00"
-                         " arg5 '3#'"
-                         " --parsable"
-                         " --output=/dev/null"
-                         " --wrap='/bin/bash -c"
-                         " \"trap : TERM INT; sleep infinity & wait\"'")
+    formatted = format_sbatch_allocation_request(
+        args=args,
+        entry_point_script='/home/user/script')
+
+    expected = ("sbatch"
+                " --arg1 'def; rm -rf /abc &&'"
+                " --arg2"
+                " --arg3 'a b c'"
+                " '--arg4 ||' 3"
+                " --mem 8G"
+                " arg5 '3#'"
+                " --cpus-per-task 2"
+                " --mem 1048576K"
+                " --nodes 1"
+                " --time 0-00:10:00"
+                " --tasks-per-node=1"
+                " --parsable"
+                " --output=/dev/null"
+                " --wrap='export IDACT_ALLOCATION_ID=$SLURM_JOB_ID"
+                " ; srun /home/user/script'")
+    print()
+    print(formatted)
+    print(expected)
+
+    assert formatted == expected

@@ -1,3 +1,5 @@
+"""This module contains generic allocation parameters."""
+
 from typing import Optional, Any, Dict
 
 import bitmath
@@ -33,24 +35,30 @@ class AllocationParameters:
 
     @property
     def nodes(self) -> Optional[int]:
+        """Cluster node count."""
         return self._nodes
 
     @property
     def cores(self) -> Optional[int]:
+        """CPU core count per node."""
         return self._cores
 
     @property
     def memory_per_node(self) -> Optional[bitmath.Byte]:
+        """Memory per node."""
         return self._memory_per_node
 
     @property
     def walltime(self) -> Optional[Walltime]:
+        """Maximum time to allocate the resources for."""
         return self._walltime
 
     @property
     def all(self) -> Dict[str, Any]:
+        """All parameters by name."""
         return self._all
 
     @property
     def native_args(self) -> Dict[str, Optional[str]]:
+        """Native arguments for the workload manager."""
         return self._native_args

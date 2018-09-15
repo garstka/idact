@@ -1,3 +1,5 @@
+"""This module contains a function for validating a port number."""
+
 from idact.detail.config.validation.validation_error_message import \
     validation_error_message
 
@@ -6,11 +8,17 @@ VALID_PORT_RANGE_DESCRIPTION = 'An integer from 1 to 65535.'
 
 
 def validate_port(port) -> int:
-    """Valid port is an integer in range(1, 2**16)
-       If port is invalid, raises a ValueError or TypeError.
-       Otherwise, returns port.
+    """Returns the parameter if it's a valid port, otherwise raises
+        an exception.
+
+        Valid port is an integer in range(1, 2**16).
 
         :param port: Object to validate.
+
+        :raises TypeError: On wrong type.
+
+        :raises ValueError: When integer is out of range.
+
     """
     if not isinstance(port, int):
         raise TypeError(validation_error_message(

@@ -6,18 +6,26 @@ idact package
 
 Top-level package for Interactive Data Analysis Convenience Tools.
 """
-
-from idact.core.auth import AuthMethod
-from idact.core.environment import load_environment, save_environment
+from idact.core.auth import AuthMethod, KeyType
+from idact.core.config import ClusterConfig, SetupActionsConfig
+from idact.core.dask_deployment import DaskDiagnostics, DaskDeployment
+from idact.core.deploy_dask import deploy_dask
+from idact.core.environment import load_environment, save_environment, \
+    pull_environment, push_environment
+from idact.core.jupyter_deployment import JupyterDeployment
+from idact.core.node_resource_status import NodeResourceStatus
 from idact.core.nodes import Nodes, Node
+from idact.core.remove_cluster import remove_cluster
+from idact.core.set_log_level import set_log_level
 from idact.core.show_clusters import show_cluster, show_clusters
+from idact.core.tunnel import Tunnel
 from idact.core.walltime import Walltime
 from idact.core.add_cluster import add_cluster
 from idact.core.cluster import Cluster
 
 __author__ = """Matt Garstka"""
 __email__ = 'matt.garstka@gmail.com'
-__version__ = '0.1.0'
+__version__ = '0.2'
 
 _IMPORTED = {add_cluster,
              load_environment,
@@ -28,7 +36,20 @@ _IMPORTED = {add_cluster,
              Cluster,
              Walltime,
              Node,
-             Nodes}
+             Nodes,
+             Tunnel,
+             JupyterDeployment,
+             KeyType,
+             set_log_level,
+             ClusterConfig,
+             SetupActionsConfig,
+             DaskDiagnostics,
+             DaskDeployment,
+             deploy_dask,
+             remove_cluster,
+             pull_environment,
+             push_environment,
+             NodeResourceStatus}
 """List of the public API members imported into the top level package
    for convenience."""
 

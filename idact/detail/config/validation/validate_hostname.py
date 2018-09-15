@@ -1,3 +1,5 @@
+"""This module contains a function for validating a hostname."""
+
 import re
 from idact.detail.config.validation.validation_error_message import \
     validation_error_message
@@ -9,12 +11,16 @@ VALID_HOSTNAME_REGEX_DESCRIPTION = "RFC 1123 hostname."
 __COMPILED = re.compile(pattern=VALID_HOSTNAME_REGEX)
 
 
-def validate_hostname(hostname):
-    """Valid cluster name is a string matching VALID_HOSTNAME_REGEX.
-       If hostname is invalid, raises a ValueError or TypeError.
-       Otherwise, returns hostname.
+def validate_hostname(hostname) -> str:
+    """Returns the parameter if it's a valid hostname, otherwise raises
+        an exception.
+
+        Valid hostname is a string matching :attr:`.VALID_HOSTNAME_REGEX`.
 
         :param hostname: Object to validate.
+
+        :raises ValueError: On regex mismatch.
+
     """
     if not __COMPILED.match(hostname):
         raise ValueError(validation_error_message(

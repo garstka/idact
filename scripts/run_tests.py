@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Runs all tests, flake8 and Pylint."""
+"""Runs all tests, `flake8` and `Pylint`."""
 
 import os
 import subprocess
@@ -29,6 +29,7 @@ def run(command):
 
 
 def main():
+    """Main script function."""
     os.chdir(WORKING_DIR)
 
     codes = [(command, run(command))

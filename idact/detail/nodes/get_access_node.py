@@ -1,17 +1,21 @@
-from idact.detail.config.client.client_cluster_config \
-    import ClientClusterConfig
+"""This module contains a function for getting the access node interface."""
+from idact.core.config import ClusterConfig
 from idact.detail.nodes.node_impl import NodeImpl
 
 
-def get_access_node(config: ClientClusterConfig) -> NodeImpl:
+def get_access_node(config: ClusterConfig) -> NodeImpl:
     """Returns the cluster access node, identified
-       by :attr:`.ClientClusterConfig.host`.
+        by :attr:`.ClusterConfig.host`.
 
-       An access node is expected to be available without allocation.
+        An access node is expected to be available without allocation.
 
-       :param config: Client cluster config.
+        :param config: Client cluster config.
+
     """
     node = NodeImpl(config=config)
     node.make_allocated(host=config.host,
+                        port=config.port,
+                        cores=None,
+                        memory=None,
                         allocated_until=None)
     return node

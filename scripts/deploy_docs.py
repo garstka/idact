@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Deploys documentation to GitHub pages."""
+"""Deploys documentation to GitHub pages.
+
+    If the environment variable :attr:`TRAVIS_BRANCH` is set, it overrides
+    the current git branch.
+    If the environment variable :attr:`GH_TOKEN` is set, it is used as the API
+    token.
+"""
 
 import os
 import shutil
@@ -8,6 +14,7 @@ import sys
 
 
 def get_current_git_branch():
+    """Returns the current git branch."""
     return str(sub.check_output("git rev-parse --abbrev-ref HEAD",
                                 shell=True).splitlines()[0], 'utf-8')
 
@@ -38,7 +45,10 @@ COMMIT_MESSAGE = ("Deploy docs for branch {git_branch},"
 
 
 def main():
+    """Main script function."""
+
     def call(command):
+        """Alias for shell check_call."""
         sub.check_call(command, shell=True)
 
     try:

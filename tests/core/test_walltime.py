@@ -1,3 +1,5 @@
+"""Tests for :class:`.Walltime`."""
+
 import pytest
 
 from idact.core.walltime import Walltime
