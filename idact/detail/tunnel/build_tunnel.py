@@ -1,5 +1,4 @@
 """This module contains a function that builds an SSH tunnel."""
-
 from typing import List, Optional
 
 from sshtunnel import SSHTunnelForwarder
@@ -10,6 +9,7 @@ from idact.detail.tunnel.first_hop_tunnel import FirstHopTunnel
 from idact.detail.tunnel.multi_hop_tunnel import MultiHopTunnel
 
 ANY_ADDRESS = ("", 0)
+TUNNEL_KEEPALIVE = 30.0
 
 
 def build_tunnel(bindings: List[Binding],
@@ -43,11 +43,14 @@ def build_tunnel(bindings: List[Binding],
         tunnels.append(FirstHopTunnel(
             forwarder=SSHTunnelForwarder(
                 (hostname, port),
+                ssh_config_file=None,
                 ssh_username=ssh_username,
                 ssh_password=ssh_password,
                 ssh_pkey=ssh_pkey,
                 local_bind_address=ANY_ADDRESS,
-                remote_bind_address=bindings[1].as_tuple()),
+                remote_bind_address=bindings[1].as_tuple(),
+                set_keepalive=TUNNEL_KEEPALIVE,
+                allow_agent=False),
             there=bindings[1].port))
 
     # Middle hops if any
@@ -58,11 +61,14 @@ def build_tunnel(bindings: List[Binding],
             FirstHopTunnel(
                 forwarder=SSHTunnelForwarder(
                     ("127.0.0.1", prev_tunnel.forwarder.local_bind_port),
+                    ssh_config_file=None,
                     ssh_username=ssh_username,
                     ssh_password=ssh_password,
                     ssh_pkey=ssh_pkey,
                     local_bind_address=ANY_ADDRESS,
-                    remote_bind_address=next_binding.as_tuple()),
+                    remote_bind_address=next_binding.as_tuple(),
+                    set_keepalive=TUNNEL_KEEPALIVE,
+                    allow_agent=False),
                 there=next_binding.port)
 
         tunnels.append(next_tunnel)
@@ -76,11 +82,14 @@ def build_tunnel(bindings: List[Binding],
     tunnels.append(FirstHopTunnel(
         forwarder=SSHTunnelForwarder(
             ("127.0.0.1", last_hop_port),
+            ssh_config_file=None,
             ssh_username=ssh_username,
             ssh_password=ssh_password,
             ssh_pkey=ssh_pkey,
             local_bind_address=bindings[0].as_tuple(),
-            remote_bind_address=bindings[-1].as_tuple()),
+            remote_bind_address=bindings[-1].as_tuple(),
+            set_keepalive=TUNNEL_KEEPALIVE,
+            allow_agent=False),
         there=bindings[-1].port))
 
     if len(tunnels) == 1:

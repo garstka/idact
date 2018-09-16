@@ -117,7 +117,6 @@ class NodeImpl(NodeInternal):
                                     or contain timezone info.
                                     None is treated as unlimited allocation.
 
-
         """
         self._host = host
         self._port = port

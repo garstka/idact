@@ -35,10 +35,10 @@ def test_can_read_node_resources():
 
         access_node = cluster.get_access_node()
 
-        start_stress_cpu(user=user, timeout=5)
+        assert access_node.resources.cpu_cores is None
+        assert access_node.resources.memory_total is None
+        start_stress_cpu(user=user, timeout=10)
         try:
-            assert access_node.resources.cpu_cores is None
-            assert access_node.resources.memory_total is None
             check_resources_in_believable_range(access_node.resources)
         finally:
             stop_stress_cpu(user=user)
@@ -54,10 +54,10 @@ def test_can_read_node_resources():
         nodes.wait(timeout=10)
         assert nodes.running()
 
-        start_stress_cpu(user=user, timeout=5)
+        assert node.resources.cpu_cores == 1
+        assert node.resources.memory_total == bitmath.GiB(0.8)
+        start_stress_cpu(user=user, timeout=10)
         try:
-            assert node.resources.cpu_cores == 1
-            assert node.resources.memory_total == bitmath.GiB(0.8)
             check_resources_in_believable_range(access_node.resources)
         finally:
             stop_stress_cpu(user=user)

@@ -160,7 +160,8 @@ def test_generate_and_install_key_on_access_node():
                     port=get_testing_port(),
                     auth=AuthMethod.PUBLIC_KEY,
                     key=KeyType.RSA,
-                    install_key=True)
+                    install_key=True,
+                    port_info_retries=0)
 
         check_remote_key_and_node_access(user=user)
 
@@ -205,7 +206,8 @@ def test_install_already_generated_key_on_access_node():
                     port=get_testing_port(),
                     auth=AuthMethod.PUBLIC_KEY,
                     key=key,
-                    install_key=True)
+                    install_key=True,
+                    port_info_retries=0)
 
         check_remote_key_and_node_access(user=user)
 
@@ -226,7 +228,8 @@ def test_generate_and_install_missing_key_on_access_node():
                     port=get_testing_port(),
                     auth=AuthMethod.PUBLIC_KEY,
                     key=missing_key,
-                    install_key=True)
+                    install_key=True,
+                    port_info_retries=0)
 
         cluster = show_cluster(TEST_CLUSTER)
         node = cluster.get_access_node()
@@ -264,7 +267,8 @@ def test_generate_and_install_key_no_sshd():
                     auth=AuthMethod.PUBLIC_KEY,
                     key=KeyType.RSA,
                     install_key=True,
-                    disable_sshd=True)
+                    disable_sshd=True,
+                    port_info_retries=0)
 
         check_remote_key_and_node_access(user=user)
 

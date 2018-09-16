@@ -3,15 +3,14 @@
 
 from typing import Optional
 
-import fabric.decorators
-
 from idact.core.nodes import Node
 from idact.core.cluster import Cluster
 from idact.detail.environment.environment import Environment
 from idact.detail.environment.environment_text_serialization import \
     deserialize_environment, serialize_environment
-from idact.detail.helper.get_remote_file import get_remote_file
-from idact.detail.helper.put_remote_file import put_remote_file
+from idact.detail.helper.get_remote_file import get_file_from_node
+from idact.detail.helper.put_remote_file import put_file_on_node
+from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
 DEFAULT_REMOTE_ENVIRONMENT_PATH = '~/.idact.conf'
@@ -51,17 +50,20 @@ def serialize_environment_to_cluster(environment: Environment,
                      or ~/.idact.conf
 
     """
+    log = get_logger(__name__)
+    log.debug("Serializing environment to cluster.")
+
     node = cluster.get_access_node()
     assert isinstance(node, NodeInternal)
     path = get_remote_environment_path(node=node, path=path)
 
     file_contents = serialize_environment(environment)
 
-    @fabric.decorators.task
-    def file_upload_task():
-        put_remote_file(remote_path=path, contents=file_contents)
+    put_file_on_node(node=node,
+                     remote_path=path,
+                     contents=file_contents)
 
-    node.run_task(task=file_upload_task)
+    log.debug("Success: Serializing environment to cluster.")
 
 
 def deserialize_environment_from_cluster(cluster: Cluster,
@@ -78,13 +80,16 @@ def deserialize_environment_from_cluster(cluster: Cluster,
                      or ~/.idact.conf
 
     """
+    log = get_logger(__name__)
+    log.debug("Deserializing environment from cluster.")
+
     node = cluster.get_access_node()
     assert isinstance(node, NodeInternal)
     path = get_remote_environment_path(node=node, path=path)
 
-    @fabric.decorators.task
-    def file_download_task():
-        return get_remote_file(remote_path=path)
+    file_contents = get_file_from_node(node=node,
+                                       remote_path=path)
+    deserialized_environment = deserialize_environment(text=file_contents)
 
-    file_contents = node.run_task(task=file_download_task)
-    return deserialize_environment(text=file_contents)
+    log.debug("Success: Deserializing environment from cluster.")
+    return deserialized_environment

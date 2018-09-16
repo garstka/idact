@@ -107,12 +107,16 @@ def authenticate(host: str,
             "Authentication method not implemented: '{}'.".format(
                 config.auth))
 
-    env.always_use_pty = False
     previous_gateway, previous_host = env.gateway, env.host_string
     env.gateway, env.host_string = get_host_strings(host=host,
                                                     port=port,
                                                     config=config)
 
+    previous_abort_on_prompts = env.abort_on_prompts
+    env.shell = "/bin/bash --noprofile -l -c"
+    env.key = None
+    env.user = config.user
+    env.abort_on_prompts = True
     try:
         if config.auth == AuthMethod.ASK:
             env.password = get_password(config=config)
@@ -121,6 +125,7 @@ def authenticate(host: str,
                 install_key_using_password_authentication(config=config)
                 env.key_filename = config.key
                 config.install_key = False
+                env.password = None
 
         access_node = get_host_string(config=config)
         if install_shared_keys:
@@ -138,3 +143,4 @@ def authenticate(host: str,
 
         env.password = None
         env.key_filename = None
+        env.abort_on_prompts = previous_abort_on_prompts

@@ -11,7 +11,7 @@ WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
 PYTEST = "{python} -mpytest -v".format(python=sys.executable)
 
 TESTS_TO_RUN = [
-    '{pytest} --cache-clear --cov=idact tests'.format(pytest=PYTEST),
+    '{pytest} -vv --cache-clear --cov=idact tests'.format(pytest=PYTEST),
     '{pytest} --flake8 -m flake8'.format(pytest=PYTEST),
     '{pytest} --pylint -m pylint'.format(pytest=PYTEST)]
 

@@ -23,3 +23,5 @@ dependencies:
     - "sshtunnel>=0.1.4"
     - "paramiko>=2.4.1"
     - "requests>=2.18.4"
+    - "dask>=0.18.2"
+    - "distributed>=1.22.0"

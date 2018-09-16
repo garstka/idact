@@ -6,6 +6,7 @@ from io import BytesIO
 import fabric.decorators
 from fabric.operations import put
 
+from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
 
@@ -35,6 +36,8 @@ def put_file_on_node(node: NodeInternal,
         :param contents: File contents.
 
     """
+    log = get_logger(__name__)
+    log.debug("Putting file on node %s: %s", node.host, remote_path)
 
     @fabric.decorators.task
     def file_upload_task():
@@ -42,3 +45,5 @@ def put_file_on_node(node: NodeInternal,
                         contents=contents)
 
     node.run_task(task=file_upload_task)
+
+    log.debug("Success: Putting file on node %s: %s", node.host, remote_path)

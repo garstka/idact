@@ -24,7 +24,8 @@ def add_cluster(name: str,
                 install_key: bool = True,
                 disable_sshd: bool = False,
                 setup_actions: Optional[SetupActionsConfig] = None,
-                scratch: Optional[str] = None) -> Cluster:
+                scratch: Optional[str] = None,
+                port_info_retries: int = 5) -> Cluster:
     """Adds a new cluster.
 
         :param name:
@@ -60,6 +61,9 @@ def add_cluster(name: str,
             Absolute path to a high-performance filesystem for temporary
             computation data, or an environment variable that contains it.
             Default: $HOME
+        :param port_info_retries:
+            Number of retries to try to obtain port info after allocation.
+            Default: 5
        """
     log = get_logger(__name__)
     environment = EnvironmentProvider().environment
@@ -85,6 +89,7 @@ def add_cluster(name: str,
                                install_key=install_key,
                                disable_sshd=disable_sshd,
                                setup_actions=setup_actions,
-                               scratch=scratch)
+                               scratch=scratch,
+                               port_info_retries=port_info_retries)
     return environment.add_cluster(name=name,
                                    config=config)

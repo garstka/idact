@@ -53,12 +53,17 @@ def pull_environment(cluster: Cluster,
                      or ~/.idact.conf
 
     """
+    log = get_logger(__name__)
+    log.debug("Pulling environment from cluster.")
+
     remote_environment = deserialize_environment_from_cluster(cluster=cluster,
                                                               path=path)
     local_environment = EnvironmentProvider().environment
     merged_environment = merge_environments(local=local_environment,
                                             remote=remote_environment)
     EnvironmentProvider().environment = merged_environment
+
+    log.debug("Success: Pulling environment from cluster.")
 
 
 def push_environment(cluster: Cluster, path: Optional[str] = None):
@@ -71,6 +76,7 @@ def push_environment(cluster: Cluster, path: Optional[str] = None):
                      or ~/.idact.conf
     """
     log = get_logger(__name__)
+    log.debug("Pushing environment to cluster.")
     try:
         remote_environment = deserialize_environment_from_cluster(
             cluster=cluster,
@@ -88,3 +94,5 @@ def push_environment(cluster: Cluster, path: Optional[str] = None):
     serialize_environment_to_cluster(environment=merged_environment,
                                      cluster=cluster,
                                      path=path)
+
+    log.debug("Success: Pushing environment to cluster.")

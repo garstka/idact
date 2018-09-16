@@ -28,9 +28,9 @@ def test_entry_point_sshd():
                 " s=socket.socket();"
                 " s.bind((str(), 0)); print(s.getsockname()[1]);"
                 " s.close()')\n"
-                "mkdir -p ~/.idact/sshd_ports\n"
-                "echo $(hostname):$SSHD_PORT"
-                " >> ~/.idact/sshd_ports/alloc-$IDACT_ALLOCATION_ID\n"
+                "mkdir -p ~/.idact/sshd_ports/alloc-$IDACT_ALLOCATION_ID\n"
+                "touch ~/.idact/sshd_ports/alloc-$IDACT_ALLOCATION_ID/$(hostname):$SSHD_PORT\n"  # noqa, pylint: disable=line-too-long
+                "export PATH=\"$PATH:/usr/sbin\"\n"
                 " $(which sshd)"
                 " -D "
                 " -f /dev/null"
@@ -49,7 +49,4 @@ def test_entry_point_sshd():
                 " -oSubsystem='sftp /usr/libexec/openssh/sftp-server'"
                 " -oX11Forwarding=yes\n"
                 "exit $?")
-    print()
-    print(formatted)
-    print(expected)
     assert formatted == expected

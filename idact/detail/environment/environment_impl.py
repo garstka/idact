@@ -9,6 +9,7 @@ from idact.detail.config.client. \
 from idact.detail.config.client.client_config import ClientConfig
 from idact.detail.environment.environment import Environment
 from idact.detail.log.set_fabric_log_level import set_fabric_log_level
+from idact.detail.log.set_paramiko_log_level import set_paramiko_log_level
 
 
 class EnvironmentImpl(Environment):
@@ -55,6 +56,7 @@ class EnvironmentImpl(Environment):
     def set_log_level(self, level: int):
         self._config.log_level = level
         set_fabric_log_level(level=level)
+        set_paramiko_log_level(level=level)
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__

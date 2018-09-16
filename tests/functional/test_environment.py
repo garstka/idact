@@ -63,6 +63,7 @@ def check_config_is_default(config: ClusterConfig, user: str):
     assert config.setup_actions.jupyter == []
     assert config.setup_actions.dask == []
     assert config.scratch == '$HOME'
+    assert config.port_info_retries == 5
     assert LoggerProvider().log_level == logging.DEBUG
 
 
@@ -77,6 +78,7 @@ def check_config_is_modified(config: ClusterConfig):
     assert config.setup_actions.jupyter == ['abc']
     assert config.setup_actions.dask == ['abc', 'def']
     assert config.scratch == '$HOME2'
+    assert config.port_info_retries == 10
     assert LoggerProvider().log_level == logging.INFO
 
 
@@ -90,6 +92,7 @@ def get_default_config_contents(user: str) -> List[str]:
             '            "installKey": true,',
             '            "key": null,',
             '            "port": 22,',
+            '            "portInfoRetries": 5,',
             '            "scratch": "$HOME",',
             '            "setupActions": {',
             '                "dask": [],',
@@ -136,6 +139,7 @@ def test_environment_create_modify_save_load():
             config.setup_actions.jupyter = ['abc']
             config.setup_actions.dask = ['abc', 'def']
             config.scratch = '$HOME2'
+            config.port_info_retries = 10
             set_log_level(logging.INFO)
 
             check_config_is_modified(config=config)
@@ -154,6 +158,7 @@ def test_environment_create_modify_save_load():
                                 '            "installKey": false,',
                                 '            "key": "./fake-key",',
                                 '            "port": 2222,',
+                                '            "portInfoRetries": 10,',
                                 '            "scratch": "$HOME2",',
                                 '            "setupActions": {',
                                 '                "dask": [',
