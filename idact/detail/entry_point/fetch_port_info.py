@@ -44,7 +44,7 @@ def fetch_port_info(allocation_id: int,
                 files = run("echo *", pty=False)
                 result.append(files)
         else:
-            log.warning("Port info dir not found.")
+            log.warning("Port info directory not found.")
             result.append("")
 
     with raise_on_remote_fail(exception=RuntimeError):

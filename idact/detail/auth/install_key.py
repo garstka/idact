@@ -14,6 +14,7 @@ from idact.core.config import ClusterConfig
 from idact.detail.auth.generate_key import generate_key
 from idact.detail.auth.get_public_key_location import get_public_key_location
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
+from idact.detail.helper.stage_info import stage_debug
 from idact.detail.helper.yn_prompt import yn_prompt
 from idact.detail.log.get_logger import get_logger
 
@@ -88,39 +89,49 @@ def install_key(config: ClusterConfig,
                             if authorized_keys
                             else ".ssh/authorized_keys")
 
-    public_key_path = try_getting_public_key_from_config(config=config,
-                                                         log=log)
+    with stage_debug(log, "Attempting to determine key path."):
+        public_key_path = try_getting_public_key_from_config(config=config,
+                                                             log=log)
 
     if public_key_path is None:
-        config.key = generate_key(host=config.host)
-        public_key_path = get_public_key_location(
-            private_key_location=config.key)
+        with stage_debug(log, "Generating key."):
+            config.key = generate_key(host=config.host)
+            public_key_path = get_public_key_location(
+                private_key_location=config.key)
 
-    public_key = read_public_key(public_key_path=public_key_path)
+    with stage_debug(log, "Reading key."):
+        public_key = read_public_key(public_key_path=public_key_path)
 
     @fabric.decorators.task
     def task():
         """Creates the .ssh dir with proper permissions. Adds the public key
             to the authorized keys file if it's not been added already."""
-        run("mkdir -p ~/.ssh")
-        run("chmod 700 ~/.ssh")
-        run("touch '{authorized_keys_path}'".format(
-            authorized_keys_path=authorized_keys_path))
-        run("chmod 644 '{authorized_keys_path}'".format(
-            authorized_keys_path=authorized_keys_path))
+        with stage_debug(log, "Creating authorized keys file: %s",
+                         authorized_keys_path):
+            run("mkdir -p ~/.ssh")
+            run("chmod 700 ~/.ssh")
+            run("touch '{authorized_keys_path}'".format(
+                authorized_keys_path=authorized_keys_path))
+            run("chmod 644 '{authorized_keys_path}'".format(
+                authorized_keys_path=authorized_keys_path))
 
-        authorized_keys_fd = BytesIO()
-        get(authorized_keys_path, authorized_keys_fd)
-        authorized_keys_contents = \
-            authorized_keys_fd.getvalue().decode('ascii').splitlines()
+        with stage_debug(log, "Downloading authorized keys file."):
+            authorized_keys_fd = BytesIO()
+            get(authorized_keys_path, authorized_keys_fd)
+            authorized_keys_contents = \
+                authorized_keys_fd.getvalue().decode('ascii').splitlines()
 
         if public_key not in authorized_keys_contents:
-            run("echo '{public_key}' >> {authorized_keys_path}".format(
+            with stage_debug(log, "Appending to authorized keys file."):
+                log.debug("Warning: This operation is not atomic on NFS.")
+                run("echo '{public_key}' >> {authorized_keys_path}".format(
+                    public_key=public_key,
+                    authorized_keys_path=authorized_keys_path))
+
+        with stage_debug(log, "Checking if public key was added."):
+            run("grep '{public_key}' '{authorized_keys_path}'".format(
                 public_key=public_key,
                 authorized_keys_path=authorized_keys_path))
-        run("grep '{public_key}' '{authorized_keys_path}'".format(
-            public_key=public_key,
-            authorized_keys_path=authorized_keys_path))
 
     with raise_on_remote_fail(exception=RuntimeError):
         fabric.tasks.execute(task)

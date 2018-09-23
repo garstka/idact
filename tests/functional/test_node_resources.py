@@ -34,6 +34,8 @@ def test_can_read_node_resources():
         cluster = show_cluster(name=TEST_CLUSTER)
 
         access_node = cluster.get_access_node()
+        print(str(access_node))
+        assert str(access_node) == repr(access_node)
 
         assert access_node.resources.cpu_cores is None
         assert access_node.resources.memory_total is None

@@ -31,6 +31,11 @@ class NodeImpl(NodeInternal):
 
     """
 
+    def connect(self, timeout: Optional[int] = None):
+        result = self.run("echo 'Testing connection...'", timeout=timeout)
+        if result != 'Testing connection...':
+            raise RuntimeError("Unexpected test command output.")
+
     def __init__(self,
                  config: ClusterConfig):
         self._config = config

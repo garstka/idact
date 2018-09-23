@@ -11,6 +11,7 @@ from bitmath import MiB
 from idact import show_cluster, Walltime, Nodes, Node
 from idact.core.deploy_dask import deploy_dask
 from idact.detail.auth.set_password import set_password
+from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.save_opened_in import save_opened_in
@@ -23,7 +24,7 @@ from tests.helpers.testing_environment import TEST_CLUSTER
 def check_submission_works(node: Node, client: dask.distributed.Client):
     print("Testing task submission.")
 
-    local_version = sys.version_info[0:3]
+    local_version = [i for i in sys.version_info[0:3]]
     print("Local version: {}".format(local_version))
 
     python_executable = "python{major}.{minor}".format(major=local_version[0],
@@ -43,7 +44,7 @@ def check_submission_works(node: Node, client: dask.distributed.Client):
         "[str(i) for i in sys.version_info[0:3]]))'".format(
             python_executable=python_executable))
 
-    remote_version = node.run(command).splitlines()
+    remote_version = [int(i) for i in node.run(command).splitlines()]
 
     print("Remote version: {}".format(remote_version))
 
@@ -74,12 +75,11 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
     ps_dask_scheduler = "ps -u $USER | grep [d]ask-scheduler ; exit 0"
 
     node = nodes[0]
-    deployment = None
-    try:
-        nodes.wait(timeout=10)
-        assert nodes.running()
+    nodes.wait(timeout=10)
+    assert nodes.running()
 
-        deployment = deploy_dask(nodes=nodes)
+    deployment = deploy_dask(nodes=nodes)
+    with cancel_on_exit(deployment):
         print(deployment)
         assert str(deployment) == repr(deployment)
 
@@ -110,26 +110,15 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
 
         assert opened_addresses == deployment.diagnostics.addresses
 
-        try:
-            yield node
-        finally:
-            deployment.cancel()
+        yield node
 
-            ps_lines = node.run(ps_dask_scheduler).splitlines()
-            pprint(ps_lines)
-            assert not ps_lines
+    ps_lines = node.run(ps_dask_scheduler).splitlines()
+    pprint(ps_lines)
+    assert not ps_lines
 
-            ps_lines = node.run(ps_dask_worker).splitlines()
-            pprint(ps_lines)
-            assert not ps_lines
-
-        deployment = None
-    finally:
-        try:
-            if deployment is not None:
-                deployment.cancel()
-        finally:
-            nodes.cancel()
+    ps_lines = node.run(ps_dask_worker).splitlines()
+    pprint(ps_lines)
+    assert not ps_lines
 
 
 def test_dask_deployment():
@@ -145,6 +134,7 @@ def test_dask_deployment():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=30))
+        stack.enter_context(cancel_on_exit(nodes))
 
         with deploy_dask_on_testing_cluster(nodes):
             pass
@@ -163,6 +153,7 @@ def test_dask_deployment_with_setup_actions():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=30))
+        stack.enter_context(cancel_on_exit(nodes))
 
         cluster.config.setup_actions.dask = ['echo ABC > file.txt',
                                              'mv file.txt file2.txt']
@@ -198,6 +189,7 @@ def test_dask_deployment_with_absolute_scratch_path():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=10))
+        stack.enter_context(cancel_on_exit(nodes))
 
         with deploy_dask_on_testing_cluster(nodes):
             pass

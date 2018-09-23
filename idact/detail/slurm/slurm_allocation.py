@@ -8,6 +8,7 @@ from typing import Optional, List
 from idact.detail.allocation.allocation import Allocation
 from idact.detail.allocation.allocation_parameters import AllocationParameters
 from idact.detail.allocation.finalize_allocation import finalize_allocation
+from idact.detail.helper.stage_info import stage_info
 from idact.detail.helper.utc_now import utc_now
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_impl import NodeImpl
@@ -89,13 +90,15 @@ class SlurmAllocation(Allocation):
             finally:
                 self._access_node.run("rm -f {entry_point_script_path}".format(
                     entry_point_script_path=self._entry_point_script_path))
-            return
+            break
 
     def cancel(self):
-        run_scancel(job_id=self._job_id,
-                    node=self._access_node)
-        for node in self._nodes:
-            node.make_cancelled()
+        log = get_logger(__name__)
+        with stage_info(log, "Cancelling job %d.", self._job_id):
+            run_scancel(job_id=self._job_id,
+                        node=self._access_node)
+            for node in self._nodes:
+                node.make_cancelled()
 
     def running(self) -> bool:
         squeue = run_squeue(node=self._access_node)

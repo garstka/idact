@@ -23,7 +23,10 @@ def run_dummy_server(user: str,
                     server_port=server_port))
             sleep(timeout)
         finally:
-            ssh.exec_command("killall python3")
+            ssh.exec_command("kill"
+                             " `ps -U $USER"
+                             " | grep python3"
+                             " | awk '{ print $1 }'`")
 
 
 STARTUP_TIME = 1

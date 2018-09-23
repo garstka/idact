@@ -1,16 +1,14 @@
 """This module contains a function for generating an entry point script for
     the workload manager."""
-
+from idact.core.config import ClusterConfig
 from idact.detail.auth.install_shared_home_key import SHARED_HOST_KEY_PATH
-from idact.detail.config.client.client_cluster_config \
-    import ClusterConfigImpl
 from idact.detail.entry_point.sshd_port_info \
     import PORT_INFO_DIR_NAME_FORMAT, PORT_INFO_LOCATION
 
 COMPUTE_NODE_AUTHORIZED_KEYS = ".ssh/authorized_keys.idact"
 
 
-def get_entry_point_script_contents(config: ClusterConfigImpl) -> str:
+def get_entry_point_script_contents(config: ClusterConfig) -> str:
     """Formats an entry point script and returns its contents.
 
         The entry point script can either deploy an ssh server, or do nothing.

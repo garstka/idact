@@ -6,6 +6,7 @@ import pytest
 
 from idact import show_clusters, show_cluster, Walltime
 from idact.detail.auth.set_password import set_password
+from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
@@ -39,13 +40,12 @@ def test_basic():
                                        native_args={
                                            '--partition': 'debug'
                                        })
+        with cancel_on_exit(nodes):
+            assert len(nodes) == 2
+            assert nodes[0] in nodes
+            print(nodes)
+            assert str(nodes) == repr(nodes)
 
-        assert len(nodes) == 2
-        assert nodes[0] in nodes
-        print(nodes)
-        assert str(nodes) == repr(nodes)
-
-        try:
             nodes.wait(timeout=10)
             assert nodes.running()
 
@@ -54,8 +54,6 @@ def test_basic():
 
             assert nodes[0].run('whoami') == user
             assert nodes[1].run('whoami') == user
-        finally:
-            nodes.cancel()
 
         assert not nodes.running()
         with pytest.raises(RuntimeError):
@@ -75,21 +73,18 @@ def test_allocate_defaults():
         cluster = show_cluster(name=TEST_CLUSTER)
 
         nodes = cluster.allocate_nodes()
-
+        stack.enter_context(cancel_on_exit(nodes))
         assert len(nodes) == 1
         node = nodes[0]
 
-        try:
-            nodes.wait(timeout=10)
-            assert nodes.running()
+        nodes.wait(timeout=10)
+        assert nodes.running()
 
-            assert node.resources.cpu_cores == 1
-            assert node.resources.memory_total == bitmath.GiB(1)
-            print(node)
+        assert node.resources.cpu_cores == 1
+        assert node.resources.memory_total == bitmath.GiB(1)
+        print(node)
 
-            assert node.run('whoami') == user
-        finally:
-            nodes.cancel()
+        assert node.run('whoami') == user
 
 
 def test_allocate_with_string_params():
@@ -104,18 +99,15 @@ def test_allocate_with_string_params():
 
         nodes = cluster.allocate_nodes(walltime='0:10:00',
                                        memory_per_node='500MiB')
-
+        stack.enter_context(cancel_on_exit(nodes))
         assert len(nodes) == 1
         node = nodes[0]
 
-        try:
-            nodes.wait(timeout=10)
-            assert nodes.running()
+        nodes.wait(timeout=10)
+        assert nodes.running()
 
-            assert node.resources.cpu_cores == 1
-            assert node.resources.memory_total == bitmath.MiB(500)
-            print(node)
+        assert node.resources.cpu_cores == 1
+        assert node.resources.memory_total == bitmath.MiB(500)
+        print(node)
 
-            assert node.run('whoami') == user
-        finally:
-            nodes.cancel()
+        assert node.run('whoami') == user

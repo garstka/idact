@@ -5,8 +5,7 @@ from typing import Optional
 from fabric.state import env
 
 from idact.detail.environment.environment import Environment
-from idact.detail.environment.environment_serialization import \
-    deserialize_environment_from_file
+from idact.detail.environment.environment_impl import EnvironmentImpl
 from idact.detail.log.logger_provider import LoggerProvider
 
 
@@ -33,8 +32,7 @@ class EnvironmentProvider:
            Tries to load it from file if there is none.
         """
         if self._environment is None:
-            new_environment = deserialize_environment_from_file(
-                ignore_if_missing=True)
+            new_environment = EnvironmentImpl()
             self._set_global_environment(new_environment)
 
         return self._environment

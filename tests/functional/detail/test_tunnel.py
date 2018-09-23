@@ -1,3 +1,4 @@
+from contextlib import ExitStack
 from typing import List
 
 import requests
@@ -5,6 +6,8 @@ import requests
 from idact.detail.tunnel.build_tunnel import build_tunnel
 from idact.detail.tunnel.binding import Binding
 from idact.detail.helper.retry import retry
+from idact.detail.tunnel.close_tunnel_on_exit import close_tunnel_on_exit
+from tests.helpers.join_on_exit import join_on_exit
 
 from tests.helpers.reset_environment import get_testing_host, get_testing_port
 from tests.helpers.run_dummy_server import start_dummy_server_thread
@@ -28,17 +31,17 @@ def run_tunnel_test_for_bindings(bindings: List[Binding]):
     local_port = bindings[0].port
     server_port = bindings[-1].port
 
-    tunnel = None
-    server = None
-    try:
+    with ExitStack() as stack:
         tunnel = build_tunnel(bindings=bindings,
                               hostname=hostname,
                               port=port,
                               ssh_username=user,
                               ssh_password=get_test_user_password(user))
+        stack.enter_context(close_tunnel_on_exit(tunnel))
 
         server = start_dummy_server_thread(user=user,
                                            server_port=server_port)
+        stack.enter_context(join_on_exit(server))
 
         assert tunnel.here == local_port
         assert tunnel.there == server_port
@@ -51,11 +54,6 @@ def run_tunnel_test_for_bindings(bindings: List[Binding]):
                         retries=3,
                         seconds_between_retries=2)
         assert "text/html" in request.headers['Content-type']
-    finally:
-        if server is not None:
-            server.join()
-        if tunnel is not None:
-            tunnel.close()
 
 
 def test_tunnel_single_hop():

@@ -6,6 +6,7 @@ from io import BytesIO
 import fabric.decorators
 from fabric.operations import get
 
+from idact.detail.helper.stage_info import stage_debug
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
@@ -34,12 +35,11 @@ def get_file_from_node(node: NodeInternal,
 
     """
     log = get_logger(__name__)
-    log.debug("Getting file from node %s: %s", node.host, remote_path)
 
     @fabric.decorators.task
     def file_upload_task():
         return get_remote_file(remote_path=remote_path)
 
-    result = node.run_task(task=file_upload_task)
-    log.debug("Success: Getting file from node %s: %s", node.host, remote_path)
-    return result
+    with stage_debug(log, "Getting file from node %s: %s",
+                     node.host, remote_path):
+        return node.run_task(task=file_upload_task)

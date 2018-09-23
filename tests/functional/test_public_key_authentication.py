@@ -10,6 +10,7 @@ from idact.core.auth import KeyType
 from idact.detail.auth.generate_key import generate_key
 from idact.detail.auth.get_public_key_location import get_public_key_location
 from idact.detail.auth.set_password import set_password
+from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from idact.detail.nodes.node_internal import NodeInternal
 from tests.helpers.clear_environment import clear_environment
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
@@ -41,35 +42,33 @@ def test_able_to_reach_nodes_when_using_password_based_authentication():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=30))
+        stack.enter_context(cancel_on_exit(nodes))
         print(nodes)
 
-        try:
-            nodes.wait(timeout=10)
+        nodes.wait(timeout=10)
 
-            compute_node = nodes[0]
-            assert isinstance(compute_node, NodeInternal)
+        compute_node = nodes[0]
+        assert isinstance(compute_node, NodeInternal)
 
-            public_key_value = get_public_key_value()
+        public_key_value = get_public_key_value()
 
-            # Local key was installed for the deployed sshd, allowing access
-            # between the access node and compute nodes.
-            assert nodes[0].run('whoami') == user
+        # Local key was installed for the deployed sshd, allowing access
+        # between the access node and compute nodes.
+        assert nodes[0].run('whoami') == user
 
-            # Local key was not installed for the access node
-            with pytest.raises(RuntimeError):
-                node.run(
-                    "grep '{public_key_value}' ~/.ssh/authorized_keys".format(
-                        public_key_value=public_key_value))
-
-            # But it was installed for compute nodes.
+        # Local key was not installed for the access node
+        with pytest.raises(RuntimeError):
             node.run(
-                "grep '{public_key_value}'"
-                " ~/.ssh/authorized_keys.idact".format(
+                "grep '{public_key_value}' ~/.ssh/authorized_keys".format(
                     public_key_value=public_key_value))
 
-            check_direct_access_from_access_node_does_not_work(nodes[0])
-        finally:
-            nodes.cancel()
+        # But it was installed for compute nodes.
+        node.run(
+            "grep '{public_key_value}'"
+            " ~/.ssh/authorized_keys.idact".format(
+                public_key_value=public_key_value))
+
+        check_direct_access_from_access_node_does_not_work(nodes[0])
 
 
 def get_public_key_value() -> str:
@@ -99,7 +98,7 @@ def check_direct_access_from_access_node_does_not_work(node: Node):
                                   port=node.port), timeout=1)
 
 
-def check_remote_key_and_node_access(user: str):
+def check_remote_key_and_node_access(stack: ExitStack, user: str):
     public_key_value = get_public_key_value()
 
     cluster = show_cluster(name=TEST_CLUSTER)
@@ -120,21 +119,18 @@ def check_remote_key_and_node_access(user: str):
                                    cores=1,
                                    memory_per_node=MiB(100),
                                    walltime=Walltime(minutes=30))
+    stack.enter_context(cancel_on_exit(nodes))
     print(nodes)
 
-    try:
-        nodes.wait(timeout=10)
-        node.run(
-            "grep '{public_key_value}' ~/.ssh/authorized_keys.idact".format(
-                public_key_value=public_key_value))
+    nodes.wait(timeout=10)
+    node.run(
+        "grep '{public_key_value}' ~/.ssh/authorized_keys.idact".format(
+            public_key_value=public_key_value))
 
-        # Access to node without password works.
-        assert nodes[0].run('whoami') == user
+    # Access to node without password works.
+    assert nodes[0].run('whoami') == user
 
-        check_direct_access_from_access_node_does_not_work(nodes[0])
-
-    finally:
-        nodes.cancel()
+    check_direct_access_from_access_node_does_not_work(nodes[0])
 
 
 def test_generate_and_install_key_on_access_node():
@@ -163,7 +159,7 @@ def test_generate_and_install_key_on_access_node():
                     install_key=True,
                     port_info_retries=0)
 
-        check_remote_key_and_node_access(user=user)
+        check_remote_key_and_node_access(stack=stack, user=user)
 
 
 def test_generate_but_do_not_install_key_on_access_node():
@@ -209,7 +205,7 @@ def test_install_already_generated_key_on_access_node():
                     install_key=True,
                     port_info_retries=0)
 
-        check_remote_key_and_node_access(user=user)
+        check_remote_key_and_node_access(stack=stack, user=user)
 
 
 def test_generate_and_install_missing_key_on_access_node():
@@ -250,7 +246,7 @@ def test_generate_and_install_missing_key_on_access_node():
             with settings(prompts={generate_missing_key_prompt: 'y'}):
                 assert node.run('whoami') == user
 
-        check_remote_key_and_node_access(user=user)
+        check_remote_key_and_node_access(stack=stack, user=user)
 
 
 def test_generate_and_install_key_no_sshd():
@@ -270,7 +266,7 @@ def test_generate_and_install_key_no_sshd():
                     disable_sshd=True,
                     port_info_retries=0)
 
-        check_remote_key_and_node_access(user=user)
+        check_remote_key_and_node_access(stack=stack, user=user)
 
 
 def test_empty_public_key_causes_runtime_error():

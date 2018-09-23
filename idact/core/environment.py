@@ -16,6 +16,7 @@ from idact.detail.environment.environment_remote_serialization import \
 from idact.detail.environment.environment_serialization import \
     serialize_environment_to_file, deserialize_environment_from_file
 from idact.detail.environment.merge_environments import merge_environments
+from idact.detail.helper.stage_info import stage_info
 from idact.detail.log.get_logger import get_logger
 
 
@@ -54,16 +55,14 @@ def pull_environment(cluster: Cluster,
 
     """
     log = get_logger(__name__)
-    log.debug("Pulling environment from cluster.")
-
-    remote_environment = deserialize_environment_from_cluster(cluster=cluster,
-                                                              path=path)
-    local_environment = EnvironmentProvider().environment
-    merged_environment = merge_environments(local=local_environment,
-                                            remote=remote_environment)
-    EnvironmentProvider().environment = merged_environment
-
-    log.debug("Success: Pulling environment from cluster.")
+    with stage_info(log, "Pulling the environment from cluster."):
+        remote_environment = deserialize_environment_from_cluster(
+            cluster=cluster,
+            path=path)
+        local_environment = EnvironmentProvider().environment
+        merged_environment = merge_environments(local=local_environment,
+                                                remote=remote_environment)
+        EnvironmentProvider().environment = merged_environment
 
 
 def push_environment(cluster: Cluster, path: Optional[str] = None):
@@ -76,23 +75,20 @@ def push_environment(cluster: Cluster, path: Optional[str] = None):
                      or ~/.idact.conf
     """
     log = get_logger(__name__)
-    log.debug("Pushing environment to cluster.")
-    try:
-        remote_environment = deserialize_environment_from_cluster(
-            cluster=cluster,
-            path=path)
-    except RuntimeError:
-        log.info("Remote environment is missing, current environment will be"
-                 " copied to cluster.")
-        log.debug("Exception", exc_info=1)
-        remote_environment = EnvironmentImpl()
+    with stage_info(log, "Pushing the environment to cluster."):
+        try:
+            remote_environment = deserialize_environment_from_cluster(
+                cluster=cluster,
+                path=path)
+        except RuntimeError:
+            log.info("Remote environment is missing, current environment will"
+                     " be copied to cluster.")
+            log.debug("Exception", exc_info=1)
+            remote_environment = EnvironmentImpl()
 
-    local_environment = EnvironmentProvider().environment
-    merged_environment = merge_environments(local=remote_environment,
-                                            remote=local_environment)
-
-    serialize_environment_to_cluster(environment=merged_environment,
-                                     cluster=cluster,
-                                     path=path)
-
-    log.debug("Success: Pushing environment to cluster.")
+        local_environment = EnvironmentProvider().environment
+        merged_environment = merge_environments(local=remote_environment,
+                                                remote=local_environment)
+        serialize_environment_to_cluster(environment=merged_environment,
+                                         cluster=cluster,
+                                         path=path)

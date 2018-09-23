@@ -25,7 +25,7 @@ class SshdPortInfo:
         self._hosts = defaultdict(list)
 
         log = get_logger(__name__)
-        log.debug("Sshd dir contents: %s", contents)
+        log.debug("Sshd port directory contents: %s", contents)
 
         lines = [i for i in contents.split(' ') if i]
         for line in lines:
@@ -61,10 +61,12 @@ class SshdPortInfo:
             raise RuntimeError(
                 "Unable to find unique sshd server for {}".format(host))
         if self._hosts:
-            log.warning("Assuming sandbox, defaulting to first found.")
+            log.warning("Assuming sandbox, defaulting to first found."
+                        " If this is not sandbox, node access may not work"
+                        " properly.")
             port = self._hosts[next(iter(self._hosts.keys()))][0]
             log.info("First found: %d", port)
             return port
         log.warning(
-            "No info found, defaulting to %d", NODE_DEFAULT_PORT)
+            "No port info found, defaulting to %d.", NODE_DEFAULT_PORT)
         return NODE_DEFAULT_PORT

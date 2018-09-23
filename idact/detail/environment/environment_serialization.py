@@ -5,7 +5,6 @@ import os
 from typing import Optional
 
 from idact.detail.environment.environment import Environment
-from idact.detail.environment.environment_impl import EnvironmentImpl
 from idact.detail.environment.environment_text_serialization import \
     serialize_environment, deserialize_environment
 
@@ -33,8 +32,8 @@ def serialize_environment_to_file(environment: Environment,
         file.write(text)
 
 
-def deserialize_environment_from_file(path: Optional[str] = None,
-                                      ignore_if_missing: bool = False) -> Environment:  # noqa, pylint: disable=line-too-long
+def deserialize_environment_from_file(path: Optional[str] = None) \
+    -> Environment:  # noqa, pylint: disable=line-too-long
     """Loads the environment from file.
 
         See :func:`.load_environment`.
@@ -42,9 +41,6 @@ def deserialize_environment_from_file(path: Optional[str] = None,
         :param path: Environment file path.
                      Default: IDACT_CONFIG_PATH environment variable,
                      or ~/.idact.conf
-
-        :param ignore_if_missing: Do not raise :class:`.ValueError` if the file
-                                  is missing. Default: `False`.
 
         :raises ValueError: On missing file if `ignore_if_missing` is not set
                             (default).
@@ -54,8 +50,6 @@ def deserialize_environment_from_file(path: Optional[str] = None,
         path = os.environ.get('IDACT_CONFIG_PATH', DEFAULT_ENVIRONMENT_PATH)
 
     if not os.path.isfile(path):
-        if ignore_if_missing:
-            return EnvironmentImpl()
         raise ValueError("Not a valid environment file: {}".format(path))
 
     with open(path, 'r') as file:

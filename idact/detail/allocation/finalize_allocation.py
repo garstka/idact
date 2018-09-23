@@ -7,6 +7,8 @@ from idact.detail.entry_point.fetch_port_info import fetch_port_info
 from idact.detail.entry_point.remove_port_info import remove_port_info
 from idact.detail.entry_point.sshd_port_info import SshdPortInfo
 from idact.detail.helper.retry import retry
+from idact.detail.helper.stage_info import stage_debug
+from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_impl import NodeImpl
 
 
@@ -27,14 +29,20 @@ def determine_ports_for_nodes(allocation_id: int,
                                  be determined.
 
     """
-    port_info_contents = fetch_port_info(allocation_id=allocation_id,
-                                         config=config)
-    port_info = SshdPortInfo(contents=port_info_contents)
+    log = get_logger(__name__)
+    with stage_debug(log, "Fetching port info for sshd."):
+        port_info_contents = fetch_port_info(allocation_id=allocation_id,
+                                             config=config)
+        port_info = SshdPortInfo(contents=port_info_contents)
 
-    ports = [port_info.get_port(host=host,
-                                raise_on_missing=raise_on_missing)
-             for host in hostnames]
-    remove_port_info(allocation_id, config=config)
+    with stage_debug(log, "Determining ports for each host."):
+        ports = [port_info.get_port(host=host,
+                                    raise_on_missing=raise_on_missing)
+                 for host in hostnames]
+
+    with stage_debug(log, "Removing the file containing sshd port info."):
+        remove_port_info(allocation_id, config=config)
+
     return ports
 
 

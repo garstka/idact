@@ -4,8 +4,7 @@ import shlex
 
 from typing import Optional, Dict, Tuple
 
-from idact.detail.config.client.client_cluster_config \
-    import ClusterConfigImpl
+from idact.core.config import ClusterConfig
 from idact.detail.entry_point.get_entry_point_script_contents \
     import get_entry_point_script_contents
 from idact.detail.entry_point.upload_entry_point import upload_entry_point
@@ -57,7 +56,7 @@ def format_sbatch_allocation_request(args: SbatchArguments,
 
 
 def prepare_sbatch_allocation_request(args: SbatchArguments,
-                                      config: ClusterConfigImpl,
+                                      config: ClusterConfig,
                                       node: NodeImpl) -> \
     Tuple[str, str]:  # noqa
     """Uploads the entry point script and returns the formatted sbatch

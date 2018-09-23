@@ -15,6 +15,7 @@ from idact.detail.deployment.get_deployment_script_contents import \
 from idact.detail.helper.get_free_remote_port import get_free_remote_port
 from idact.detail.helper.get_remote_file import get_remote_file
 from idact.detail.helper.retry import retry
+from idact.detail.helper.stage_info import stage_debug
 from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
@@ -31,8 +32,11 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
     """
     log = get_logger(__name__)
 
-    runtime_dir = create_runtime_dir(node=node)
-    remote_port = get_free_remote_port(node=node)
+    with stage_debug(log, "Creating a runtime dir."):
+        runtime_dir = create_runtime_dir(node=node)
+
+    with stage_debug(log, "Obtaining a free remote port."):
+        remote_port = get_free_remote_port(node=node)
 
     deployment_commands = []
     deployment_commands.append(
@@ -50,10 +54,11 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
         setup_actions=node.config.setup_actions.jupyter)
 
     log.debug("Deployment script contents: %s", script_contents)
-    deployment = deploy_generic(node=node,
-                                script_contents=script_contents,
-                                capture_output_seconds=5,
-                                runtime_dir=runtime_dir)
+    with stage_debug(log, "Deploying script."):
+        deployment = deploy_generic(node=node,
+                                    script_contents=script_contents,
+                                    capture_output_seconds=5,
+                                    runtime_dir=runtime_dir)
 
     with cancel_on_failure(deployment):
         @fabric.decorators.task
@@ -68,13 +73,15 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
             nbserver_json = json.loads(nbserver_json_str)
             return int(nbserver_json['port']), nbserver_json['token']
 
-        actual_port, token = retry(
-            lambda: node.run_task(task=load_nbserver_json),
-            retries=5,
-            seconds_between_retries=3)
+        with stage_debug(log, "Obtaining info about notebook from json file."):
+            actual_port, token = retry(
+                lambda: node.run_task(task=load_nbserver_json),
+                retries=5,
+                seconds_between_retries=3)
 
-        tunnel = node.tunnel(there=actual_port,
-                             here=local_port)
+        with stage_debug(log, "Opening a tunnel to notebook."):
+            tunnel = node.tunnel(there=actual_port,
+                                 here=local_port)
 
         return JupyterDeploymentImpl(node=node,
                                      deployment=deployment,
