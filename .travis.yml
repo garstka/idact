@@ -11,14 +11,45 @@ addons:
      - expect-dev
 matrix:
   include:
-    - python: 3.6
-      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 DEPLOY_DOCS=1
-    - python: 3.5
-      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 DEPLOY_DOCS=0
+    - name: "Python 3.6 support"
+      python: 3.6
+      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=1 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=0 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=1
+    - name: "Python 3.5 support"
+      python: 3.5
+      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=1 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=0 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=0
+    - name: "Pip install support"
+      python: 3.6.6
+      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=1 REQUIREMENTS_DEV_TXT=0 REQUIREMENTS_TEST_TXT=1 CONDA_DEV_ENV=0 PYTEST_ONLY=1 RUN_TESTS=0 BUILD_COVERAGE=0 BUILD_DOCS=0 DEPLOY_DOCS=0
+    - name: "Conda development support"
+      python: 3.6
+      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=0 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=1 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=0
 before_install:
   - source scripts/testing_setup/container_prepare_envs.sh
   - printenv | sort
 install:
+  - if [ $REQUIREMENTS_DEV_TXT -eq 1 ]; then pip install -r requirements_dev.txt ; fi
+  - if [ $REQUIREMENTS_TEST_TXT -eq 1 ]; then pip install -r requirements_test.txt ; fi
+  - if [ $PIP_INSTALL -eq 1 ]; then pip install . ; fi
+  - if [ $CONDA_DEV_ENV -eq 1 ]; then
+        wget https://repo.continuum.io/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh -O miniconda.sh &&
+        echo ea4594241e13a2671c5b158b3b813f0794fe58d514795fbf72a1aad24db918cf miniconda.sh | sha256sum --check &&
+        bash miniconda.sh -b -p $HOME/miniconda &&
+        export PATH="$HOME/miniconda/bin:$PATH" &&
+        hash -r &&
+        conda config --set always_yes yes &&
+        conda update -q conda &&
+        conda config --show ;
+    fi
+  - if [ $CONDA_DEV_ENV -eq 1 ]; then
+        conda env create -f envs/environment-dev.yml &&
+        source activate idact-dev &&
+        conda env list ;
+    fi
+  - if [ $CONDA_DEV_ENV -eq 1 ]; then
+        shopt -s expand_aliases &&
+        alias unbuffer='' ;
+    fi  # unbuffer doesn't work with source activate
+  - python --version
   - python scripts/testing_setup/full_setup.py
   - docker ps
 script:
@@ -31,13 +62,15 @@ script:
   - sleep 10
   - docker exec $SLURM_CONTAINER squeue
   - sshpass -p pass-50 ssh -o "StrictHostKeyChecking no" -p 2222 user-50@localhost bash -c "squeue"
-  - pip install -r requirements_dev.txt
-  - unbuffer python scripts/run_tests.py
-  - unbuffer python scripts/generate_diagrams.py
-  - unbuffer python scripts/build_docs.py --no-show
-  - unbuffer python scripts/view_coverage.py --no-show
+  - if [ $PIP_INSTALL -eq 1 ]; then mv idact idact_tmp ; fi
+  - if [ $PYTEST_ONLY -eq 1 ]; then python -mpytest tests ; fi
+  - if [ $PIP_INSTALL -eq 1 ]; then mv idact_tmp idact ; fi
+  - if [ $RUN_TESTS -eq 1 ]; then unbuffer python scripts/run_tests.py ; fi
+  - if [ $BUILD_DOCS -eq 1 ]; then unbuffer python scripts/generate_diagrams.py ; fi
+  - if [ $BUILD_DOCS -eq 1 ]; then unbuffer python scripts/build_docs.py --no-show ; fi
+  - if [ $BUILD_COVERAGE -eq 1 ]; then unbuffer python scripts/view_coverage.py --no-show ; fi
 after_success:
-  - unbuffer python scripts/testing_setup/full_teardown.py
+  - python scripts/testing_setup/full_teardown.py
   - if [ $DEPLOY_DOCS -eq 1 ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then unbuffer python scripts/deploy_docs.py; fi
 env:
   global:
