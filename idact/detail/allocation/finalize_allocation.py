@@ -1,4 +1,5 @@
 import datetime
+from math import ceil
 from typing import List
 
 from idact.core.config import ClusterConfig
@@ -75,8 +76,10 @@ def finalize_allocation(allocation_id: int,
                                          raise_on_missing=True)
 
     try:
+        node_count = len(hostnames)
+        retry_count = config.port_info_retries * int(ceil(node_count / 10))
         ports = retry(try_to_determine_ports,
-                      retries=config.port_info_retries,
+                      retries=retry_count,
                       seconds_between_retries=5)
     except RuntimeError:
         ports = determine_ports_for_nodes(allocation_id=allocation_id,
