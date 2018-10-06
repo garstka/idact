@@ -102,6 +102,7 @@ def deploy_dask_worker(node: NodeInternal,
         with stage_debug(log, "Opening a tunnel to bokeh diagnostics server."):
             bokeh_tunnel = node.tunnel(there=bokeh_port)
             stack.enter_context(close_tunnel_on_failure(bokeh_tunnel))
+            log.debug("Diagnostic local port: %d", bokeh_tunnel.here)
 
         return DaskWorkerDeployment(deployment=deployment,
                                     bokeh_tunnel=bokeh_tunnel)

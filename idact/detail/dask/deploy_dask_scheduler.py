@@ -96,6 +96,7 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
         with stage_debug(log, "Opening a tunnel to scheduler."):
             tunnel = node.tunnel(there=remote_port)
             stack.enter_context(close_tunnel_on_failure(tunnel))
+            log.debug("Diagnostics local port: %d", tunnel.here)
 
         with stage_debug(log, "Opening a tunnel to bokeh diagnostics server."):
             try:

@@ -14,7 +14,8 @@ REQUIREMENTS = ['click>=6.7',
                 'sshtunnel>=0.1.4',
                 'paramiko>=2.4.1',
                 'dask>=0.18.2',
-                'distributed>=1.22.0']
+                'distributed>=1.22.0',
+                'requests>=2.18.4']
 
 setup(
     author="Matt Garstka",

@@ -33,3 +33,8 @@ class DaskWorkerDeployment:
                            self._deployment.node.host))
             stack.enter_context(cancel_on_exit(self._deployment))
             stack.enter_context(close_tunnel_on_exit(self._bokeh_tunnel))
+
+    @property
+    def deployment(self) -> GenericDeployment:
+        """Generic deployment."""
+        return self._deployment
