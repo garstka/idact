@@ -10,6 +10,7 @@ from idact.detail.config.validation.validate_hostname import validate_hostname
 from idact.detail.config.validation.validate_bool import validate_bool
 from idact.detail.config.validation.validate_key_path import validate_key_path
 from idact.detail.config.validation.validate_port import validate_port
+from idact.detail.config.validation.validate_retries import validate_retries
 from idact.detail.config.validation.validate_scratch import validate_scratch
 from idact.detail.config.validation.validate_setup_actions_config import \
     validate_setup_actions_config
@@ -34,7 +35,8 @@ class ClusterConfigImpl(ClusterConfig):
                  install_key: bool = True,
                  disable_sshd: bool = False,
                  setup_actions: Optional[SetupActionsConfigImpl] = None,
-                 scratch: Optional[str] = None):
+                 scratch: Optional[str] = None,
+                 port_info_retries: Optional[int] = None):
         if install_key is None:
             install_key = True
         if disable_sshd is None:
@@ -43,6 +45,8 @@ class ClusterConfigImpl(ClusterConfig):
             setup_actions = SetupActionsConfigImpl()
         if scratch is None:
             scratch = '$HOME'
+        if port_info_retries is None:
+            port_info_retries = 5
 
         self._host = validate_hostname(host)
         self._port = validate_port(port)
@@ -53,6 +57,8 @@ class ClusterConfigImpl(ClusterConfig):
         self._disable_sshd = validate_bool(disable_sshd, 'disable_sshd')
         self._setup_actions = validate_setup_actions_config(setup_actions)
         self._scratch = validate_scratch(scratch)
+        self._port_info_retries = validate_retries(port_info_retries,
+                                                   'port_info_retries')
 
     @property
     def host(self) -> str:
@@ -121,6 +127,14 @@ class ClusterConfigImpl(ClusterConfig):
     @scratch.setter
     def scratch(self, value: str):
         self._scratch = value
+
+    @property
+    def port_info_retries(self) -> int:
+        return self._port_info_retries
+
+    @port_info_retries.setter
+    def port_info_retries(self, value: int):
+        self._port_info_retries = value
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__

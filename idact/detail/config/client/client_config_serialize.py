@@ -29,7 +29,8 @@ def serialize_client_config_to_json(config: ClientConfig) -> dict:
                    'setupActions': {
                        'jupyter': cluster_config.setup_actions.jupyter,
                        'dask': cluster_config.setup_actions.dask},
-                   'scratch': cluster_config.scratch}
+                   'scratch': cluster_config.scratch,
+                   'portInfoRetries': cluster_config.port_info_retries}
             for name, cluster_config in config.clusters.items()},
         'logLevel': config.log_level}
 
@@ -52,7 +53,11 @@ def use_defaults_in_missing_fields(data: dict) -> bool:
             modified.append(True)
 
     for cluster in data['clusters'].values():
-        for key in ['key', 'installKey', 'disableSshd', 'scratch']:
+        for key in ['key',
+                    'installKey',
+                    'disableSshd',
+                    'scratch',
+                    'portInfoRetries']:
             default(cluster, key, None)
         default(cluster, 'setupActions', {})
         default(cluster['setupActions'], 'jupyter', None)
@@ -84,7 +89,8 @@ def deserialize_client_config_from_json(data: dict) -> ClientConfig:
             setup_actions=SetupActionsConfigImpl(
                 jupyter=value['setupActions']['jupyter'],
                 dask=value['setupActions']['dask']),
-            scratch=value['scratch']
+            scratch=value['scratch'],
+            port_info_retries=value['portInfoRetries']
         ) for name, value in data['clusters'].items()}
     return ClientConfig(clusters=clusters,
                         log_level=data['logLevel'])

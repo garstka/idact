@@ -7,8 +7,8 @@ from typing import Optional, List
 
 from idact.detail.allocation.allocation import Allocation
 from idact.detail.allocation.allocation_parameters import AllocationParameters
-from idact.detail.entry_point.fetch_port_info import fetch_port_info
-from idact.detail.entry_point.sshd_port_info import SshdPortInfo
+from idact.detail.allocation.finalize_allocation import finalize_allocation
+from idact.detail.helper.stage_info import stage_info
 from idact.detail.helper.utc_now import utc_now
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_impl import NodeImpl
@@ -45,6 +45,7 @@ class SlurmAllocation(Allocation):
         self._nodes = nodes
         self._entry_point_script_path = entry_point_script_path
         self._parameters = parameters
+        self._done_waiting = False
 
     def wait(self, timeout: Optional[float]):
         log = get_logger(__name__)
@@ -53,6 +54,10 @@ class SlurmAllocation(Allocation):
         log.debug("Waiting for allocation of job %d...", self._job_id)
         if timeout is not None:
             end = utc_now() + datetime.timedelta(seconds=timeout)
+
+        if self._done_waiting:
+            raise RuntimeError("Already waited.")
+
         while True:
             squeue = run_squeue(node=self._access_node)
 
@@ -75,27 +80,25 @@ class SlurmAllocation(Allocation):
                                " or failing state: '{}'")
                     raise RuntimeError(message.format(job.state))
 
-                port_info_contents = fetch_port_info(
-                    allocation_id=self._job_id,
-                    config=self._access_node.config)
-                port_info = SshdPortInfo(contents=port_info_contents)
-                for host, node in zip(job.node_list, self._nodes):
-                    node.make_allocated(
-                        host=host,
-                        port=port_info.get_port(host=host),
-                        cores=self._parameters.cores,
-                        memory=self._parameters.memory_per_node,
-                        allocated_until=job.end_time)
+                self._done_waiting = True
+                finalize_allocation(allocation_id=self._job_id,
+                                    hostnames=job.node_list,
+                                    nodes=self._nodes,
+                                    parameters=self._parameters,
+                                    allocated_until=job.end_time,
+                                    config=self._access_node.config)
             finally:
                 self._access_node.run("rm -f {entry_point_script_path}".format(
                     entry_point_script_path=self._entry_point_script_path))
-            return
+            break
 
     def cancel(self):
-        run_scancel(job_id=self._job_id,
-                    node=self._access_node)
-        for node in self._nodes:
-            node.make_cancelled()
+        log = get_logger(__name__)
+        with stage_info(log, "Cancelling job %d.", self._job_id):
+            run_scancel(job_id=self._job_id,
+                        node=self._access_node)
+            for node in self._nodes:
+                node.make_cancelled()
 
     def running(self) -> bool:
         squeue = run_squeue(node=self._access_node)

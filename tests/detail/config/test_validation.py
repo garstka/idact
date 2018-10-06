@@ -10,6 +10,7 @@ from idact.detail.config.validation.validate_key_path import validate_key_path
 from idact.detail.config.validation.validate_log_level \
     import validate_log_level
 from idact.detail.config.validation.validate_port import validate_port
+from idact.detail.config.validation.validate_retries import validate_retries
 from idact.detail.config.validation.validate_scratch import validate_scratch
 from idact.detail.config.validation.validate_setup_actions import \
     validate_setup_actions
@@ -236,3 +237,17 @@ def test_validate_username():
         validate_username('')
     with pytest.raises(ValueError):
         validate_username('us\ner')
+
+
+def test_validate_retries():
+    assert validate_retries(0, label='') == 0
+    assert validate_retries(1, label='') == 1
+    assert validate_retries(22, label='') == 22
+    with pytest.raises(TypeError):
+        validate_retries(None, label='')
+    with pytest.raises(TypeError):
+        validate_retries('1', label='')
+    with pytest.raises(ValueError):
+        validate_retries(-1, label='')
+    with pytest.raises(ValueError):
+        validate_retries(-10, label='')

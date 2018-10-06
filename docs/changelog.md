@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3
+
+Multiple stability and debugability improvements, among them:
+ - More task stage info is available for the user.
+ - More actions are retried on failure.
+ - Conda dev environment and pip install and are now tested on Travis.
+
 ## 0.2
 
 Added:

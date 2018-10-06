@@ -2,9 +2,10 @@
 
 from typing import Optional
 
+from fabric.state import env
+
 from idact.detail.environment.environment import Environment
-from idact.detail.environment.environment_serialization import \
-    deserialize_environment_from_file
+from idact.detail.environment.environment_impl import EnvironmentImpl
 from idact.detail.log.logger_provider import LoggerProvider
 
 
@@ -31,8 +32,7 @@ class EnvironmentProvider:
            Tries to load it from file if there is none.
         """
         if self._environment is None:
-            new_environment = deserialize_environment_from_file(
-                ignore_if_missing=True)
+            new_environment = EnvironmentImpl()
             self._set_global_environment(new_environment)
 
         return self._environment
@@ -54,3 +54,15 @@ class EnvironmentProvider:
         self._environment = value
         if value is not None:
             LoggerProvider().log_level = self._environment.config.log_level
+            env.connection_attempts = 3
+            env.gss_auth = False
+            env.gss_deleg = False
+            env.gss_kex = False
+            env.keepalive = 30
+            env.no_agent = True
+            env.no_keys = True  # only explicit keys
+            env.rcfile = None
+            env.ssh_config_path = None
+            env.timeout = 15
+            env.use_ssh_config = False
+            env.warn_only = False

@@ -11,6 +11,7 @@ from idact.detail.helper.retry import retry
 from idact.detail.tunnel.close_tunnel_on_exit import close_tunnel_on_exit
 
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
+from tests.helpers.join_on_exit import join_on_exit
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.run_dummy_server import start_dummy_server_thread
 from tests.helpers.set_up_key_location import set_up_key_location
@@ -20,35 +21,31 @@ from tests.helpers.testing_environment import TEST_CLUSTER
 
 def run_tunnel_test(user: str, nodes: Nodes):
     node = nodes[0]
-    server = None
-    try:
-        nodes.wait(timeout=10)
-        assert nodes.running()
-        with ExitStack() as stack:
-            stack.enter_context(cancel_on_exit(nodes))
-            there = 8000
-            here = 2223
-            server = start_dummy_server_thread(user=user, server_port=there)
+    nodes.wait(timeout=10)
+    assert nodes.running()
+    with ExitStack() as stack:
+        stack.enter_context(cancel_on_exit(nodes))
+        there = 8000
+        here = 2223
+        server = start_dummy_server_thread(user=user, server_port=there)
+        stack.enter_context(join_on_exit(server))
 
-            tunnel = node.tunnel(there=there, here=here)
-            print(tunnel)
-            assert str(tunnel) == repr(tunnel)
+        tunnel = node.tunnel(there=there, here=here)
+        print(tunnel)
+        assert str(tunnel) == repr(tunnel)
 
-            stack.enter_context(close_tunnel_on_exit(tunnel))
-            assert tunnel.here == here
-            assert tunnel.there == there
+        stack.enter_context(close_tunnel_on_exit(tunnel))
+        assert tunnel.here == here
+        assert tunnel.there == there
 
-            def access_dummy_server():
-                return requests.get("http://127.0.0.1:{local_port}".format(
-                    local_port=here))
+        def access_dummy_server():
+            return requests.get("http://127.0.0.1:{local_port}".format(
+                local_port=here))
 
-            request = retry(access_dummy_server,
-                            retries=3,
-                            seconds_between_retries=2)
-            assert "text/html" in request.headers['Content-type']
-    finally:
-        if server is not None:
-            server.join()
+        request = retry(access_dummy_server,
+                        retries=3,
+                        seconds_between_retries=2)
+        assert "text/html" in request.headers['Content-type']
 
     assert not nodes.running()
     with pytest.raises(RuntimeError):

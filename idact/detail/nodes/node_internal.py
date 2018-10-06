@@ -53,18 +53,6 @@ class NodeInternal(Node):
 
     @property
     @abstractmethod
-    def host(self) -> Optional[str]:
-        """Hostname of the cluster node."""
-        pass
-
-    @property
-    @abstractmethod
-    def port(self) -> Optional[int]:
-        """SSH port of the cluster node."""
-        pass
-
-    @property
-    @abstractmethod
     def cores(self) -> Optional[int]:
         """Returns the allocated node core count.
             Returns None for a node that was not allocated."""

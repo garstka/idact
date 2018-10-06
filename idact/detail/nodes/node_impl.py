@@ -31,6 +31,11 @@ class NodeImpl(NodeInternal):
 
     """
 
+    def connect(self, timeout: Optional[int] = None):
+        result = self.run("echo 'Testing connection...'", timeout=timeout)
+        if result != 'Testing connection...':
+            raise RuntimeError("Unexpected test command output.")
+
     def __init__(self,
                  config: ClusterConfig):
         self._config = config
@@ -116,7 +121,6 @@ class NodeImpl(NodeInternal):
             :param allocated_until: Timestamp for job termination. Must be UTC
                                     or contain timezone info.
                                     None is treated as unlimited allocation.
-
 
         """
         self._host = host

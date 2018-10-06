@@ -123,7 +123,8 @@ def test_client_config_serialize():
                          'disableSshd': False,
                          'setupActions': {'jupyter': [],
                                           'dask': []},
-                         'scratch': '$HOME'}
+                         'scratch': '$HOME',
+                         'portInfoRetries': 5}
         },
         'logLevel': INFO
     }
@@ -143,7 +144,8 @@ def test_client_config_deserialize():
                          'disableSshd': False,
                          'setupActions': {'jupyter': [],
                                           'dask': []},
-                         'scratch': '$HOME'}
+                         'scratch': '$HOME',
+                         'portInfoRetries': 5}
         },
         'logLevel': DEBUG
     }
@@ -170,7 +172,8 @@ def test_client_config_serialize_public_key():
                          'disableSshd': False,
                          'setupActions': {'jupyter': ['echo a'],
                                           'dask': []},
-                         'scratch': '$HOME'}
+                         'scratch': '$HOME',
+                         'portInfoRetries': 5}
         }, 'logLevel': INFO}
     assert serialize_client_config_to_json(client_config) == expected_json
 
@@ -187,7 +190,8 @@ def test_client_config_deserialize_public_key():
                          'disableSshd': False,
                          'setupActions': {'jupyter': ['echo a'],
                                           'dask': []},
-                         'scratch': '$HOME'}
+                         'scratch': '$HOME',
+                         'portInfoRetries': 5}
         },
         'logLevel': INFO
     }
@@ -207,7 +211,8 @@ EXPECTED_DEFAULT_JSON = {
                      'disableSshd': False,
                      'setupActions': {'jupyter': [],
                                       'dask': []},
-                     'scratch': '$HOME'}
+                     'scratch': '$HOME',
+                     'portInfoRetries': 5}
     },
     'logLevel': INFO
 }

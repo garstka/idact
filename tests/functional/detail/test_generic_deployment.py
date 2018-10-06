@@ -55,16 +55,15 @@ def test_generic_deployment():
                                     script_contents=script_contents,
                                     capture_output_seconds=4,
                                     runtime_dir=runtime_dir)
-        stack.enter_context(cancel_on_exit(deployment))
-        print(deployment)
+        with cancel_on_exit(deployment):
+            print(deployment)
 
-        assert deployment.output == "ABC\nDEF"
+            assert deployment.output == "ABC\nDEF"
 
-        fabric.network.disconnect_all()
-        node.run(
-            "kill -0 {pid}".format(pid=deployment.pid))
+            fabric.network.disconnect_all()
+            node.run(
+                "kill -0 {pid}".format(pid=deployment.pid))
 
-        deployment.cancel()
         with pytest.raises(RuntimeError):
             node.run(
                 "kill -0 {pid}".format(pid=deployment.pid))

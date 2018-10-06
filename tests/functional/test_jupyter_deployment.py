@@ -7,6 +7,7 @@ from bitmath import MiB
 
 from idact import show_cluster, Walltime, Nodes
 from idact.detail.auth.set_password import set_password
+from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
@@ -19,13 +20,12 @@ def deploy_jupyter(nodes: Nodes):
     ps_jupyter = "ps -u $USER | grep jupyter ; exit 0"
 
     node = nodes[0]
-    deployment = None
-    try:
-        nodes.wait(timeout=10)
-        assert nodes.running()
+    nodes.wait(timeout=10)
+    assert nodes.running()
 
-        local_port = 2223
-        deployment = node.deploy_notebook(local_port=local_port)
+    local_port = 2223
+    deployment = node.deploy_notebook(local_port=local_port)
+    with cancel_on_exit(deployment):
         print(deployment)
         assert str(deployment) == repr(deployment)
 
@@ -41,22 +41,11 @@ def deploy_jupyter(nodes: Nodes):
             local_port=local_port))
         assert "text/html" in request.headers['Content-type']
 
-        try:
-            yield node
-        finally:
-            deployment.cancel()
+        yield node
 
-            ps_jupyter_lines = node.run(ps_jupyter).splitlines()
-            pprint(ps_jupyter_lines)
-            assert not ps_jupyter_lines
-
-            deployment = None
-    finally:
-        try:
-            if deployment is not None:
-                deployment.cancel()
-        finally:
-            nodes.cancel()
+    ps_jupyter_lines = node.run(ps_jupyter).splitlines()
+    pprint(ps_jupyter_lines)
+    assert not ps_jupyter_lines
 
 
 def test_jupyter_deployment():
@@ -72,6 +61,7 @@ def test_jupyter_deployment():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=30))
+        stack.enter_context(cancel_on_exit(nodes))
 
         with deploy_jupyter(nodes):
             pass
@@ -90,6 +80,7 @@ def test_jupyter_deployment_with_setup_actions():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=30))
+        stack.enter_context(cancel_on_exit(nodes))
 
         cluster.config.setup_actions.jupyter = ['echo ABC > file.txt',
                                                 'mv file.txt file2.txt']

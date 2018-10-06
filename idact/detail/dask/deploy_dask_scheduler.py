@@ -18,6 +18,7 @@ from idact.detail.helper.get_remote_file import get_remote_file
 from idact.detail.helper.remove_runtime_dir \
     import remove_runtime_dir_on_failure
 from idact.detail.helper.retry import retry
+from idact.detail.helper.stage_info import stage_debug
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.tunnel.close_tunnel_on_failure import close_tunnel_on_failure
@@ -49,14 +50,17 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
     log = get_logger(__name__)
 
     with ExitStack() as stack:
-        runtime_dir = create_runtime_dir(node=node)
-        stack.enter_context(
-            remove_runtime_dir_on_failure(node=node,
-                                          runtime_dir=runtime_dir))
+        with stage_debug(log, "Creating a runtime dir."):
+            runtime_dir = create_runtime_dir(node=node)
+            stack.enter_context(
+                remove_runtime_dir_on_failure(node=node,
+                                              runtime_dir=runtime_dir))
 
-        remote_port, bokeh_port = get_free_remote_ports(count=2, node=node)
+        with stage_debug(log, "Obtaining free remote ports."):
+            remote_port, bokeh_port = get_free_remote_ports(count=2, node=node)
 
-        scratch_subdir = create_scratch_subdir(node=node)
+        with stage_debug(log, "Creating a scratch subdirectory."):
+            scratch_subdir = create_scratch_subdir(node=node)
 
         log_file = '{runtime_dir}/log'.format(runtime_dir=runtime_dir)
 
@@ -68,11 +72,13 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
             config=node.config)
 
         log.debug("Deployment script contents: %s", script_contents)
-        deployment = deploy_generic(node=node,
-                                    script_contents=script_contents,
-                                    capture_output_seconds=5,
-                                    runtime_dir=runtime_dir)
-        stack.enter_context(cancel_on_failure(deployment))
+
+        with stage_debug(log, "Deploying script."):
+            deployment = deploy_generic(node=node,
+                                        script_contents=script_contents,
+                                        capture_output_seconds=5,
+                                        runtime_dir=runtime_dir)
+            stack.enter_context(cancel_on_failure(deployment))
 
         @fabric.decorators.task
         def extract_address_from_log() -> str:
@@ -81,23 +87,25 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
             log.debug("Log file: %s", output)
             return extract_address_from_output(output=output)
 
-        address = retry(
-            lambda: node.run_task(task=extract_address_from_log),
-            retries=5,
-            seconds_between_retries=5)
+        with stage_debug(log, "Obtaining scheduler address."):
+            address = retry(
+                lambda: node.run_task(task=extract_address_from_log),
+                retries=5,
+                seconds_between_retries=5)
 
-        tunnel = node.tunnel(there=remote_port)
-        stack.enter_context(close_tunnel_on_failure(tunnel))
+        with stage_debug(log, "Opening a tunnel to scheduler."):
+            tunnel = node.tunnel(there=remote_port)
+            stack.enter_context(close_tunnel_on_failure(tunnel))
 
-        try:
-            bokeh_tunnel = node.tunnel(there=bokeh_port, here=bokeh_port)
-        except SSHException:
-            log.warning("Failed to bind scheduler diagnostics tunnel"
-                        " to the same local port as on the node.")
-            bokeh_tunnel = node.tunnel(there=bokeh_port)
-            log.info("Bound to port %d instead", bokeh_tunnel.here)
-
-        stack.enter_context(close_tunnel_on_failure(bokeh_tunnel))
+        with stage_debug(log, "Opening a tunnel to bokeh diagnostics server."):
+            try:
+                bokeh_tunnel = node.tunnel(there=bokeh_port, here=bokeh_port)
+            except SSHException:
+                log.warning("Failed to bind scheduler diagnostics tunnel"
+                            " to the same local port as on the node.")
+                bokeh_tunnel = node.tunnel(there=bokeh_port)
+                log.info("Bound to port %d instead", bokeh_tunnel.here)
+            stack.enter_context(close_tunnel_on_failure(bokeh_tunnel))
 
         return DaskSchedulerDeployment(deployment=deployment,
                                        tunnel=tunnel,

@@ -7,6 +7,7 @@ from typing import Dict, Optional, List
 from idact.core.nodes import Node
 from idact.detail.config.validation.validate_hostname import validate_hostname
 from idact.detail.helper.utc_now import utc_now
+from idact.detail.log.get_logger import get_logger
 from idact.detail.slurm.squeue_result import SqueueResult
 
 
@@ -112,6 +113,8 @@ def extract_squeue_line(now: datetime.datetime,
         node_list = extract_squeue_format_R(value=components[4], node=node)
         state = extract_squeue_format_T(value=components[5])
     except ValueError:
+        log = get_logger(__name__)
+        log.debug("Exception", exc_info=1)
         return None
 
     return SqueueResult(job_id=job_id,

@@ -133,3 +133,14 @@ class ClusterConfig(ABC):
     @abstractmethod
     def scratch(self, value: str):
         pass
+
+    @property
+    @abstractmethod
+    def port_info_retries(self) -> int:
+        """Number of retries to determine port info during allocation."""
+        pass
+
+    @port_info_retries.setter
+    @abstractmethod
+    def port_info_retries(self, value: int):
+        pass

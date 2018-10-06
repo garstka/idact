@@ -18,6 +18,15 @@ class Node(ABC):
     """Cluster node interface."""
 
     @abstractmethod
+    def connect(self, timeout: Optional[int] = None):
+        """Just connects to the node and executes a test command.
+            Doing this explicitly is optional.
+
+            :param timeout: Execution timeout.
+        """
+        pass
+
+    @abstractmethod
     def run(self, command: str, timeout: Optional[int] = None) -> str:
         """Runs a command on the node. Returns the result as string.
 
@@ -52,6 +61,18 @@ class Node(ABC):
     @abstractmethod
     def resources(self) -> NodeResourceStatus:
         """Returns the node resource status, like CPU and memory usage."""
+        pass
+
+    @property
+    @abstractmethod
+    def host(self) -> Optional[str]:
+        """Hostname of the cluster node."""
+        pass
+
+    @property
+    @abstractmethod
+    def port(self) -> Optional[int]:
+        """SSH port of the cluster node."""
         pass
 
 

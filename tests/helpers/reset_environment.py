@@ -35,7 +35,8 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
         host=get_testing_host(),
         port=get_testing_port(),
         user=user,
-        auth=auth)
+        auth=auth,
+        port_info_retries=0)
     EnvironmentProvider(
         initial_environment=EnvironmentImpl(
             config=ClientConfig(

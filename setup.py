@@ -4,7 +4,7 @@
 """The setup script."""
 from setuptools import setup, find_packages
 
-with open('README.rst') as readme_file:
+with open('README.md') as readme_file:
     README = readme_file.read()
 
 REQUIREMENTS = ['click>=6.7',
@@ -42,6 +42,6 @@ setup(
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.2',
+    version='0.3',
     zip_safe=False,
 )

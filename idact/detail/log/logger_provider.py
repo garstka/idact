@@ -26,7 +26,7 @@ class LoggerProvider:
             fmt="%(asctime)s %(levelname)s: %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S")
         handler.setFormatter(formatter)
-        self._handlers = [handler]
+        self.handlers = [handler]
 
         LoggerProvider._state = self.__dict__
 
@@ -38,5 +38,5 @@ class LoggerProvider:
         """
         logger = logging.getLogger(name)
         logger.setLevel(self.log_level)
-        logger.handlers = self._handlers
+        logger.handlers = self.handlers
         return logger

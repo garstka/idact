@@ -7,6 +7,7 @@ import fabric.decorators
 import fabric.tasks
 
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
+from idact.detail.helper.stage_info import stage_info
 from idact.detail.log.get_logger import get_logger
 
 SHARED_HOST_KEY_PATH = "~/.ssh/ssh_host_rsa_key"
@@ -27,14 +28,20 @@ def install_shared_home_key():
     def task():
         """Creates the .ssh dir with proper permissions and generates the host
             key if it's not been generated already."""
-        run("mkdir -p ~/.ssh")
-        run("chmod 700 ~/.ssh")
-        if not exists(SHARED_HOST_KEY_PATH):
-            log.info("Generating shared host key...")
-            run("ssh-keygen"
-                " -t rsa"
-                " -f {shared_host_key_path}"
-                " -N ''".format(shared_host_key_path=SHARED_HOST_KEY_PATH))
+        with stage_info(log, "Creating the ssh directory."):
+            run("mkdir -p ~/.ssh")
+            run("chmod 700 ~/.ssh")
+
+        if exists(SHARED_HOST_KEY_PATH):
+            log.debug("Skipping the generation of host key, because it"
+                      " already exists: %s", SHARED_HOST_KEY_PATH)
+        else:
+            with stage_info(log, "Generating shared host key at %s.",
+                            SHARED_HOST_KEY_PATH):
+                run("ssh-keygen"
+                    " -t rsa"
+                    " -f {shared_host_key_path}"
+                    " -N ''".format(shared_host_key_path=SHARED_HOST_KEY_PATH))
 
     with raise_on_remote_fail(exception=RuntimeError):
         fabric.tasks.execute(task)

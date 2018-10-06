@@ -3,15 +3,15 @@
 
 from typing import Optional
 
-import fabric.decorators
-
 from idact.core.nodes import Node
 from idact.core.cluster import Cluster
 from idact.detail.environment.environment import Environment
 from idact.detail.environment.environment_text_serialization import \
     deserialize_environment, serialize_environment
-from idact.detail.helper.get_remote_file import get_remote_file
-from idact.detail.helper.put_remote_file import put_remote_file
+from idact.detail.helper.get_remote_file import get_file_from_node
+from idact.detail.helper.put_remote_file import put_file_on_node
+from idact.detail.helper.stage_info import stage_debug
+from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
 DEFAULT_REMOTE_ENVIRONMENT_PATH = '~/.idact.conf'
@@ -20,6 +20,8 @@ DEFAULT_REMOTE_ENVIRONMENT_PATH = '~/.idact.conf'
 def get_remote_environment_path(node: Node,
                                 path: Optional[str]) -> str:
     """Returns the remote path to config file, or Raises a RuntimeError.
+
+        :param node: Remote node.
 
         :param path: Optional remote path.
 
@@ -51,17 +53,16 @@ def serialize_environment_to_cluster(environment: Environment,
                      or ~/.idact.conf
 
     """
-    node = cluster.get_access_node()
-    assert isinstance(node, NodeInternal)
-    path = get_remote_environment_path(node=node, path=path)
+    log = get_logger(__name__)
+    with stage_debug(log, "Serializing the environment to cluster."):
+        node = cluster.get_access_node()
+        assert isinstance(node, NodeInternal)
+        path = get_remote_environment_path(node=node, path=path)
 
-    file_contents = serialize_environment(environment)
-
-    @fabric.decorators.task
-    def file_upload_task():
-        put_remote_file(remote_path=path, contents=file_contents)
-
-    node.run_task(task=file_upload_task)
+        file_contents = serialize_environment(environment)
+        put_file_on_node(node=node,
+                         remote_path=path,
+                         contents=file_contents)
 
 
 def deserialize_environment_from_cluster(cluster: Cluster,
@@ -78,13 +79,12 @@ def deserialize_environment_from_cluster(cluster: Cluster,
                      or ~/.idact.conf
 
     """
-    node = cluster.get_access_node()
-    assert isinstance(node, NodeInternal)
-    path = get_remote_environment_path(node=node, path=path)
+    log = get_logger(__name__)
+    with stage_debug(log, "Deserializing the environment from cluster."):
+        node = cluster.get_access_node()
+        assert isinstance(node, NodeInternal)
+        path = get_remote_environment_path(node=node, path=path)
 
-    @fabric.decorators.task
-    def file_download_task():
-        return get_remote_file(remote_path=path)
-
-    file_contents = node.run_task(task=file_download_task)
-    return deserialize_environment(text=file_contents)
+        file_contents = get_file_from_node(node=node,
+                                           remote_path=path)
+        return deserialize_environment(text=file_contents)

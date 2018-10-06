@@ -15,6 +15,8 @@ from idact.detail.auth.install_key import install_key
 from idact.detail.auth.install_shared_home_key import install_shared_home_key
 from idact.detail.entry_point.get_entry_point_script_contents import \
     COMPUTE_NODE_AUTHORIZED_KEYS
+from idact.detail.helper.stage_info import stage_info, stage_debug
+from idact.detail.log.get_logger import get_logger
 
 
 def get_host_strings(host: str,
@@ -107,26 +109,37 @@ def authenticate(host: str,
             "Authentication method not implemented: '{}'.".format(
                 config.auth))
 
-    env.always_use_pty = False
     previous_gateway, previous_host = env.gateway, env.host_string
     env.gateway, env.host_string = get_host_strings(host=host,
                                                     port=port,
                                                     config=config)
 
+    previous_abort_on_prompts = env.abort_on_prompts
+    env.shell = "/bin/bash --noprofile -l -c"
+    env.key = None
+    env.user = config.user
+    env.abort_on_prompts = True
+    log = get_logger(__name__)
     try:
         if config.auth == AuthMethod.ASK:
             env.password = get_password(config=config)
         elif config.auth == AuthMethod.PUBLIC_KEY:
             if config.install_key:
-                install_key_using_password_authentication(config=config)
+                with stage_info(log, "Installing key using password"
+                                     " authentication."):
+                    install_key_using_password_authentication(config=config)
                 env.key_filename = config.key
                 config.install_key = False
+                env.password = None
 
         access_node = get_host_string(config=config)
         if install_shared_keys:
-            install_keys_using_current_authentication(
-                access_node=access_node,
-                config=config)
+            with stage_debug(log, "Installing key in %s for access to compute"
+                                  " nodes",
+                             COMPUTE_NODE_AUTHORIZED_KEYS):
+                install_keys_using_current_authentication(
+                    access_node=access_node,
+                    config=config)
 
         # Key is needed between gateway and compute nodes even when using
         # password-based authentication.
@@ -138,3 +151,4 @@ def authenticate(host: str,
 
         env.password = None
         env.key_filename = None
+        env.abort_on_prompts = previous_abort_on_prompts

@@ -5,6 +5,7 @@ from bitmath import MiB
 
 from idact import Walltime, show_cluster, Node
 from idact.detail.auth.set_password import set_password
+from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from idact.detail.helper.remove_runtime_dir import remove_runtime_dir
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
@@ -94,6 +95,7 @@ def test_remove_runtime_dir_test():
                                        cores=1,
                                        memory_per_node=MiB(100),
                                        walltime=Walltime(minutes=30))
+        stack.enter_context(cancel_on_exit(nodes))
         node = nodes[0]
         try:
             nodes.wait(timeout=10)
@@ -104,9 +106,5 @@ def test_remove_runtime_dir_test():
             check_will_remove_files(node=node)
             check_will_not_remove_dotfiles(node=node)
             check_will_not_remove_nested_dirs(node=node)
-
         finally:
-            try:
-                node.run("rm -rf *")
-            finally:
-                nodes.cancel()
+            node.run("rm -rf *")

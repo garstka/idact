@@ -18,6 +18,7 @@ from idact.detail.helper.get_remote_file import get_remote_file
 from idact.detail.helper.remove_runtime_dir \
     import remove_runtime_dir_on_failure
 from idact.detail.helper.retry import retry
+from idact.detail.helper.stage_info import stage_debug
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.tunnel.close_tunnel_on_failure import close_tunnel_on_failure
@@ -53,14 +54,17 @@ def deploy_dask_worker(node: NodeInternal,
     log = get_logger(__name__)
 
     with ExitStack() as stack:
-        runtime_dir = create_runtime_dir(node=node)
-        stack.enter_context(
-            remove_runtime_dir_on_failure(node=node,
-                                          runtime_dir=runtime_dir))
+        with stage_debug(log, "Creating a runtime dir."):
+            runtime_dir = create_runtime_dir(node=node)
+            stack.enter_context(
+                remove_runtime_dir_on_failure(node=node,
+                                              runtime_dir=runtime_dir))
 
-        bokeh_port = get_free_remote_port(node=node)
+        with stage_debug(log, "Obtaining a free remote port."):
+            bokeh_port = get_free_remote_port(node=node)
 
-        scratch_subdir = create_scratch_subdir(node=node)
+        with stage_debug(log, "Creating a scratch subdirectory."):
+            scratch_subdir = create_scratch_subdir(node=node)
 
         log_file = '{runtime_dir}/log'.format(runtime_dir=runtime_dir)
 
@@ -74,11 +78,13 @@ def deploy_dask_worker(node: NodeInternal,
             config=node.config)
 
         log.debug("Deployment script contents: %s", script_contents)
-        deployment = deploy_generic(node=node,
-                                    script_contents=script_contents,
-                                    capture_output_seconds=5,
-                                    runtime_dir=runtime_dir)
-        stack.enter_context(cancel_on_failure(deployment))
+
+        with stage_debug(log, "Deploying script."):
+            deployment = deploy_generic(node=node,
+                                        script_contents=script_contents,
+                                        capture_output_seconds=5,
+                                        runtime_dir=runtime_dir)
+            stack.enter_context(cancel_on_failure(deployment))
 
         @fabric.decorators.task
         def validate_worker_started_from_log():
@@ -88,12 +94,14 @@ def deploy_dask_worker(node: NodeInternal,
             log.debug("Log file: %s", output)
             validate_worker_started(output=output)
 
-        retry(lambda: node.run_task(task=validate_worker_started_from_log),
-              retries=5,
-              seconds_between_retries=5)
+        with stage_debug(log, "Checking if worker started."):
+            retry(lambda: node.run_task(task=validate_worker_started_from_log),
+                  retries=5,
+                  seconds_between_retries=5)
 
-        bokeh_tunnel = node.tunnel(there=bokeh_port)
-        stack.enter_context(close_tunnel_on_failure(bokeh_tunnel))
+        with stage_debug(log, "Opening a tunnel to bokeh diagnostics server."):
+            bokeh_tunnel = node.tunnel(there=bokeh_port)
+            stack.enter_context(close_tunnel_on_failure(bokeh_tunnel))
 
         return DaskWorkerDeployment(deployment=deployment,
                                     bokeh_tunnel=bokeh_tunnel)

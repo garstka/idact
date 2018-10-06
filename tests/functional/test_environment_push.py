@@ -56,6 +56,7 @@ def check_able_to_merge_push_environment(user: str,
         cluster = show_cluster(name=TEST_CLUSTER)
         cluster.config.key = None
         cluster.config.install_key = False
+        cluster.config.port_info_retries = 5
 
         assert len(show_clusters()) == 1
         node = cluster.get_access_node()
@@ -170,6 +171,7 @@ def check_able_to_push_new_environment(user: str,
         cluster = show_cluster(name=TEST_CLUSTER)
         cluster.config.key = None
         cluster.config.install_key = False
+        cluster.config.port_info_retries = 5
 
         assert len(show_clusters()) == 1
         node = cluster.get_access_node()
