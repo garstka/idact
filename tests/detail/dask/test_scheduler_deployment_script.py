@@ -1,4 +1,4 @@
-from idact import AuthMethod
+from idact.core.auth import AuthMethod
 from idact.detail.config.client.client_cluster_config import ClusterConfigImpl
 from idact.detail.config.client.setup_actions_config import \
     SetupActionsConfigImpl

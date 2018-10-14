@@ -98,3 +98,26 @@ def test_walltime_from_string():
         Walltime.from_string('1:2:3')
     with pytest.raises(ValueError):
         Walltime.from_string('abc')
+
+
+def test_walltime_to_string():
+    assert str(Walltime(days=0,
+                        hours=1,
+                        minutes=2,
+                        seconds=3)) == '01:02:03'
+    assert str(Walltime(days=1,
+                        hours=2,
+                        minutes=3,
+                        seconds=4)) == '1-02:03:04'
+    assert str(Walltime(days=123,
+                        hours=4,
+                        minutes=5,
+                        seconds=6)) == '123-04:05:06'
+    assert str(Walltime(days=123,
+                        hours=10,
+                        minutes=20,
+                        seconds=30)) == '123-10:20:30'
+    assert str(Walltime(days=123,
+                        hours=0,
+                        minutes=0,
+                        seconds=0)) == '123-00:00:00'

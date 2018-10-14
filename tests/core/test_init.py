@@ -1,7 +1,8 @@
 """Tests for core imports."""
 
 from idact.core.set_log_level import set_log_level
-from idact.core.nodes import Node, Nodes
+from idact.core.node import Node
+from idact.core.nodes import Nodes
 from idact.core.auth import AuthMethod, KeyType
 from idact.core.cluster import Cluster
 from idact.core.add_cluster import add_cluster
@@ -16,6 +17,7 @@ from idact.core.dask_deployment import DaskDeployment, DaskDiagnostics
 from idact.core.deploy_dask import deploy_dask
 from idact.core.remove_cluster import remove_cluster
 from idact.core.node_resource_status import NodeResourceStatus
+from idact.core.synchronized_deployments import SynchronizedDeployments
 from idact import _IMPORTED
 from idact import add_cluster as add_cluster2
 from idact import show_cluster as show_cluster2
@@ -40,6 +42,7 @@ from idact import remove_cluster as remove_cluster2
 from idact import pull_environment as pull_environment2
 from idact import push_environment as push_environment2
 from idact import NodeResourceStatus as NodeResourceStatus2
+from idact import SynchronizedDeployments as SynchronizedDeployments2
 
 IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (show_cluster, show_cluster2),
@@ -63,7 +66,8 @@ IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (remove_cluster, remove_cluster2),
                           (pull_environment, pull_environment2),
                           (push_environment, push_environment2),
-                          (NodeResourceStatus, NodeResourceStatus2)]
+                          (NodeResourceStatus, NodeResourceStatus2),
+                          (SynchronizedDeployments, SynchronizedDeployments2)]
 
 CORE_IMPORTS = [add_cluster,
                 load_environment,
@@ -87,14 +91,15 @@ CORE_IMPORTS = [add_cluster,
                 remove_cluster,
                 pull_environment,
                 push_environment,
-                NodeResourceStatus]
+                NodeResourceStatus,
+                SynchronizedDeployments]
 
 
 def test_aliases():
     """Tests classes and functions imported from the core package
        to the top level package.
     """
-    assert len(_IMPORTED) == 23
+    assert len(_IMPORTED) == 24
 
     for core, main in IMPORT_PAIRS_CORE_MAIN:
         assert core is main

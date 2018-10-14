@@ -43,6 +43,8 @@ def check_scheduler_reachable_from_nodes(nodes: Sequence[Node],
 
          :param nodes: Nodes to deploy Dask on.
 
+         :param scheduler: Scheduler to connect to.
+
     """
     log = get_logger(__name__)
     node_count = len(nodes)

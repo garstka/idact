@@ -14,10 +14,12 @@ from idact.core.environment import load_environment, save_environment, \
     pull_environment, push_environment
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.node_resource_status import NodeResourceStatus
-from idact.core.nodes import Nodes, Node
+from idact.core.node import Node
+from idact.core.nodes import Nodes
 from idact.core.remove_cluster import remove_cluster
 from idact.core.set_log_level import set_log_level
 from idact.core.show_clusters import show_cluster, show_clusters
+from idact.core.synchronized_deployments import SynchronizedDeployments
 from idact.core.tunnel import Tunnel
 from idact.core.walltime import Walltime
 from idact.core.add_cluster import add_cluster
@@ -49,7 +51,8 @@ _IMPORTED = {add_cluster,
              remove_cluster,
              pull_environment,
              push_environment,
-             NodeResourceStatus}
+             NodeResourceStatus,
+             SynchronizedDeployments}
 """List of the public API members imported into the top level package
    for convenience."""
 

@@ -21,6 +21,7 @@ Core classes
  - :py:class:`.NodeResourceStatus`
  - :py:class:`.Nodes`
  - :py:class:`.SetupActionsConfig`
+ - :py:class:`.SynchronizedDeployments`
  - :py:class:`.Tunnel`
  - :py:class:`.Walltime`
 
@@ -37,12 +38,13 @@ Core implementation classes:
  - :py:class:`.DaskDeploymentImpl`
  - :py:class:`.DaskDiagnosticsImpl`
  - :py:class:`.FirstHopTunnel`
+ - :py:class:`.JupyterDeploymentImpl`
+ - :py:class:`.MultiHopTunnel`
+ - :py:class:`.NodeImpl`
  - :py:class:`.NodeInternal`
  - :py:class:`.NodeResourceStatusImpl`
- - :py:class:`.MultiHopTunnel`
- - :py:class:`.JupyterDeploymentImpl`
- - :py:class:`.NodeImpl`
  - :py:class:`.NodesImpl`
+ - :py:class:`.SynchronizedDeploymentsImpl`
 
 Allocation detail classes
 -------------------------
@@ -73,6 +75,18 @@ Deployment detail classes:
  - :py:class:`.GenericDeployment`
  - :py:class:`.SshdPortInfo`
 
+Deployment synchronization detail classes
+-----------------------------------------
+
+.. figure:: diagrams/detail-deployment-sync.png
+    :scale: 50 %
+    :alt: Deployment synchronization detail class diagram
+    :figclass: align-center
+
+Deployment detail classes:
+ - :py:class:`.DeploymentDefinition`
+ - :py:class:`.DeploymentDefinitions`
+
 Config detail classes
 ---------------------
 
@@ -101,3 +115,4 @@ Other detail classes:
  - :py:class:`.GetpassExecutedError`
  - :py:class:`.LoggerProvider`
  - :py:class:`.PasswordCache`
+ - :py:class:`.Serializable`

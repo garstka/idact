@@ -9,7 +9,7 @@ from idact.detail.entry_point.get_entry_point_script_contents \
     import get_entry_point_script_contents
 from idact.detail.entry_point.upload_entry_point import upload_entry_point
 from idact.detail.log.get_logger import get_logger
-from idact.detail.nodes.node_impl import NodeImpl
+from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.slurm.sbatch_arguments import SbatchArguments
 
 
@@ -57,7 +57,7 @@ def format_sbatch_allocation_request(args: SbatchArguments,
 
 def prepare_sbatch_allocation_request(args: SbatchArguments,
                                       config: ClusterConfig,
-                                      node: NodeImpl) -> \
+                                      node: NodeInternal) -> \
     Tuple[str, str]:  # noqa
     """Uploads the entry point script and returns the formatted sbatch
         command.
@@ -84,7 +84,7 @@ def prepare_sbatch_allocation_request(args: SbatchArguments,
 
 
 def run_sbatch(args: SbatchArguments,
-               node: NodeImpl) -> Tuple[int, str]:
+               node: NodeInternal) -> Tuple[int, str]:
     """Runs sbatch on the given node. Returns the job id and the path
         to the entry point script.
 

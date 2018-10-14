@@ -9,9 +9,10 @@ import bitmath
 from idact.core.nodes import Node
 from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl
+from idact.detail.serialization.serializable import Serializable
 
 
-class NodeInternal(Node):
+class NodeInternal(Node, Serializable):
     """Node interface for internal use."""
 
     @abstractmethod
