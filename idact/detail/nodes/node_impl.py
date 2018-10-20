@@ -238,7 +238,6 @@ class NodeImpl(NodeInternal):
 
     @property
     def allocated_until(self) -> Optional[datetime.datetime]:
-        """Datetime allocation ends, or None if not allocated."""
         return self._allocated_until
 
     def __eq__(self, other):

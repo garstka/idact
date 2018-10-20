@@ -32,7 +32,6 @@ def discard_expired_deployments(
         discard_now = utc_now() + timedelta(seconds=DISCARD_DELTA_SECONDS)
 
         unexpired_nodes = {}
-
         for uuid, node in deployments.nodes.items():
             if node.expiration_date < discard_now:
                 log.warning("Discarding a synchronized allocation deployment,"
@@ -40,7 +39,14 @@ def discard_expired_deployments(
             else:
                 unexpired_nodes[uuid] = node
 
-        log.debug("Discarded %d allocations.",
-                  len(deployments.nodes) - len(unexpired_nodes))
+        unexpired_jupyter_deployments = {}
+        for uuid, jupyter in deployments.jupyter_deployments.items():
+            if jupyter.expiration_date < discard_now:
+                log.warning("Discarding a Jupyter deployment,"
+                            " because it has expired: %s", uuid)
+            else:
+                unexpired_jupyter_deployments[uuid] = jupyter
 
-    return DeploymentDefinitions(nodes=unexpired_nodes)
+        return DeploymentDefinitions(
+            nodes=unexpired_nodes,
+            jupyter_deployments=unexpired_jupyter_deployments)

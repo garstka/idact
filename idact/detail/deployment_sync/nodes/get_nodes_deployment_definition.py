@@ -1,8 +1,7 @@
-from datetime import timedelta
-
 from idact.detail.deployment_sync.deployment_definition import \
     DeploymentDefinition
-from idact.detail.helper.utc_now import utc_now
+from idact.detail.deployment_sync.nodes.get_expiration_date_from_nodes \
+    import get_expiration_date_from_nodes
 from idact.detail.nodes.nodes_impl import NodesImpl
 
 
@@ -17,13 +16,6 @@ def get_nodes_deployment_definition(
 
     """
 
-    expiration_dates = [node.allocated_until
-                        for node in deployment
-                        if node.allocated_until is not None]
-    if expiration_dates:
-        expiration_date = min(expiration_dates)
-    else:
-        expiration_date = utc_now() + timedelta(days=1)
-
+    expiration_date = get_expiration_date_from_nodes(nodes=deployment)
     return DeploymentDefinition(value=deployment.serialize(),
                                 expiration_date=expiration_date)

@@ -36,8 +36,17 @@ def test_discard_expired_deployments():
                 expiration_date=base + datetime.timedelta(seconds=45)),
             '60s in the future': DeploymentDefinition(
                 value={},
+                expiration_date=base + datetime.timedelta(seconds=60))},
+        jupyter_deployments={
+            '-30s Jupyter': DeploymentDefinition(
+                value={},
+                expiration_date=base - datetime.timedelta(seconds=30)),
+            '+60s Jupyter': DeploymentDefinition(
+                value={},
                 expiration_date=base + datetime.timedelta(seconds=60))})
     assert len(deployments.nodes) == 7
+    assert len(deployments.jupyter_deployments) == 2
+
     old_utc_now = \
         idact.detail.deployment_sync.discard_expired_deployments.utc_now
 
@@ -53,6 +62,8 @@ def test_discard_expired_deployments():
             old_utc_now
 
     assert len(deployments.nodes) == 7
+    assert len(deployments.jupyter_deployments) == 2
+
     assert new_deployments.nodes == {
         '30s in the future': DeploymentDefinition(
             value={},
@@ -61,5 +72,10 @@ def test_discard_expired_deployments():
             value={},
             expiration_date=base + datetime.timedelta(seconds=45)),
         '60s in the future': DeploymentDefinition(
+            value={},
+            expiration_date=base + datetime.timedelta(seconds=60))}
+
+    assert new_deployments.jupyter_deployments == {
+        '+60s Jupyter': DeploymentDefinition(
             value={},
             expiration_date=base + datetime.timedelta(seconds=60))}

@@ -3,21 +3,21 @@
 
 import webbrowser
 from contextlib import ExitStack
+from typing import Optional
 
 from idact.core.tunnel import Tunnel
-from idact.core.nodes import Node
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from idact.detail.deployment.generic_deployment import GenericDeployment
+from idact.detail.helper.get_uuid import get_uuid
 from idact.detail.helper.stage_info import stage_info
 from idact.detail.log.get_logger import get_logger
-from idact.detail.tunnel.close_tunnel_on_exit import close_tunnel_on_exit
+from idact.detail.serialization.serializable import Serializable
+from idact.detail.serialization.serializable_types import SerializableTypes
 
 
-class JupyterDeploymentImpl(JupyterDeployment):
+class JupyterDeploymentImpl(JupyterDeployment, Serializable):
     """Jupyter Notebook deployment on a node.
-
-        :param node: Node the server was deployed on.
 
         :param deployment: Generic deployment of the notebook process.
 
@@ -25,21 +25,38 @@ class JupyterDeploymentImpl(JupyterDeployment):
 
         :param token: Authentication token.
 
+        :param uuid: Unique deployment identifier.
+
     """
 
     def __init__(self,
-                 node: Node,
                  deployment: GenericDeployment,
                  tunnel: Tunnel,
-                 token: str):
-        self._node = node
+                 token: str,
+                 uuid: Optional[str] = None):
         self._deployment = deployment
         self._tunnel = tunnel
         self._token = token
+        self._uuid = uuid if uuid is not None else get_uuid()
 
     @property
     def local_port(self) -> int:
         return self._tunnel.here
+
+    @property
+    def uuid(self) -> str:
+        """Unique deployment id."""
+        return self._uuid
+
+    @property
+    def deployment(self) -> GenericDeployment:
+        """Generic deployment of the notebook process."""
+        return self._deployment
+
+    @property
+    def tunnel(self) -> Tunnel:
+        """Tunnel to notebook server."""
+        return self._tunnel
 
     def open_in_browser(self):
         webbrowser.open("http://localhost:{local_port}/?token={token}".format(
@@ -52,12 +69,25 @@ class JupyterDeploymentImpl(JupyterDeployment):
             stack.enter_context(stage_info(log,
                                            "Cancelling Jupyter deployment."))
             stack.enter_context(cancel_on_exit(self._deployment))
-            stack.enter_context(close_tunnel_on_exit(self._tunnel))
+            self.cancel_local()
+
+    def cancel_local(self):
+        """Closes the tunnel, but does not cancel the allocation."""
+        self._tunnel.close()
 
     def __str__(self):
-        return "JupyterDeployment({local_port} -> {node})".format(
+        return "JupyterDeployment({local_port} -> {node}".format(
             local_port=self.local_port,
-            node=self._node)
+            node=self._deployment.node)
 
     def __repr__(self):
         return str(self)
+
+    def serialize(self) -> dict:
+        return {'type': str(SerializableTypes.JUPYTER_DEPLOYMENT_IMPL),
+                'deployment': self._deployment.serialize(),
+                'tunnel_there': self._tunnel.there,
+                'token': self._token}
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__

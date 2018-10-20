@@ -7,6 +7,7 @@ from idact.detail.deployment_sync.get_deployment_definition \
     import get_deployment_definition
 from idact.detail.deployment_sync.deployment_definitions import \
     DeploymentDefinitions
+from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.nodes_impl import NodesImpl
 
@@ -25,8 +26,13 @@ def add_deployment_definition(deployments: DeploymentDefinitions,
     """
 
     deployment_definition = get_deployment_definition(deployment=deployment)
-    if isinstance(deployment, NodesImpl):
+    if isinstance(deployment, Nodes):
+        assert isinstance(deployment, NodesImpl)
         target = deployments.nodes
+        uuid = deployment.uuid
+    elif isinstance(deployment, JupyterDeployment):
+        assert isinstance(deployment, JupyterDeploymentImpl)
+        target = deployments.jupyter_deployments
         uuid = deployment.uuid
     else:
         raise NotImplementedError()

@@ -83,7 +83,6 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
             tunnel = node.tunnel(there=actual_port,
                                  here=local_port)
 
-        return JupyterDeploymentImpl(node=node,
-                                     deployment=deployment,
+        return JupyterDeploymentImpl(deployment=deployment,
                                      tunnel=tunnel,
                                      token=token)

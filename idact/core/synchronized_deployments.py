@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Nodes
 
 
@@ -11,4 +12,10 @@ class SynchronizedDeployments(ABC):
     @abstractmethod
     def nodes(self) -> List[Nodes]:
         """Synchronized allocations."""
+        pass
+
+    @property
+    @abstractmethod
+    def jupyter_deployments(self) -> List[JupyterDeployment]:
+        """Synchronized Jupyter deployments."""
         pass

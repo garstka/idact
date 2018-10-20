@@ -35,7 +35,8 @@ def test_serialize_deserialize():
                   '222': {'type': 'SerializableTypes.DEPLOYMENT_DEFINITION',
                           'value': {'c': 3,
                                     'd': '4'},
-                          'expiration_date': '2018-11-16T17:18:00+00:00'}}}
+                          'expiration_date': '2018-11-16T17:18:00+00:00'}},
+        'jupyter_deployments': {}}
 
     deserialized = DeploymentDefinitions.deserialize(serialized=serialized)
     assert deserialized == value

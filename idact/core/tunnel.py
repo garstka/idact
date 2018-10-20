@@ -3,7 +3,7 @@
 
    See :class:`.Tunnel`.
 """
-from abc import ABC, abstractmethod
+from abc import abstractmethod, ABC
 
 
 class Tunnel(ABC):

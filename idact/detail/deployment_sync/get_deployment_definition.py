@@ -5,8 +5,11 @@ from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Nodes
 from idact.detail.deployment_sync.deployment_definition import \
     DeploymentDefinition
+from idact.detail.deployment_sync.jupyter_deployments. \
+    get_jupyter_deployment_definition import get_jupyter_deployment_definition
 from idact.detail.deployment_sync.nodes.get_nodes_deployment_definition \
     import get_nodes_deployment_definition
+from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
 from idact.detail.nodes.nodes_impl import NodesImpl
 
 
@@ -22,5 +25,8 @@ def get_deployment_definition(deployment: Union[Nodes,
     if isinstance(deployment, Nodes):
         assert isinstance(deployment, NodesImpl)
         return get_nodes_deployment_definition(deployment)
+    if isinstance(deployment, JupyterDeployment):
+        assert isinstance(deployment, JupyterDeploymentImpl)
+        return get_jupyter_deployment_definition(jupyter_deployment=deployment)
 
     raise NotImplementedError()

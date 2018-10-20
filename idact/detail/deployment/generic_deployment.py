@@ -1,28 +1,31 @@
 """This module contains the implementation of a generic deployment."""
-
-from idact.core.nodes import Node
 from idact.detail.helper.ptree import ptree
 from idact.detail.helper.remove_runtime_dir import remove_runtime_dir_on_exit
 from idact.detail.helper.retry import retry
 from idact.detail.helper.stage_info import stage_debug
 from idact.detail.log.get_logger import get_logger
+from idact.detail.nodes.node_internal import NodeInternal
+from idact.detail.serialization.serializable import Serializable
+from idact.detail.serialization.serializable_types import SerializableTypes
 
 CANCEL_TIMEOUT = 5
 
 
-class GenericDeployment:
+class GenericDeployment(Serializable):
     """Deployment of a program on a node.
 
         :param node: Node the program is running on.
 
         :param pid: Process id.
 
+        :param output: Initial script output.
+
         :param runtime_dir: Runtime dir to remove.
 
     """
 
     def __init__(self,
-                 node: Node,
+                 node: NodeInternal,
                  pid: int,
                  output: str,
                  runtime_dir: str):
@@ -32,7 +35,7 @@ class GenericDeployment:
         self._runtime_dir = runtime_dir
 
     @property
-    def node(self) -> Node:
+    def node(self) -> NodeInternal:
         """Node the program is running on."""
         return self._node
 
@@ -84,3 +87,13 @@ class GenericDeployment:
                 retry(fun=cancel_task,
                       retries=5,
                       seconds_between_retries=1)
+
+    def serialize(self) -> dict:
+        return {'type': str(SerializableTypes.GENERIC_DEPLOYMENT),
+                'node': self._node.serialize(),
+                'pid': self._pid,
+                'output': self._output,
+                'runtime_dir': self._runtime_dir}
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
