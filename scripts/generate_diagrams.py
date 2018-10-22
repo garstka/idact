@@ -50,8 +50,7 @@ DIAGRAMS_TO_GENERATE = {
                     " idact/detail/helper"
                     " idact/detail/log"
                     " idact/detail/serialization/serializable.py"
-                    " idact/detail/tunnel/binding.py"
-                    " idact/cli.py"}
+                    " idact/detail/tunnel/binding.py"}
 
 WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
 

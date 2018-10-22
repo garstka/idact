@@ -58,10 +58,14 @@ class JupyterDeploymentImpl(JupyterDeployment, Serializable):
         """Tunnel to notebook server."""
         return self._tunnel
 
-    def open_in_browser(self):
-        webbrowser.open("http://localhost:{local_port}/?token={token}".format(
+    @property
+    def address(self) -> str:
+        return "http://localhost:{local_port}/?token={token}".format(
             local_port=self.local_port,
-            token=self._token))
+            token=self._token)
+
+    def open_in_browser(self):
+        webbrowser.open(self.address)
 
     def cancel(self):
         log = get_logger(__name__)
@@ -72,7 +76,6 @@ class JupyterDeploymentImpl(JupyterDeployment, Serializable):
             self.cancel_local()
 
     def cancel_local(self):
-        """Closes the tunnel, but does not cancel the allocation."""
         self._tunnel.close()
 
     def __str__(self):

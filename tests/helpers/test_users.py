@@ -55,6 +55,10 @@ USER_45 = 'user-45'
 USER_46 = 'user-46'
 USER_47 = 'user-47'
 USER_48 = 'user-48'
+USER_49 = 'user-49'
+USER_50 = 'user-50'
+USER_51 = 'user-51'
+USER_52 = 'user-52'
 
 
 def get_test_user_password(user: str) -> str:

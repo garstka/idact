@@ -2,6 +2,7 @@
 
 import datetime
 import dateutil.tz
+import dateutil.parser
 
 
 def utc_from_str(value: str) -> datetime.datetime:

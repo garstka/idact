@@ -9,6 +9,8 @@ from idact.detail.config.validation.validate_bool import validate_bool
 from idact.detail.config.validation.validate_key_path import validate_key_path
 from idact.detail.config.validation.validate_log_level \
     import validate_log_level
+from idact.detail.config.validation.validate_notebook_defaults import \
+    validate_notebook_defaults
 from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.config.validation.validate_retries import validate_retries
 from idact.detail.config.validation.validate_scratch import validate_scratch
@@ -224,6 +226,20 @@ def test_validate_setup_actions_config():
         validate_setup_actions_config(1)
     with pytest.raises(TypeError):
         validate_setup_actions_config('a')
+
+
+def test_validate_notebook_defaults():
+    assert validate_notebook_defaults(
+        {'a': 1}) == {'a': 1}
+
+    with pytest.raises(TypeError):
+        validate_notebook_defaults([])
+    with pytest.raises(TypeError):
+        validate_notebook_defaults(None)
+    with pytest.raises(TypeError):
+        validate_notebook_defaults(1)
+    with pytest.raises(TypeError):
+        validate_notebook_defaults('a')
 
 
 def test_validate_username():

@@ -32,7 +32,7 @@ setup(
                  " of working with big data on a cluster."),
     entry_points={
         'console_scripts': [
-            'idact=idact.cli:main',
+            'idact-notebook=idact.notebook:main',
         ],
     },
     install_requires=REQUIREMENTS,

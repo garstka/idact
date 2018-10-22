@@ -26,9 +26,9 @@ def test_able_to_sync_jupyter():
         cluster = show_cluster(name=TEST_CLUSTER)
 
         nodes = cluster.allocate_nodes()
+        stack.enter_context(cancel_on_exit(nodes))
         node = nodes[0]
         nodes.wait(timeout=10)
-        stack.enter_context(cancel_on_exit(nodes))
 
         local_port = 2223
         jupyter = node.deploy_notebook(local_port=local_port)
@@ -64,9 +64,9 @@ def test_cancelled_node_allocation_is_discarded_on_pull():
         cluster = show_cluster(name=TEST_CLUSTER)
 
         nodes = cluster.allocate_nodes()
+        stack.enter_context(cancel_on_exit(nodes))
         node = nodes[0]
         nodes.wait(timeout=10)
-        stack.enter_context(cancel_on_exit(nodes))
 
         local_port = 2223
         jupyter = node.deploy_notebook(local_port=local_port)
