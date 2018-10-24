@@ -76,7 +76,7 @@ class SlurmAllocation(Allocation):
                 if end is not None and utc_now() >= end:
                     raise TimeoutError("Timed out while waiting "
                                        "for allocation.")
-                log.debug("Still pending or configuring...")
+                log.info("Still pending or configuring...")
                 sleep(interval)
                 continue
             try:

@@ -25,6 +25,8 @@ from idact.detail.deployment_sync.discard_expired_deployments import \
     discard_expired_deployments
 from idact.detail.deployment_sync.discard_non_functional_deployments import \
     discard_non_functional_deployments
+from idact.detail.deployment_sync.install_compute_node_access_key import \
+    install_compute_node_access_key
 from idact.detail.deployment_sync.materialize_deployments import \
     materialize_deployments
 from idact.detail.deployment_sync.synchronized_deployments_impl import \
@@ -125,15 +127,15 @@ class ClusterImpl(Cluster):
     def pull_deployments(self) -> SynchronizedDeployments:
         log = get_logger(__name__)
         with stage_info(log, "Pulling deployments."):
-            node = self.get_access_node()
-            if not deployment_definitions_file_exists(node=node):
+            access_node = self.get_access_node()
+            if not deployment_definitions_file_exists(node=access_node):
                 log.info("No deployment definitions were found.")
                 return SynchronizedDeploymentsImpl(nodes=[])
 
             deployments = deserialize_deployment_definitions_from_cluster(
-                node=node)
+                node=access_node)
             deployments = discard_expired_deployments(deployments)
-            access_node = self.get_access_node()
+            install_compute_node_access_key(access_node=access_node)
             materialized_deployments = materialize_deployments(
                 config=self._config,
                 access_node=access_node,
