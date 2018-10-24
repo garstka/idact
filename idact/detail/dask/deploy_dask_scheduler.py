@@ -4,7 +4,7 @@ import re
 from contextlib import ExitStack
 
 import fabric.decorators
-from paramiko import SSHException
+from sshtunnel import HandlerSSHTunnelForwarderError
 
 from idact.detail.dask.create_scratch_dir import create_scratch_subdir
 from idact.detail.dask.dask_scheduler_deployment import DaskSchedulerDeployment
@@ -101,11 +101,13 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
         with stage_debug(log, "Opening a tunnel to bokeh diagnostics server."):
             try:
                 bokeh_tunnel = node.tunnel(there=bokeh_port, here=bokeh_port)
-            except SSHException:
+            except HandlerSSHTunnelForwarderError:
                 log.warning("Failed to bind scheduler diagnostics tunnel"
-                            " to the same local port as on the node.")
+                            " to the same local port as on the node."
+                            " This is expected, if this host is the scheduler"
+                            " node.")
                 bokeh_tunnel = node.tunnel(there=bokeh_port)
-                log.info("Bound to port %d instead", bokeh_tunnel.here)
+                log.info("Bound to port %d instead.", bokeh_tunnel.here)
             stack.enter_context(close_tunnel_on_failure(bokeh_tunnel))
 
         return DaskSchedulerDeployment(deployment=deployment,
