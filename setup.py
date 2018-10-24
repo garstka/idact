@@ -15,7 +15,8 @@ REQUIREMENTS = ['click>=6.7',
                 'paramiko>=2.4.1',
                 'dask>=0.18.2',
                 'distributed>=1.22.0',
-                'requests>=2.18.4']
+                'requests>=2.18.4',
+                'bokeh>=0.13.0']
 
 setup(
     author="Matt Garstka",
