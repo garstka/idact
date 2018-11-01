@@ -20,7 +20,7 @@ REQUIREMENTS = ['click>=6.7',
 
 setup(
     author="Matt Garstka",
-    author_email='matt.garstka@gmail.com',
+    author_email='matt@garstka.net',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -44,6 +44,6 @@ setup(
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.3',
+    version='0.4',
     zip_safe=False,
 )
