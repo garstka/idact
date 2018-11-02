@@ -1,3 +1,12 @@
+"""This module contains the :func:`main` function for the quick Jupyter
+ deployment app, see :mod:`idact.notebook`.
+
+ Note: The :func:`main` function uses :func:`click.command`, so it doesn't
+ show up in API docs for this module. See help message in :mod:`idact.notebook`
+ instead.
+
+"""
+
 from contextlib import ExitStack
 from typing import Optional, List, Tuple
 

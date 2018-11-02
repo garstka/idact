@@ -7,55 +7,35 @@ Tools taking care of the tedious aspects of working with big data on a cluster.
 
 ## Requirements
 
-Python 3.5+ is required.
+Python 3.5+ is required, on a Linux or Windows operating system.
 
-If this is not the default installation, use the proper executables,
-e.g. pip3 and python3 instead of pip and python for each command
-in this README.
+If this is not the default installation, make sure you use the proper
+executable, e.g. python3 instead of python, or the absolute path,
+for each command in this README and other documentation.
 
-You can also use the absolute paths to pip and python executables.
-
-## Install
+## Install idact
 
 ```
-pip install git+https://github.com/garstka/eng-project
+python -m pip install git+https://github.com/garstka/eng-project
 ```
 
-## Prepare dev environment
+## Demo notebooks
 
-```
-git clone https://github.com/garstka/eng-project
-cd eng-project
-```
+The `notebook` directory contains interactive Jupyter notebooks demonstrating
+idact.
 
-With Conda:
+## Documentation
 
-```
-conda env create -f envs/environment-dev.yml
-conda activate idact-dev
-```
+HTML documentation is available for each branch and tag.
 
-Without Conda:
+It includes, among other information, a detailed description of user facing
+API generated directly from code.
 
-```
-pip install -r requirements_dev.txt
-```
+ - [master](https://garstka.github.io/idact/master/html/index.html)
+ - [develop](https://garstka.github.io/idact/develop/html/index.html)
+ - [0.4](https://garstka.github.io/idact/0.4/html/index.html)
+ - [0.3](https://garstka.github.io/idact/0.3/html/index.html)
+ - [0.2](https://garstka.github.io/idact/0.2/html/index.html)
+ - [0.1](https://garstka.github.io/idact/0.1/html/index.html)
 
-## Run tests with coverage, flake8 and Pylint
 
-Functional tests require the testing container to be up and running,
-see testing_setup/README.md.
-
-```
-python scripts/run_tests.py
-```
-
-## Build docs and coverage
-
-```
-python scripts/build_docs.py
-python scripts/view_coverage.py
-```
-
-Each script will open the generated html page in the default browser, unless
-`--no-show` parameter is passed.

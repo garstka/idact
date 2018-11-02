@@ -22,6 +22,7 @@
 # pylint: skip-file
 
 import os
+import shutil
 import sys
 
 sys.path.insert(0, os.path.abspath('..'))
@@ -44,7 +45,10 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx_autodoc_typehints',
               'm2r',
               'sphinxcontrib.fulltoc',
-              'sphinx.ext.autosummary']
+              'sphinx.ext.autosummary',
+              'sphinx_click.ext',
+              'nbsphinx',
+              'IPython.sphinxext.ipython_console_highlighting']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -165,3 +169,23 @@ texinfo_documents = [
      'One line description of project.',
      'Miscellaneous'),
 ]
+
+# https://github.com/spatialaudio/nbsphinx/issues/170
+print("Copy example notebooks into docs/_notebooks")
+
+
+def all_but_ipynb(dir, contents):
+    result = []
+    for c in contents:
+        if os.path.isfile(os.path.join(dir, c)) and (not c.endswith(".ipynb")):
+            result += [c]
+    return result
+
+
+project_root = os.path.realpath("..")
+
+shutil.rmtree(os.path.join(project_root, "docs/_notebooks"),
+              ignore_errors=True)
+shutil.copytree(os.path.join(project_root, "notebooks"),
+                os.path.join(project_root, "docs/_notebooks"),
+                ignore=all_but_ipynb)

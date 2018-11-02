@@ -33,10 +33,12 @@ DIAGRAMS_TO_GENERATE = {
                    " idact/detail/tunnel/first_hop_tunnel.py"
                    " idact/detail/tunnel/multi_hop_tunnel.py"
                    " idact/detail/deployment_sync"
-                   "/synchronized_deployments_impl.py",
+                   "/synchronized_deployments_impl.py"
+                   " idact/detail/config/client/client_cluster_config.py"
+                   " idact/detail/config/client/setup_actions_config.py",
     "detail-allocation": "idact/detail/allocation"
                          " idact/detail/slurm",
-    "detail-config": "idact/detail/config",
+    "detail-config": "idact/detail/config/client/client_config.py",
     "detail-deployment": "idact/detail/dask/dask_scheduler_deployment.py"
                          " idact/detail/dask/dask_worker_deployment.py"
                          " idact/detail/deployment"

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4
+
+More Dask stability improvements and new features:
+ - Synchronization to and from cluster for allocation and Jupyter deployments.
+ - Quick Jupyter deployment app: `idact-notebook`, or `python -m idact.notebook`.
+
 ## 0.3
 
 Multiple stability and debugability improvements, among them:

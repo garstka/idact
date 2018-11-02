@@ -12,9 +12,10 @@ For internals see :py:mod:`idact.detail`.
    self
    readme
    api/idact
+   notebooks
+   development_overview
    diagrams
    testing_setup
-   notebooks
    api/tests
    scripts
    changelog

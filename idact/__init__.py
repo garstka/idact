@@ -5,6 +5,9 @@ idact package
 =============
 
 Top-level package for Interactive Data Analysis Convenience Tools.
+
+All user facing API can be imported directly from the :mod:`idact` module.
+
 """
 from idact.core.auth import AuthMethod, KeyType
 from idact.core.config import ClusterConfig, SetupActionsConfig
@@ -54,19 +57,19 @@ _IMPORTED = {add_cluster,
              NodeResourceStatus,
              SynchronizedDeployments}
 """List of the public API members imported into the top level package
-   for convenience."""
+    for convenience."""
 
 
 def _patch_modules_for_sphinx():
     """Sphinx looks at the __module__ attribute to determine the module
-       of a class, function, etc. while generating documentation.
+        of a class, function, etc. while generating documentation.
 
-       This value does not change after importing the object into the top
-       level package, even if this effectively makes the object its member.
+        This value does not change after importing the object into the top
+        level package, even if this effectively makes the object its member.
 
-       In order for Sphinx to show the imported objects as members
-       of the top level package, the __module__ attribute is changed manually
-       for all imported objects.
+        In order for Sphinx to show the imported objects as members
+        of the top level package, the __module__ attribute is changed manually
+        for all imported objects.
     """
     for imported in _IMPORTED:
         imported.__module__ = 'idact'

@@ -9,6 +9,7 @@ addons:
      - sshpass
      - graphviz
      - expect-dev
+     - pandoc
 matrix:
   include:
     - name: "Python 3.6 support"
