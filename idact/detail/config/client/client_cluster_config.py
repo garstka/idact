@@ -9,6 +9,8 @@ from idact.detail.config.client.setup_actions_config import \
 from idact.detail.config.validation.validate_hostname import validate_hostname
 from idact.detail.config.validation.validate_bool import validate_bool
 from idact.detail.config.validation.validate_key_path import validate_key_path
+from idact.detail.config.validation.validate_notebook_defaults import \
+    validate_notebook_defaults
 from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.config.validation.validate_retries import validate_retries
 from idact.detail.config.validation.validate_scratch import validate_scratch
@@ -24,6 +26,8 @@ class ClusterConfigImpl(ClusterConfig):
 
        For defaults, see :func:`.add_cluster`.
 
+       For notebook defaults, see :mod:`.jupyter_app.main`
+
     """
 
     def __init__(self,
@@ -36,7 +40,8 @@ class ClusterConfigImpl(ClusterConfig):
                  disable_sshd: bool = False,
                  setup_actions: Optional[SetupActionsConfigImpl] = None,
                  scratch: Optional[str] = None,
-                 port_info_retries: Optional[int] = None):
+                 port_info_retries: Optional[int] = None,
+                 notebook_defaults: Optional[dict] = None):
         if install_key is None:
             install_key = True
         if disable_sshd is None:
@@ -47,6 +52,8 @@ class ClusterConfigImpl(ClusterConfig):
             scratch = '$HOME'
         if port_info_retries is None:
             port_info_retries = 5
+        if notebook_defaults is None:
+            notebook_defaults = {}
 
         self._host = validate_hostname(host)
         self._port = validate_port(port)
@@ -59,6 +66,7 @@ class ClusterConfigImpl(ClusterConfig):
         self._scratch = validate_scratch(scratch)
         self._port_info_retries = validate_retries(port_info_retries,
                                                    'port_info_retries')
+        self._notebook_defaults = validate_notebook_defaults(notebook_defaults)
 
     @property
     def host(self) -> str:
@@ -157,3 +165,12 @@ class ClusterConfigImpl(ClusterConfig):
 
     def __repr__(self):
         return str(self)
+
+    @property
+    def notebook_defaults(self) -> dict:
+        """Defaults for the notebook app."""
+        return self._notebook_defaults
+
+    @notebook_defaults.setter
+    def notebook_defaults(self, value: dict):
+        self._notebook_defaults = value

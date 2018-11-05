@@ -3,6 +3,7 @@
 
 from typing import Any, Optional
 
+from idact.core.config import ClusterConfig
 from idact.core.auth import AuthMethod
 from idact.detail.config.client. \
     client_cluster_config import ClusterConfigImpl
@@ -17,6 +18,12 @@ def serialize_client_config_to_json(config: ClientConfig) -> dict:
 
         :param config: The object to serialize.
     """
+
+    def get_notebook_defaults(cluster: ClusterConfig) -> dict:
+        """Notebook defaults are not in the public interface."""
+        assert isinstance(cluster, ClusterConfigImpl)
+        return cluster.notebook_defaults
+
     return {
         'clusters': {
             name: {'host': cluster_config.host,
@@ -30,7 +37,8 @@ def serialize_client_config_to_json(config: ClientConfig) -> dict:
                        'jupyter': cluster_config.setup_actions.jupyter,
                        'dask': cluster_config.setup_actions.dask},
                    'scratch': cluster_config.scratch,
-                   'portInfoRetries': cluster_config.port_info_retries}
+                   'portInfoRetries': cluster_config.port_info_retries,
+                   'notebookDefaults': get_notebook_defaults(cluster_config)}
             for name, cluster_config in config.clusters.items()},
         'logLevel': config.log_level}
 
@@ -62,6 +70,7 @@ def use_defaults_in_missing_fields(data: dict) -> bool:
         default(cluster, 'setupActions', {})
         default(cluster['setupActions'], 'jupyter', None)
         default(cluster['setupActions'], 'dask', None)
+        default(cluster, 'notebookDefaults', {})
 
     return len(modified) != 0
 
@@ -90,7 +99,8 @@ def deserialize_client_config_from_json(data: dict) -> ClientConfig:
                 jupyter=value['setupActions']['jupyter'],
                 dask=value['setupActions']['dask']),
             scratch=value['scratch'],
-            port_info_retries=value['portInfoRetries']
+            port_info_retries=value['portInfoRetries'],
+            notebook_defaults=value['notebookDefaults']
         ) for name, value in data['clusters'].items()}
     return ClientConfig(clusters=clusters,
                         log_level=data['logLevel'])

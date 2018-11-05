@@ -15,6 +15,12 @@ class JupyterDeployment(ABC):
         """The local access port."""
         pass
 
+    @property
+    @abstractmethod
+    def address(self) -> str:
+        """Local notebook address."""
+        pass
+
     @abstractmethod
     def open_in_browser(self):
         """Opens the notebook server in the local browser."""
@@ -23,4 +29,9 @@ class JupyterDeployment(ABC):
     @abstractmethod
     def cancel(self):
         """Closes the notebook server and the tunnel."""
+        pass
+
+    @abstractmethod
+    def cancel_local(self):
+        """Closes the tunnel, but does not cancel the allocation."""
         pass

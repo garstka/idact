@@ -12,6 +12,8 @@ from idact.detail.helper.stage_info import stage_info
 from idact.detail.helper.utc_now import utc_now
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_impl import NodeImpl
+from idact.detail.nodes.node_internal import NodeInternal
+from idact.detail.serialization.serializable_types import SerializableTypes
 from idact.detail.slurm.run_scancel import run_scancel
 from idact.detail.slurm.run_squeue import run_squeue
 
@@ -32,20 +34,23 @@ class SlurmAllocation(Allocation):
 
         :param parameters: Allocation parameters.
 
+        :param done_waiting: Already waited for allocation.
+
     """
 
     def __init__(self,
                  job_id: int,
-                 access_node: NodeImpl,
+                 access_node: NodeInternal,
                  nodes: List[NodeImpl],
                  entry_point_script_path: str,
-                 parameters: AllocationParameters):
+                 parameters: AllocationParameters,
+                 done_waiting: bool = False):
         self._job_id = job_id
         self._access_node = access_node
         self._nodes = nodes
         self._entry_point_script_path = entry_point_script_path
         self._parameters = parameters
-        self._done_waiting = False
+        self._done_waiting = done_waiting
 
     def wait(self, timeout: Optional[float]):
         log = get_logger(__name__)
@@ -71,7 +76,7 @@ class SlurmAllocation(Allocation):
                 if end is not None and utc_now() >= end:
                     raise TimeoutError("Timed out while waiting "
                                        "for allocation.")
-                log.debug("Still pending or configuring...")
+                log.info("Still pending or configuring...")
                 sleep(interval)
                 continue
             try:
@@ -104,3 +109,38 @@ class SlurmAllocation(Allocation):
         squeue = run_squeue(node=self._access_node)
         return (self._job_id in squeue and
                 squeue[self._job_id].state == 'RUNNING')
+
+    @property
+    def waited(self) -> bool:
+        return self._done_waiting
+
+    def serialize(self) -> dict:
+        return {'type': str(SerializableTypes.SLURM_ALLOCATION),
+                'job_id': self._job_id,
+                'entry_point_script_path': self._entry_point_script_path,
+                'parameters': self._parameters.serialize(),
+                'done_waiting': self._done_waiting}
+
+    @staticmethod
+    def deserialize(access_node: NodeInternal,
+                    nodes: List[NodeImpl],
+                    serialized: dict) -> 'SlurmAllocation':
+        try:
+            assert serialized['type'] == str(
+                SerializableTypes.SLURM_ALLOCATION)
+            return SlurmAllocation(
+                job_id=serialized['job_id'],
+                access_node=access_node,
+                nodes=nodes,
+                entry_point_script_path=serialized['entry_point_script_path'],
+                parameters=AllocationParameters.deserialize(
+                    serialized['parameters']),
+                done_waiting=serialized['done_waiting'])
+        except KeyError as e:
+            raise RuntimeError("Unable to serialize.") from e
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+    def __str__(self):
+        return "SlurmAllocation(job_id={job_id})".format(job_id=self._job_id)

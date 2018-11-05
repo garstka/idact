@@ -5,9 +5,11 @@ from typing import Optional, Any, Dict
 import bitmath
 
 from idact.core.walltime import Walltime
+from idact.detail.serialization.serializable import Serializable
+from idact.detail.serialization.serializable_types import SerializableTypes
 
 
-class AllocationParameters:
+class AllocationParameters(Serializable):
     """Union of all cluster job allocation parameters, regardless of
        the workflow manager.
 
@@ -62,3 +64,33 @@ class AllocationParameters:
     def native_args(self) -> Dict[str, Optional[str]]:
         """Native arguments for the workload manager."""
         return self._native_args
+
+    def serialize(self) -> dict:
+        return {'type': str(SerializableTypes.ALLOCATION_PARAMETERS),
+                'nodes': self._nodes,
+                'cores': self._cores,
+                'memory_per_node': (None if self._memory_per_node is None
+                                    else str(self._memory_per_node)),
+                'walltime': (None if self._walltime is None
+                             else str(self._walltime)),
+                'native_args': self._native_args}
+
+    @staticmethod
+    def deserialize(serialized: dict) -> 'AllocationParameters':
+        try:
+            assert serialized['type'] == str(
+                SerializableTypes.ALLOCATION_PARAMETERS)
+            return AllocationParameters(
+                nodes=serialized['nodes'],
+                cores=serialized['cores'],
+                memory_per_node=(
+                    None if serialized['memory_per_node'] is None
+                    else bitmath.parse_string(serialized['memory_per_node'])),
+                walltime=(None if serialized['walltime'] is None
+                          else Walltime.from_string(serialized['walltime'])),
+                native_args=serialized['native_args'])
+        except KeyError as e:
+            raise RuntimeError("Unable to deserialize.") from e
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__

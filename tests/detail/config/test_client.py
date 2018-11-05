@@ -124,7 +124,8 @@ def test_client_config_serialize():
                          'setupActions': {'jupyter': [],
                                           'dask': []},
                          'scratch': '$HOME',
-                         'portInfoRetries': 5}
+                         'portInfoRetries': 5,
+                         'notebookDefaults': {}}
         },
         'logLevel': INFO
     }
@@ -173,7 +174,8 @@ def test_client_config_serialize_public_key():
                          'setupActions': {'jupyter': ['echo a'],
                                           'dask': []},
                          'scratch': '$HOME',
-                         'portInfoRetries': 5}
+                         'portInfoRetries': 5,
+                         'notebookDefaults': {}}
         }, 'logLevel': INFO}
     assert serialize_client_config_to_json(client_config) == expected_json
 
@@ -212,7 +214,8 @@ EXPECTED_DEFAULT_JSON = {
                      'setupActions': {'jupyter': [],
                                       'dask': []},
                      'scratch': '$HOME',
-                     'portInfoRetries': 5}
+                     'portInfoRetries': 5,
+                     'notebookDefaults': {}}
     },
     'logLevel': INFO
 }

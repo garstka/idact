@@ -9,6 +9,7 @@ addons:
      - sshpass
      - graphviz
      - expect-dev
+     - pandoc
 matrix:
   include:
     - name: "Python 3.6 support"
@@ -65,6 +66,7 @@ script:
   - if [ $PIP_INSTALL -eq 1 ]; then mv idact idact_tmp ; fi
   - if [ $PYTEST_ONLY -eq 1 ]; then python -mpytest tests ; fi
   - if [ $PIP_INSTALL -eq 1 ]; then mv idact_tmp idact ; fi
+  - if [ $PIP_INSTALL -eq 1 ]; then idact-notebook --help ; fi
   - if [ $RUN_TESTS -eq 1 ]; then unbuffer python scripts/run_tests.py ; fi
   - if [ $BUILD_DOCS -eq 1 ]; then unbuffer python scripts/generate_diagrams.py ; fi
   - if [ $BUILD_DOCS -eq 1 ]; then unbuffer python scripts/build_docs.py --no-show ; fi

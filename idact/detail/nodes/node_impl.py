@@ -16,10 +16,12 @@ from idact.core.node_resource_status import NodeResourceStatus
 from idact.detail.auth.authenticate import authenticate
 from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
+from idact.detail.helper.utc_from_str import utc_from_str
 from idact.detail.helper.utc_now import utc_now
 from idact.detail.jupyter.deploy_jupyter import deploy_jupyter
 from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.nodes.node_resource_status_impl import NodeResourceStatusImpl
+from idact.detail.serialization.serializable_types import SerializableTypes
 from idact.detail.tunnel.binding import Binding
 from idact.detail.tunnel.build_tunnel import build_tunnel
 
@@ -42,7 +44,7 @@ class NodeImpl(NodeInternal):
         self._host = None  # type: Optional[str]
         self._port = None  # type: Optional[int]
         self._cores = None  # type: Optional[int]
-        self._memory = None  # type: Optional[int]
+        self._memory = None  # type: Optional[bitmath.Byte]
         self._allocated_until = None  # type: Optional[datetime.datetime]
 
     def _ensure_allocated(self):
@@ -205,3 +207,38 @@ class NodeImpl(NodeInternal):
     @property
     def resources(self) -> NodeResourceStatus:
         return NodeResourceStatusImpl(node=self)
+
+    def serialize(self) -> dict:
+        return {'type': str(SerializableTypes.NODE_IMPL),
+                'host': self._host,
+                'port': self._port,
+                'cores': self._cores,
+                'memory': (None if self._memory is None
+                           else str(self._memory)),
+                'allocated_until': (None if self._allocated_until is None
+                                    else self._allocated_until.isoformat())}
+
+    @staticmethod
+    def deserialize(config: ClusterConfig, serialized: dict) -> 'NodeImpl':
+        try:
+            assert serialized['type'] == str(SerializableTypes.NODE_IMPL)
+            node = NodeImpl(config=config)
+            node.make_allocated(
+                host=serialized['host'],
+                port=serialized['port'],
+                cores=serialized['cores'],
+                memory=(None if serialized['memory'] is None
+                        else bitmath.parse_string(serialized['memory'])),
+                allocated_until=(
+                    None if serialized['allocated_until'] is None
+                    else utc_from_str(serialized['allocated_until'])))
+            return node
+        except KeyError as e:
+            raise RuntimeError("Unable to deserialize.") from e
+
+    @property
+    def allocated_until(self) -> Optional[datetime.datetime]:
+        return self._allocated_until
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__

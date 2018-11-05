@@ -9,8 +9,11 @@ from typing import Union, Optional, Dict
 
 import bitmath
 
+from idact.core.jupyter_deployment import JupyterDeployment
+from idact.core.dask_deployment import DaskDeployment
 from idact.core.config import ClusterConfig
 from idact.core.nodes import Nodes, Node
+from idact.core.synchronized_deployments import SynchronizedDeployments
 from idact.core.walltime import Walltime
 
 
@@ -70,4 +73,30 @@ class Cluster(ABC):
     @abstractmethod
     def config(self) -> ClusterConfig:
         """Client-side cluster config."""
+        pass
+
+    @abstractmethod
+    def push_deployment(self, deployment: Union[Nodes,
+                                                JupyterDeployment,
+                                                DaskDeployment]):
+        """Saves the deployment info on the cluster, so it can be pulled later,
+            even from a different process.
+
+            :param deployment: Deployment to push.
+
+        """
+        pass
+
+    @abstractmethod
+    def pull_deployments(self) -> SynchronizedDeployments:
+        """Pulls all pushed deployments from the cluster."""
+        pass
+
+    @abstractmethod
+    def clear_pushed_deployments(self):
+        """Clears the list of deployments uploaded with
+            :meth:`.push_deployment`.
+
+            After this, :meth:`.pull_deployments` will return no deployments.
+        """
         pass

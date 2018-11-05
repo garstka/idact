@@ -2,12 +2,13 @@ from contextlib import ExitStack, contextmanager
 from pprint import pprint
 
 import fabric.network
-import requests
 from bitmath import MiB
 
 from idact import show_cluster, Walltime, Nodes
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
+from tests.helpers.check_local_http_connection import \
+    check_local_http_connection
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
@@ -37,9 +38,7 @@ def deploy_jupyter(nodes: Nodes):
         pprint(ps_jupyter_lines)
         assert len(ps_jupyter_lines) == 1
 
-        request = requests.get("http://127.0.0.1:{local_port}".format(
-            local_port=local_port))
-        assert "text/html" in request.headers['Content-type']
+        check_local_http_connection(port=local_port)
 
         yield node
 

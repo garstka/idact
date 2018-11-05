@@ -89,3 +89,14 @@ class Walltime:
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
+
+    def __str__(self):
+        if self._days != 0:
+            days = "{days}-".format(days=self._days)
+        else:
+            days = ""
+        return "{days}{hours:02d}:{minutes:02d}:{seconds:02d}".format(
+            days=days,
+            hours=self._hours,
+            minutes=self._minutes,
+            seconds=self._seconds)

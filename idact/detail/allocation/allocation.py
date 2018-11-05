@@ -1,11 +1,13 @@
 """This module contains the internal allocation interface."""
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from typing import Optional
 
+from idact.detail.serialization.serializable import Serializable
 
-class Allocation(ABC):
+
+class Allocation(Serializable):
     """Corresponds to a resource allocation request.
 
         E.g. a Slurm job.
@@ -33,4 +35,10 @@ class Allocation(ABC):
 
            For more, see :meth:`.Nodes.running`.
         """
+        pass
+
+    @property
+    @abstractmethod
+    def waited(self) -> bool:
+        """Returns True if successfully waited for allocation."""
         pass

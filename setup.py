@@ -14,11 +14,13 @@ REQUIREMENTS = ['click>=6.7',
                 'sshtunnel>=0.1.4',
                 'paramiko>=2.4.1',
                 'dask>=0.18.2',
-                'distributed>=1.22.0']
+                'distributed>=1.22.0',
+                'requests>=2.18.4',
+                'bokeh>=0.13.0']
 
 setup(
     author="Matt Garstka",
-    author_email='matt.garstka@gmail.com',
+    author_email='matt@garstka.net',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -31,7 +33,7 @@ setup(
                  " of working with big data on a cluster."),
     entry_points={
         'console_scripts': [
-            'idact=idact.cli:main',
+            'idact-notebook=idact.notebook:main',
         ],
     },
     install_requires=REQUIREMENTS,
@@ -42,6 +44,6 @@ setup(
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.3',
+    version='0.4',
     zip_safe=False,
 )

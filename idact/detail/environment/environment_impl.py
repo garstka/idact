@@ -16,6 +16,7 @@ class EnvironmentImpl(Environment):
     """User working environment implementation.
 
         :param config: Client-side configuration. Default: empty.
+
     """
 
     def __init__(self, config: Optional[ClientConfig] = None):

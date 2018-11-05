@@ -31,20 +31,28 @@ DIAGRAMS_TO_GENERATE = {
                    " idact/detail/dask/dask_diagnostics_impl.py"
                    " idact/detail/jupyter/jupyter_deployment_impl.py"
                    " idact/detail/tunnel/first_hop_tunnel.py"
-                   " idact/detail/tunnel/multi_hop_tunnel.py",
+                   " idact/detail/tunnel/multi_hop_tunnel.py"
+                   " idact/detail/deployment_sync"
+                   "/synchronized_deployments_impl.py"
+                   " idact/detail/config/client/client_cluster_config.py"
+                   " idact/detail/config/client/setup_actions_config.py",
     "detail-allocation": "idact/detail/allocation"
                          " idact/detail/slurm",
-    "detail-config": "idact/detail/config",
+    "detail-config": "idact/detail/config/client/client_config.py",
     "detail-deployment": "idact/detail/dask/dask_scheduler_deployment.py"
                          " idact/detail/dask/dask_worker_deployment.py"
                          " idact/detail/deployment"
                          " idact/detail/entry_point",
+    "detail-deployment-sync": "idact/detail/deployment_sync"
+                              "/deployment_definition.py"
+                              " idact/detail/deployment_sync"
+                              "/deployment_definitions.py",
     "detail-other": "idact/detail/auth"
                     " idact/detail/environment"
                     " idact/detail/helper"
                     " idact/detail/log"
-                    " idact/detail/tunnel/binding.py"
-                    " idact/cli.py"}
+                    " idact/detail/serialization/serializable.py"
+                    " idact/detail/tunnel/binding.py"}
 
 WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
 

@@ -1,5 +1,5 @@
 """This module contains the internal cluster node interface."""
-
+import datetime
 from abc import abstractmethod
 
 from typing import Optional, Callable, Any
@@ -9,9 +9,10 @@ import bitmath
 from idact.core.nodes import Node
 from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl
+from idact.detail.serialization.serializable import Serializable
 
 
-class NodeInternal(Node):
+class NodeInternal(Node, Serializable):
     """Node interface for internal use."""
 
     @abstractmethod
@@ -63,4 +64,10 @@ class NodeInternal(Node):
     def memory(self) -> Optional[bitmath.Byte]:
         """Returns the allocated node memory limit.
             Returns None for a node that was not allocated."""
+        pass
+
+    @property
+    @abstractmethod
+    def allocated_until(self) -> Optional[datetime.datetime]:
+        """Datetime, when the allocation ends, or None if not allocated."""
         pass
