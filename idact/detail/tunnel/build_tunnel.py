@@ -7,7 +7,7 @@ from sshtunnel import SSHTunnelForwarder
 from idact.core.tunnel import Tunnel
 from idact.detail.helper.retry import retry
 from idact.detail.helper.stage_info import stage_debug
-from idact.detail.log.get_logger import get_logger
+from idact.detail.log.get_logger import get_logger, get_debug_logger
 from idact.detail.tunnel.binding import Binding
 from idact.detail.tunnel.close_tunnel_on_failure import close_tunnel_on_failure
 from idact.detail.tunnel.first_hop_tunnel import FirstHopTunnel
@@ -52,6 +52,8 @@ def build_tunnel(bindings: List[Binding],
         log.debug("Using password: %r", ssh_password is not None)
         log.debug("Using key file: %s", ssh_pkey)
 
+        logger = get_debug_logger("{}/Tunnels".format(__name__))
+
         # First hop if not the only one
         if len(bindings) != 2:
             with stage_debug(log, "Adding first hop."):
@@ -73,7 +75,8 @@ def build_tunnel(bindings: List[Binding],
                             local_bind_address=local_bind_address,
                             remote_bind_address=remote_bind_address,
                             set_keepalive=TUNNEL_KEEPALIVE,
-                            allow_agent=False),
+                            allow_agent=False,
+                            logger=logger),
                         there=bindings[1].port)
 
                 tunnel = retry(create_first_tunnel,
@@ -108,7 +111,8 @@ def build_tunnel(bindings: List[Binding],
                             local_bind_address=local_bind_address,
                             remote_bind_address=remote_bind_address,
                             set_keepalive=TUNNEL_KEEPALIVE,
-                            allow_agent=False),
+                            allow_agent=False,
+                            logger=logger),
                         there=next_binding_port)  # noqa, pylint: disable=cell-var-from-loop, line-too-long
 
                 next_tunnel = retry(
@@ -143,7 +147,8 @@ def build_tunnel(bindings: List[Binding],
                         local_bind_address=local_bind_address,
                         remote_bind_address=remote_bind_address,
                         set_keepalive=TUNNEL_KEEPALIVE,
-                        allow_agent=False),
+                        allow_agent=False,
+                        logger=logger),
                     there=bindings[-1].port)
 
             last_tunnel = retry(

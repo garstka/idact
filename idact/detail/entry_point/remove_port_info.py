@@ -10,6 +10,8 @@ from idact.detail.auth.authenticate import authenticate
 from idact.detail.entry_point.sshd_port_info \
     import PORT_INFO_DIR_NAME_FORMAT, PORT_INFO_LOCATION
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 
 
 def remove_port_info(allocation_id: int,
@@ -31,9 +33,10 @@ def remove_port_info(allocation_id: int,
 
     @fabric.decorators.task
     def task():
-        run("rm -f {dir_path}/*"
-            " && rmdir {dir_path}"
-            " || exit 0".format(dir_path=dir_path))
+        with capture_fabric_output_to_log():
+            run("rm -f {dir_path}/*"
+                " && rmdir {dir_path}"
+                " || exit 0".format(dir_path=dir_path))
 
     with raise_on_remote_fail(exception=RuntimeError):
         with authenticate(host=config.host,

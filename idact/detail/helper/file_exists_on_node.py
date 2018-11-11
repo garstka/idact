@@ -1,6 +1,8 @@
 import fabric.decorators
 from fabric.contrib.files import exists
 
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.nodes.node_internal import NodeInternal
 
 
@@ -16,6 +18,7 @@ def file_exists_on_node(node: NodeInternal,
 
     @fabric.decorators.task
     def task():
-        return exists(path)
+        with capture_fabric_output_to_log():
+            return exists(path)
 
     return node.run_task(task=task)

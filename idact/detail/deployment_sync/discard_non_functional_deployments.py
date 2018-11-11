@@ -24,8 +24,8 @@ def discard_non_functional_deployments(
         if nodes_functional:
             all_nodes.append(nodes)
         else:
-            log.warning("Discarding an allocation deployment, "
-                        " because it is no longer functional: %s.", nodes)
+            log.info("Discarding an allocation deployment,"
+                     " because it is no longer functional: %s.", nodes)
 
     all_jupyter_deployments = []
     for jupyter in deployments.jupyter_deployments:
@@ -36,11 +36,10 @@ def discard_non_functional_deployments(
             try:
                 validate_tunnel_http_connection(tunnel=jupyter_impl.tunnel)
                 all_jupyter_deployments.append(jupyter_impl)
-            except Exception as e:  # pylint: disable=broad-except
-                log.warning("Discarding a Jupyter deployment, "
-                            " because it is no longer functional: %s."
-                            " Exception: %s.",
-                            jupyter_impl, str(e))
+            except Exception:  # pylint: disable=broad-except
+                log.info("Discarding a Jupyter deployment,"
+                         " because it is no longer functional: %s.",
+                         jupyter_impl)
                 log.debug("Exception", exc_info=1)
                 with stage_debug(log,
                                  "Cancelling tunnel to discarded notebook."):

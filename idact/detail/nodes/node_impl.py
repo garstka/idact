@@ -19,6 +19,8 @@ from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.utc_from_str import utc_from_str
 from idact.detail.helper.utc_now import utc_now
 from idact.detail.jupyter.deploy_jupyter import deploy_jupyter
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.nodes.node_resource_status_impl import NodeResourceStatusImpl
 from idact.detail.serialization.serializable_types import SerializableTypes
@@ -72,9 +74,10 @@ class NodeImpl(NodeInternal):
             @fabric.decorators.task
             def task():
                 """Runs the command with a timeout."""
-                return fabric.operations.run(command,
-                                             pty=False,
-                                             timeout=timeout)
+                with capture_fabric_output_to_log():
+                    return fabric.operations.run(command,
+                                                 pty=False,
+                                                 timeout=timeout)
 
             return self.run_task(task=task,
                                  install_keys=install_keys)

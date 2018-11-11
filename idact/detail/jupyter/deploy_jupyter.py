@@ -17,6 +17,8 @@ from idact.detail.helper.get_remote_file import get_remote_file
 from idact.detail.helper.retry import retry
 from idact.detail.helper.stage_info import stage_debug
 from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
@@ -64,14 +66,15 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
         @fabric.decorators.task
         def load_nbserver_json():
             """Loads notebook parameters from a json file."""
-            with cd(runtime_dir):
-                nbserver_json_path = run("realpath $PWD/nbserver-*.json") \
-                    .splitlines()[0]
-            run("cat '{nbserver_json_path}' > /dev/null".format(
-                nbserver_json_path=nbserver_json_path))
-            nbserver_json_str = get_remote_file(nbserver_json_path)
-            nbserver_json = json.loads(nbserver_json_str)
-            return int(nbserver_json['port']), nbserver_json['token']
+            with capture_fabric_output_to_log():
+                with cd(runtime_dir):
+                    nbserver_json_path = run("realpath $PWD/nbserver-*.json") \
+                        .splitlines()[0]
+                run("cat '{nbserver_json_path}' > /dev/null".format(
+                    nbserver_json_path=nbserver_json_path))
+                nbserver_json_str = get_remote_file(nbserver_json_path)
+                nbserver_json = json.loads(nbserver_json_str)
+                return int(nbserver_json['port']), nbserver_json['token']
 
         with stage_debug(log, "Obtaining info about notebook from json file."):
             actual_port, token = retry(

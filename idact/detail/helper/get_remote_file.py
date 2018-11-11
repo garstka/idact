@@ -7,6 +7,8 @@ import fabric.decorators
 from fabric.operations import get
 
 from idact.detail.helper.stage_info import stage_debug
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
@@ -38,7 +40,8 @@ def get_file_from_node(node: NodeInternal,
 
     @fabric.decorators.task
     def file_upload_task():
-        return get_remote_file(remote_path=remote_path)
+        with capture_fabric_output_to_log():
+            return get_remote_file(remote_path=remote_path)
 
     with stage_debug(log, "Getting file from node %s: %s",
                      node.host, remote_path):

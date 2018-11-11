@@ -19,6 +19,8 @@ from idact.detail.helper.remove_runtime_dir \
     import remove_runtime_dir_on_failure
 from idact.detail.helper.retry import retry
 from idact.detail.helper.stage_info import stage_debug
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.tunnel.close_tunnel_on_failure import close_tunnel_on_failure
@@ -90,7 +92,8 @@ def deploy_dask_worker(node: NodeInternal,
         def validate_worker_started_from_log():
             """Checks that the worker has started correctly based on
                 the log file."""
-            output = get_remote_file(remote_path=log_file)
+            with capture_fabric_output_to_log():
+                output = get_remote_file(remote_path=log_file)
             log.debug("Log file: %s", output)
             validate_worker_started(output=output)
 

@@ -19,6 +19,8 @@ from idact.detail.helper.remove_runtime_dir \
     import remove_runtime_dir_on_failure
 from idact.detail.helper.retry import retry
 from idact.detail.helper.stage_info import stage_debug
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.tunnel.close_tunnel_on_failure import close_tunnel_on_failure
@@ -83,7 +85,8 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
         @fabric.decorators.task
         def extract_address_from_log() -> str:
             """Extracts scheduler address from a log file."""
-            output = get_remote_file(remote_path=log_file)
+            with capture_fabric_output_to_log():
+                output = get_remote_file(remote_path=log_file)
             log.debug("Log file: %s", output)
             return extract_address_from_output(output=output)
 

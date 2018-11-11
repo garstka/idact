@@ -28,6 +28,6 @@ def retry(fun: Callable, retries: int, seconds_between_retries: int) -> Any:
         except Exception as e:  # pylint: disable=broad-except
             if i >= retries:
                 raise e
-            log.warning("Exception: %s, retry %d/%d.",
-                        str(e), i + 1, retries)
+            log.debug("%s, retry %d/%d.",
+                      str(e), i + 1, retries)
             sleep(seconds_between_retries)

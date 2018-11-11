@@ -9,6 +9,8 @@ from fabric.operations import run, put
 
 from idact.detail.helper.get_random_file_name import get_random_file_name
 from idact.detail.helper.stage_info import stage_debug
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
@@ -33,27 +35,31 @@ def upload_entry_point(contents: str,
     def task():
         """Creates the entry point dir and file.
             Fails if it couldn't be created."""
-        run("mkdir -p {entry_point_location}".format(
-            entry_point_location=ENTRY_POINT_LOCATION))
+        with capture_fabric_output_to_log():
+            run("mkdir -p {entry_point_location}".format(
+                entry_point_location=ENTRY_POINT_LOCATION))
 
-        file_name = get_random_file_name(
-            length=ENTRY_POINT_FILE_NAME_LENGTH)
-        file_path = run("echo {entry_point_location}/{file_name}".format(
-            entry_point_location=ENTRY_POINT_LOCATION,
-            file_name=file_name))
+            file_name = get_random_file_name(
+                length=ENTRY_POINT_FILE_NAME_LENGTH)
+            file_path = run("echo {entry_point_location}/{file_name}".format(
+                entry_point_location=ENTRY_POINT_LOCATION,
+                file_name=file_name))
+            file_exists = exists(file_path)
 
-        if exists(file_path):
+        if file_exists:
             log.warning("Overwriting randomly named entry point file:"
                         " %s", file_path)
 
         with stage_debug(log, "Uploading the entry point script."):
-            real_path = run("echo {file_path}".format(file_path=file_path))
-            file = BytesIO(contents.encode('ascii'))
-            put(file, real_path, mode=0o700)
+            with capture_fabric_output_to_log():
+                real_path = run("echo {file_path}".format(file_path=file_path))
+                file = BytesIO(contents.encode('ascii'))
+                put(file, real_path, mode=0o700)
 
         with stage_debug(log, "Checking the entry point script was uploaded."):
-            run("cat {real_path} > /dev/null".format(
-                real_path=real_path))
+            with capture_fabric_output_to_log():
+                run("cat {real_path} > /dev/null".format(
+                    real_path=real_path))
         result.append(real_path)
 
     node.run_task(task)
