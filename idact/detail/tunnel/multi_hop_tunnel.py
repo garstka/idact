@@ -1,8 +1,9 @@
 """This module contains the implementation of a multi hop SSH tunnel."""
-
+from contextlib import ExitStack
 from typing import List
 
 from idact.core.tunnel import Tunnel
+from idact.detail.tunnel.close_tunnel_on_exit import close_tunnel_on_exit
 
 
 class MultiHopTunnel(Tunnel):
@@ -29,8 +30,9 @@ class MultiHopTunnel(Tunnel):
         return self._here
 
     def close(self):
-        for i in reversed(self._tunnels):
-            i.close()
+        with ExitStack() as stack:
+            for i in self._tunnels:
+                stack.enter_context(close_tunnel_on_exit(i))
 
     def __str__(self):
         return "{class_name}({here}:{there})".format(

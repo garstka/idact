@@ -28,7 +28,9 @@ class LoggerOut(StringIO):
         self._fileno = fileno
 
     def write(self, message):
-        self._logger.debug(message.rstrip())
+        message = message.rstrip()
+        if message:
+            self._logger.debug(message)
 
     def fileno(self) -> int:
         """Returns the file number for corresponding output."""
