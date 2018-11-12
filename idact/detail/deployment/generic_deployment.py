@@ -1,7 +1,8 @@
 """This module contains the implementation of a generic deployment."""
+from idact.core.retry import Retry
 from idact.detail.helper.ptree import ptree
 from idact.detail.helper.remove_runtime_dir import remove_runtime_dir_on_exit
-from idact.detail.helper.retry import retry
+from idact.detail.helper.retry import retry_with_config
 from idact.detail.helper.stage_info import stage_debug
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
@@ -84,9 +85,9 @@ class GenericDeployment(Serializable):
             with stage_debug(log,
                              "Killing the process tree for pid: %d",
                              self._pid):
-                retry(fun=cancel_task,
-                      retries=5,
-                      seconds_between_retries=1)
+                retry_with_config(fun=cancel_task,
+                                  name=Retry.CANCEL_DEPLOYMENT,
+                                  config=self._node.config)
 
     def serialize(self) -> dict:
         return {'type': str(SerializableTypes.GENERIC_DEPLOYMENT),

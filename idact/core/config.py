@@ -5,8 +5,9 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import Optional, List, Dict
 from idact.core.auth import AuthMethod
+from idact.core.retry import Retry
 
 
 class SetupActionsConfig:
@@ -32,6 +33,32 @@ class SetupActionsConfig:
     @dask.setter
     @abstractmethod
     def dask(self, value: List[str]):
+        pass
+
+
+class RetryConfig:
+    """Retry config for an action."""
+
+    @property
+    @abstractmethod
+    def count(self) -> int:
+        """Number of retries."""
+        pass
+
+    @count.setter
+    @abstractmethod
+    def count(self, value: int):
+        pass
+
+    @property
+    @abstractmethod
+    def seconds_between(self) -> int:
+        """Seconds between retries."""
+        pass
+
+    @seconds_between.setter
+    @abstractmethod
+    def seconds_between(self, value: int):
         pass
 
 
@@ -136,11 +163,6 @@ class ClusterConfig(ABC):
 
     @property
     @abstractmethod
-    def port_info_retries(self) -> int:
-        """Number of retries to determine port info during allocation."""
-        pass
-
-    @port_info_retries.setter
-    @abstractmethod
-    def port_info_retries(self, value: int):
+    def retries(self) -> Dict[Retry, RetryConfig]:
+        """Retry config by retried action name."""
         pass

@@ -3,6 +3,8 @@ from typing import List
 
 import requests
 
+from idact import AuthMethod
+from idact.detail.config.client.client_cluster_config import ClusterConfigImpl
 from idact.detail.tunnel.build_tunnel import build_tunnel
 from idact.detail.tunnel.binding import Binding
 from idact.detail.helper.retry import retry
@@ -24,18 +26,18 @@ def run_tunnel_test_for_bindings(bindings: List[Binding]):
         :param bindings: Sequence of tunnel bindings.
 
     """
-    hostname = get_testing_host()
-    port = get_testing_port()
     user = USER_3
+    config = ClusterConfigImpl(host=get_testing_host(),
+                               port=get_testing_port(),
+                               user=user,
+                               auth=AuthMethod.ASK)
 
     local_port = bindings[0].port
     server_port = bindings[-1].port
 
     with ExitStack() as stack:
-        tunnel = build_tunnel(bindings=bindings,
-                              hostname=hostname,
-                              port=port,
-                              ssh_username=user,
+        tunnel = build_tunnel(config=config,
+                              bindings=bindings,
                               ssh_password=get_test_user_password(user))
         stack.enter_context(close_tunnel_on_exit(tunnel))
 

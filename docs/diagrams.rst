@@ -28,6 +28,8 @@ abstract.
  - :py:class:`.Node`
  - :py:class:`.NodeResourceStatus`
  - :py:class:`.Nodes`
+ - :py:class:`.Retry`
+ - :py:class:`.RetryConfig`
  - :py:class:`.SetupActionsConfig`
  - :py:class:`.SynchronizedDeployments`
  - :py:class:`.Tunnel`
@@ -57,6 +59,7 @@ Core implementation classes:
  - :py:class:`.NodeInternal`
  - :py:class:`.NodeResourceStatusImpl`
  - :py:class:`.NodesImpl`
+ - :py:class:`.RetryConfigImpl`
  - :py:class:`.SetupActionsConfigImpl`
  - :py:class:`.SynchronizedDeploymentsImpl`
 

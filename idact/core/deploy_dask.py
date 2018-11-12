@@ -16,6 +16,7 @@ from idact.detail.dask.deploy_dask_impl import connect_to_each_node, \
 from idact.detail.deployment.cancel_on_failure import cancel_on_failure
 from idact.detail.helper.stage_info import stage_info
 from idact.detail.log.get_logger import get_logger
+from idact.detail.nodes.node_internal import NodeInternal
 
 
 def deploy_dask(nodes: Sequence[Node]) -> DaskDeployment:
@@ -36,13 +37,19 @@ def deploy_dask(nodes: Sequence[Node]) -> DaskDeployment:
                                        "Deploying Dask on %d nodes.",
                                        len(nodes)))
 
-        connect_to_each_node(nodes=nodes)
+        first_node = nodes[0]
+        assert isinstance(first_node, NodeInternal)
+        config = first_node.config
+
+        connect_to_each_node(nodes=nodes,
+                             config=first_node.config)
 
         scheduler = deploy_scheduler_on_first_node(nodes)
         stack.enter_context(cancel_on_failure(scheduler))
 
         check_scheduler_reachable_from_nodes(nodes=nodes,
-                                             scheduler=scheduler)
+                                             scheduler=scheduler,
+                                             config=config)
 
         workers = deploy_workers_on_each_node(nodes=nodes,
                                               scheduler=scheduler,

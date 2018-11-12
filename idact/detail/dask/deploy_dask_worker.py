@@ -5,6 +5,7 @@ from contextlib import ExitStack
 
 import fabric.decorators
 
+from idact.core.retry import Retry
 from idact.detail.dask.create_scratch_dir import create_scratch_subdir
 from idact.detail.dask.dask_scheduler_deployment import DaskSchedulerDeployment
 from idact.detail.dask.dask_worker_deployment import DaskWorkerDeployment
@@ -17,7 +18,7 @@ from idact.detail.helper.get_free_remote_port import get_free_remote_port
 from idact.detail.helper.get_remote_file import get_remote_file
 from idact.detail.helper.remove_runtime_dir \
     import remove_runtime_dir_on_failure
-from idact.detail.helper.retry import retry
+from idact.detail.helper.retry import retry_with_config
 from idact.detail.helper.stage_info import stage_debug
 from idact.detail.log.capture_fabric_output_to_log import \
     capture_fabric_output_to_log
@@ -98,9 +99,10 @@ def deploy_dask_worker(node: NodeInternal,
             validate_worker_started(output=output)
 
         with stage_debug(log, "Checking if worker started."):
-            retry(lambda: node.run_task(task=validate_worker_started_from_log),
-                  retries=5,
-                  seconds_between_retries=5)
+            retry_with_config(
+                lambda: node.run_task(task=validate_worker_started_from_log),
+                name=Retry.CHECK_WORKER_STARTED,
+                config=node.config)
 
         with stage_debug(log, "Opening a tunnel to bokeh diagnostics server."):
             bokeh_tunnel = node.tunnel(there=bokeh_port)

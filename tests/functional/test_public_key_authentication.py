@@ -7,6 +7,8 @@ from fabric.context_managers import settings
 
 from idact import AuthMethod, add_cluster, show_cluster, Walltime, Node
 from idact.core.auth import KeyType
+from idact.core.retry import Retry
+from idact.core.set_retry import set_retry
 from idact.detail.auth.generate_key import generate_key
 from idact.detail.auth.get_public_key_location import get_public_key_location
 from idact.detail.auth.set_password import set_password
@@ -157,7 +159,7 @@ def test_generate_and_install_key_on_access_node():
                     auth=AuthMethod.PUBLIC_KEY,
                     key=KeyType.RSA,
                     install_key=True,
-                    port_info_retries=0)
+                    retries={Retry.PORT_INFO: set_retry(count=0)})
 
         check_remote_key_and_node_access(stack=stack, user=user)
 
@@ -203,7 +205,7 @@ def test_install_already_generated_key_on_access_node():
                     auth=AuthMethod.PUBLIC_KEY,
                     key=key,
                     install_key=True,
-                    port_info_retries=0)
+                    retries={Retry.PORT_INFO: set_retry(count=0)})
 
         check_remote_key_and_node_access(stack=stack, user=user)
 
@@ -225,7 +227,7 @@ def test_generate_and_install_missing_key_on_access_node():
                     auth=AuthMethod.PUBLIC_KEY,
                     key=missing_key,
                     install_key=True,
-                    port_info_retries=0)
+                    retries={Retry.PORT_INFO: set_retry(count=0)})
 
         cluster = show_cluster(TEST_CLUSTER)
         node = cluster.get_access_node()
@@ -264,7 +266,7 @@ def test_generate_and_install_key_no_sshd():
                     key=KeyType.RSA,
                     install_key=True,
                     disable_sshd=True,
-                    port_info_retries=0)
+                    retries={Retry.PORT_INFO: set_retry(count=0)})
 
         check_remote_key_and_node_access(stack=stack, user=user)
 

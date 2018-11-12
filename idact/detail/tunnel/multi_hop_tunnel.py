@@ -2,24 +2,31 @@
 from contextlib import ExitStack
 from typing import List
 
+from idact.core.config import ClusterConfig
 from idact.core.tunnel import Tunnel
 from idact.detail.tunnel.close_tunnel_on_exit import close_tunnel_on_exit
+from idact.detail.tunnel.tunnel_internal import TunnelInternal
 
 
-class MultiHopTunnel(Tunnel):
+class MultiHopTunnel(TunnelInternal):
     """Tunnel consisting of one or multiple segments.
 
         :param tunnels: Tunnel segments.
 
+        :param config: Cluster config.
+
     """
 
-    def __init__(self, tunnels: List[Tunnel]):
+    def __init__(self,
+                 tunnels: List[Tunnel],
+                 config: ClusterConfig):
         if not tunnels:
             raise ValueError(
                 "Multi-hop tunnel requires at least one tunnel segment.")
         self._tunnels = tunnels
         self._here = tunnels[-1].here
         self._there = tunnels[-1].there
+        self._config = config
 
     @property
     def there(self) -> int:
@@ -42,3 +49,7 @@ class MultiHopTunnel(Tunnel):
 
     def __repr__(self):
         return str(self)
+
+    @property
+    def config(self) -> ClusterConfig:
+        return self._config

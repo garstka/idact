@@ -26,6 +26,7 @@ from idact.detail.nodes.node_resource_status_impl import NodeResourceStatusImpl
 from idact.detail.serialization.serializable_types import SerializableTypes
 from idact.detail.tunnel.binding import Binding
 from idact.detail.tunnel.build_tunnel import build_tunnel
+from idact.detail.tunnel.tunnel_internal import TunnelInternal
 
 
 class NodeImpl(NodeInternal):
@@ -155,7 +156,7 @@ class NodeImpl(NodeInternal):
 
     def tunnel(self,
                there: int,
-               here: Optional[int] = None):
+               here: Optional[int] = None) -> TunnelInternal:
         try:
             here = here if here is not None else 0
             validate_port(there)
@@ -171,10 +172,8 @@ class NodeImpl(NodeInternal):
             with authenticate(host=self._host,
                               port=self._port,
                               config=self._config):
-                return build_tunnel(bindings=bindings,
-                                    hostname=self._config.host,
-                                    port=self._config.port,
-                                    ssh_username=self._config.user,
+                return build_tunnel(config=self._config,
+                                    bindings=bindings,
                                     ssh_password=env.password,
                                     ssh_pkey=env.key_filename)
         except RuntimeError as e:

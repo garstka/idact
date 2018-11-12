@@ -1,7 +1,8 @@
-from idact import Tunnel
+from idact import ClusterConfig
+from idact.detail.tunnel.tunnel_internal import TunnelInternal
 
 
-class FakeTunnelAnyLocalPort(Tunnel):
+class FakeTunnelAnyLocalPort(TunnelInternal):
     """Does nothing besides holding the remote port.
         Local port is ignored.
 
@@ -29,3 +30,7 @@ class FakeTunnelAnyLocalPort(Tunnel):
     def __str__(self):
         return "FakeTunnelAnyLocalPort(there={there})".format(
             there=self._there)
+
+    @property
+    def config(self) -> ClusterConfig:
+        raise NotImplementedError()

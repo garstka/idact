@@ -35,7 +35,8 @@ DIAGRAMS_TO_GENERATE = {
                    " idact/detail/deployment_sync"
                    "/synchronized_deployments_impl.py"
                    " idact/detail/config/client/client_cluster_config.py"
-                   " idact/detail/config/client/setup_actions_config.py",
+                   " idact/detail/config/client/setup_actions_config.py"
+                   " idact/detail/config/client/retry_config_impl.py",
     "detail-allocation": "idact/detail/allocation"
                          " idact/detail/slurm",
     "detail-config": "idact/detail/config/client/client_config.py",

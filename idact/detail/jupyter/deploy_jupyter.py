@@ -7,6 +7,7 @@ from fabric.context_managers import cd
 from fabric.operations import run
 
 from idact.core.jupyter_deployment import JupyterDeployment
+from idact.core.retry import Retry
 from idact.detail.deployment.cancel_on_failure import cancel_on_failure
 from idact.detail.deployment.create_deployment_dir import create_runtime_dir
 from idact.detail.deployment.deploy_generic import deploy_generic
@@ -14,7 +15,7 @@ from idact.detail.deployment.get_deployment_script_contents import \
     get_deployment_script_contents
 from idact.detail.helper.get_free_remote_port import get_free_remote_port
 from idact.detail.helper.get_remote_file import get_remote_file
-from idact.detail.helper.retry import retry
+from idact.detail.helper.retry import retry_with_config
 from idact.detail.helper.stage_info import stage_debug
 from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
 from idact.detail.log.capture_fabric_output_to_log import \
@@ -77,10 +78,10 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
                 return int(nbserver_json['port']), nbserver_json['token']
 
         with stage_debug(log, "Obtaining info about notebook from json file."):
-            actual_port, token = retry(
+            actual_port, token = retry_with_config(
                 lambda: node.run_task(task=load_nbserver_json),
-                retries=5,
-                seconds_between_retries=3)
+                name=Retry.JUPYTER_JSON,
+                config=node.config)
 
         with stage_debug(log, "Opening a tunnel to notebook."):
             tunnel = node.tunnel(there=actual_port,

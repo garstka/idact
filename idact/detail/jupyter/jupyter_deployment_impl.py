@@ -5,7 +5,6 @@ import webbrowser
 from contextlib import ExitStack
 from typing import Optional
 
-from idact.core.tunnel import Tunnel
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from idact.detail.deployment.generic_deployment import GenericDeployment
@@ -14,6 +13,7 @@ from idact.detail.helper.stage_info import stage_info
 from idact.detail.log.get_logger import get_logger
 from idact.detail.serialization.serializable import Serializable
 from idact.detail.serialization.serializable_types import SerializableTypes
+from idact.detail.tunnel.tunnel_internal import TunnelInternal
 
 
 class JupyterDeploymentImpl(JupyterDeployment, Serializable):
@@ -31,7 +31,7 @@ class JupyterDeploymentImpl(JupyterDeployment, Serializable):
 
     def __init__(self,
                  deployment: GenericDeployment,
-                 tunnel: Tunnel,
+                 tunnel: TunnelInternal,
                  token: str,
                  uuid: Optional[str] = None):
         self._deployment = deployment
@@ -54,7 +54,7 @@ class JupyterDeploymentImpl(JupyterDeployment, Serializable):
         return self._deployment
 
     @property
-    def tunnel(self) -> Tunnel:
+    def tunnel(self) -> TunnelInternal:
         """Tunnel to notebook server."""
         return self._tunnel
 

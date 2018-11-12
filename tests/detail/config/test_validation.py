@@ -1,5 +1,7 @@
 import pytest
 
+from idact.core.retry import Retry
+from idact.detail.config.client.retry_config_impl import RetryConfigImpl
 from idact.detail.config.client.setup_actions_config import \
     SetupActionsConfigImpl
 from idact.detail.config.validation.validate_cluster_name import \
@@ -12,7 +14,10 @@ from idact.detail.config.validation.validate_log_level \
 from idact.detail.config.validation.validate_notebook_defaults import \
     validate_notebook_defaults
 from idact.detail.config.validation.validate_port import validate_port
-from idact.detail.config.validation.validate_retries import validate_retries
+from idact.detail.config.validation.validate_non_negative_int \
+    import validate_non_negative_int
+from idact.detail.config.validation.validate_retry_config_dict import \
+    validate_retry_config_dict
 from idact.detail.config.validation.validate_scratch import validate_scratch
 from idact.detail.config.validation.validate_setup_actions import \
     validate_setup_actions
@@ -255,15 +260,33 @@ def test_validate_username():
         validate_username('us\ner')
 
 
-def test_validate_retries():
-    assert validate_retries(0, label='') == 0
-    assert validate_retries(1, label='') == 1
-    assert validate_retries(22, label='') == 22
+def test_validate_non_negative_int():
+    assert validate_non_negative_int(0, label='') == 0
+    assert validate_non_negative_int(1, label='') == 1
+    assert validate_non_negative_int(22, label='') == 22
     with pytest.raises(TypeError):
-        validate_retries(None, label='')
+        validate_non_negative_int(None, label='')
     with pytest.raises(TypeError):
-        validate_retries('1', label='')
+        validate_non_negative_int('1', label='')
     with pytest.raises(ValueError):
-        validate_retries(-1, label='')
+        validate_non_negative_int(-1, label='')
     with pytest.raises(ValueError):
-        validate_retries(-10, label='')
+        validate_non_negative_int(-10, label='')
+
+
+def test_validate_retry_config_dict():
+    assert validate_retry_config_dict({}, label='') == {}
+    assert {Retry.PORT_INFO: RetryConfigImpl(0, 0)} == (
+        validate_retry_config_dict(
+            label='',
+            value={Retry.PORT_INFO: RetryConfigImpl(0, 0)}))
+    with pytest.raises(TypeError):
+        validate_retry_config_dict(11, label='')
+    with pytest.raises(TypeError):
+        validate_retry_config_dict(
+            {Retry.PORT_INFO: RetryConfigImpl(0, 0),
+             Retry.JUPYTER_JSON: 22}, label='')
+    with pytest.raises(TypeError):
+        validate_retry_config_dict(
+            {Retry.PORT_INFO: RetryConfigImpl(0, 0),
+             22: RetryConfigImpl(0, 0)}, label='')

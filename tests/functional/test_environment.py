@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from contextlib import ExitStack
@@ -9,11 +10,13 @@ import pytest
 from idact import show_clusters, show_cluster, add_cluster, \
     AuthMethod, save_environment, load_environment, set_log_level, \
     ClusterConfig
+from idact.core.get_default_retries import get_default_retries
 from idact.core.remove_cluster import remove_cluster
 from idact.detail.auth.set_password import set_password
 from idact.detail.environment.environment_provider import EnvironmentProvider
 from idact.detail.log.logger_provider import LoggerProvider
 from tests.helpers.clear_environment import clear_environment
+from tests.helpers.config_defaults import DEFAULT_RETRIES_JSON
 from tests.helpers.test_users import USER_2, get_test_user_password, USER_19, \
     USER_25, USER_26
 from tests.helpers.testing_environment import TEST_CLUSTER
@@ -63,8 +66,8 @@ def check_config_is_default(config: ClusterConfig, user: str):
     assert config.setup_actions.jupyter == []
     assert config.setup_actions.dask == []
     assert config.scratch == '$HOME'
-    assert config.port_info_retries == 5
     assert LoggerProvider().log_level == logging.DEBUG
+    assert config.retries == get_default_retries()
 
 
 def check_config_is_modified(config: ClusterConfig):
@@ -78,32 +81,48 @@ def check_config_is_modified(config: ClusterConfig):
     assert config.setup_actions.jupyter == ['abc']
     assert config.setup_actions.dask == ['abc', 'def']
     assert config.scratch == '$HOME2'
-    assert config.port_info_retries == 10
     assert LoggerProvider().log_level == logging.INFO
+    assert config.retries == get_default_retries()
 
 
 def get_default_config_contents(user: str) -> List[str]:
-    return ['{',
-            '    "clusters": {',
-            '        "test": {',
-            '            "auth": "ASK",',
-            '            "disableSshd": false,',
-            '            "host": "localhost",',
-            '            "installKey": true,',
-            '            "key": null,',
-            '            "notebookDefaults": {},',
-            '            "port": 22,',
-            '            "portInfoRetries": 5,',
-            '            "scratch": "$HOME",',
-            '            "setupActions": {',
-            '                "dask": [],',
-            '                "jupyter": []',
-            '            },',
-            '            "user": "' + user + '"',
-            '        }',
-            '    },',
-            '    "logLevel": 10',
-            '}']
+    return json.dumps(
+        {"clusters": {"test": {
+            "auth": "ASK",
+            "disableSshd": False,
+            "host": "localhost",
+            "installKey": True,
+            "key": None,
+            "notebookDefaults": {},
+            "port": 22,
+            "retries": DEFAULT_RETRIES_JSON,
+            "scratch": "$HOME",
+            "setupActions": {
+                "dask": [],
+                "jupyter": []
+            },
+            "user": user
+        }}, "logLevel": 10}, sort_keys=True, indent=4).splitlines()
+
+
+def get_modified_config_contents() -> List[str]:
+    return json.dumps(
+        {"clusters": {"test": {
+            "auth": "PUBLIC_KEY",
+            "disableSshd": True,
+            "host": "localhost2",
+            "installKey": False,
+            "key": "./fake-key",
+            "notebookDefaults": {},
+            "port": 2222,
+            "retries": DEFAULT_RETRIES_JSON,
+            "scratch": "$HOME2",
+            "setupActions": {
+                "dask": ["abc", "def"],
+                "jupyter": ["abc"]
+            },
+            "user": "other"
+        }}, "logLevel": 20}, sort_keys=True, indent=4).splitlines()
 
 
 def test_environment_create_modify_save_load():
@@ -140,7 +159,6 @@ def test_environment_create_modify_save_load():
             config.setup_actions.jupyter = ['abc']
             config.setup_actions.dask = ['abc', 'def']
             config.scratch = '$HOME2'
-            config.port_info_retries = 10
             set_log_level(logging.INFO)
 
             check_config_is_modified(config=config)
@@ -150,32 +168,7 @@ def test_environment_create_modify_save_load():
                 contents = test_file.read().splitlines()
 
             pprint(contents)
-            assert contents == ['{',
-                                '    "clusters": {',
-                                '        "test": {',
-                                '            "auth": "PUBLIC_KEY",',
-                                '            "disableSshd": true,',
-                                '            "host": "localhost2",',
-                                '            "installKey": false,',
-                                '            "key": "./fake-key",',
-                                '            "notebookDefaults": {},',
-                                '            "port": 2222,',
-                                '            "portInfoRetries": 10,',
-                                '            "scratch": "$HOME2",',
-                                '            "setupActions": {',
-                                '                "dask": [',
-                                '                    "abc",',
-                                '                    "def"',
-                                '                ],',
-                                '                "jupyter": [',
-                                '                    "abc"',
-                                '                ]',
-                                '            },',
-                                '            "user": "other"',
-                                '        }',
-                                '    },',
-                                '    "logLevel": 20',
-                                '}']
+            assert contents == get_modified_config_contents()
 
             load_environment(test_environment_file)
 

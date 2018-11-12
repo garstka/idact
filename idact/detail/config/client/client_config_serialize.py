@@ -8,8 +8,12 @@ from idact.core.auth import AuthMethod
 from idact.detail.config.client. \
     client_cluster_config import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
+from idact.detail.config.client.retry_config_serialize \
+    import serialize_retries, deserialize_retries
 from idact.detail.config.client.setup_actions_config import \
     SetupActionsConfigImpl
+from idact.detail.config.defaults.provide_defaults_for_retries import \
+    provide_defaults_for_retries
 from idact.detail.log.get_logger import get_logger
 
 
@@ -37,8 +41,8 @@ def serialize_client_config_to_json(config: ClientConfig) -> dict:
                        'jupyter': cluster_config.setup_actions.jupyter,
                        'dask': cluster_config.setup_actions.dask},
                    'scratch': cluster_config.scratch,
-                   'portInfoRetries': cluster_config.port_info_retries,
-                   'notebookDefaults': get_notebook_defaults(cluster_config)}
+                   'notebookDefaults': get_notebook_defaults(cluster_config),
+                   'retries': serialize_retries(cluster_config.retries)}
             for name, cluster_config in config.clusters.items()},
         'logLevel': config.log_level}
 
@@ -64,13 +68,13 @@ def use_defaults_in_missing_fields(data: dict) -> bool:
         for key in ['key',
                     'installKey',
                     'disableSshd',
-                    'scratch',
-                    'portInfoRetries']:
+                    'scratch']:
             default(cluster, key, None)
         default(cluster, 'setupActions', {})
         default(cluster['setupActions'], 'jupyter', None)
         default(cluster['setupActions'], 'dask', None)
         default(cluster, 'notebookDefaults', {})
+        default(cluster, 'retries', {})
 
     return len(modified) != 0
 
@@ -99,8 +103,9 @@ def deserialize_client_config_from_json(data: dict) -> ClientConfig:
                 jupyter=value['setupActions']['jupyter'],
                 dask=value['setupActions']['dask']),
             scratch=value['scratch'],
-            port_info_retries=value['portInfoRetries'],
-            notebook_defaults=value['notebookDefaults']
+            notebook_defaults=value['notebookDefaults'],
+            retries=provide_defaults_for_retries(
+                deserialize_retries(value['retries']))
         ) for name, value in data['clusters'].items()}
     return ClientConfig(clusters=clusters,
                         log_level=data['logLevel'])

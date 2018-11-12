@@ -1,7 +1,9 @@
 from contextlib import ExitStack
 from typing import Sequence, List, Tuple
 
+from idact.core.config import ClusterConfig
 from idact.core.nodes import Node
+from idact.core.retry import Retry
 from idact.detail.dask.check_scheduler_reachable import \
     check_scheduler_reachable
 from idact.detail.dask.dask_scheduler_deployment import DaskSchedulerDeployment
@@ -11,17 +13,20 @@ from idact.detail.dask.deploy_dask_worker import deploy_dask_worker
 from idact.detail.dask.validate_worker import validate_worker
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
 from idact.detail.deployment.cancel_on_failure import cancel_on_failure
-from idact.detail.helper.retry import retry
+from idact.detail.helper.retry import retry_with_config
 from idact.detail.helper.stage_info import stage_info
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 
 
-def connect_to_each_node(nodes: Sequence[Node]):
+def connect_to_each_node(nodes: Sequence[Node],
+                         config: ClusterConfig):
     """Connects to each node to make sure any connection issues come up
         before attempting to actually deploy anything.
 
          :param nodes: Nodes to deploy Dask on.
+
+         :param config: Cluster config.
 
     """
     log = get_logger(__name__)
@@ -31,19 +36,22 @@ def connect_to_each_node(nodes: Sequence[Node]):
                         "Connecting to %s:%d (%d/%d).",
                         node.host, node.port,
                         i + 1, node_count):
-            retry(node.connect,
-                  retries=3,
-                  seconds_between_retries=5)
+            retry_with_config(node.connect,
+                              name=Retry.DASK_NODE_CONNECT,
+                              config=config)
 
 
 def check_scheduler_reachable_from_nodes(nodes: Sequence[Node],
-                                         scheduler: DaskSchedulerDeployment):
+                                         scheduler: DaskSchedulerDeployment,
+                                         config: ClusterConfig):
     """Checks whether connection to the scheduler is possible from each node,
         before deploying workers.
 
          :param nodes: Nodes to deploy Dask on.
 
          :param scheduler: Scheduler to connect to.
+
+         :param config: Cluster config.
 
     """
     log = get_logger(__name__)
@@ -53,11 +61,11 @@ def check_scheduler_reachable_from_nodes(nodes: Sequence[Node],
                         "Checking scheduler connectivity from %s (%d/%d).",
                         node.host,
                         i + 1, node_count):
-            retry(lambda n=node:
-                  check_scheduler_reachable(node=n,
-                                            scheduler=scheduler),
-                  retries=5,
-                  seconds_between_retries=2)
+            retry_with_config(lambda n=node:
+                              check_scheduler_reachable(node=n,
+                                                        scheduler=scheduler),
+                              name=Retry.SCHEDULER_CONNECT,
+                              config=config)
 
 
 # pylint: disable=bad-continuation,bad-whitespace
@@ -74,9 +82,10 @@ def deploy_scheduler_on_first_node(
 
     with stage_info(log, "Deploying scheduler on the first node: %s.",
                     first_node.host):
-        scheduler = retry(lambda: deploy_dask_scheduler(node=first_node),
-                          retries=3,
-                          seconds_between_retries=5)
+        scheduler = retry_with_config(
+            lambda: deploy_dask_scheduler(node=first_node),
+            name=Retry.DEPLOY_DASK_SCHEDULER,
+            config=first_node.config)
         return scheduler
 
 
@@ -100,10 +109,11 @@ def deploy_worker_on_node(node: Node,
                     worker_number, worker_count):
         assert isinstance(node, NodeInternal)
         node_impl = node  # type: NodeInternal
-        worker = retry(lambda: deploy_dask_worker(node=node_impl,
-                                                  scheduler=scheduler),
-                       retries=3,
-                       seconds_between_retries=5)
+        worker = retry_with_config(
+            lambda: deploy_dask_worker(node=node_impl,
+                                       scheduler=scheduler),
+            name=Retry.DEPLOY_DASK_WORKER,
+            config=node_impl.config)
         return worker
 
 

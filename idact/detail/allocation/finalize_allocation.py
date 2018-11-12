@@ -3,11 +3,12 @@ from math import ceil
 from typing import List
 
 from idact.core.config import ClusterConfig
+from idact.core.retry import Retry
 from idact.detail.allocation.allocation_parameters import AllocationParameters
 from idact.detail.entry_point.fetch_port_info import fetch_port_info
 from idact.detail.entry_point.remove_port_info import remove_port_info
 from idact.detail.entry_point.sshd_port_info import SshdPortInfo
-from idact.detail.helper.retry import retry
+from idact.detail.helper.retry import retry_with_config
 from idact.detail.helper.stage_info import stage_debug
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_impl import NodeImpl
@@ -77,10 +78,11 @@ def finalize_allocation(allocation_id: int,
 
     try:
         node_count = len(hostnames)
-        retry_count = config.port_info_retries * int(ceil(node_count / 10))
-        ports = retry(try_to_determine_ports,
-                      retries=retry_count,
-                      seconds_between_retries=5)
+        multiplier = int(ceil(node_count / 10))
+        ports = retry_with_config(try_to_determine_ports,
+                                  name=Retry.PORT_INFO,
+                                  config=config,
+                                  multiplier=multiplier)
     except RuntimeError:
         ports = determine_ports_for_nodes(allocation_id=allocation_id,
                                           hostnames=hostnames,
