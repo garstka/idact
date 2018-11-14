@@ -28,9 +28,9 @@ class DaskDeploymentImpl(DaskDeployment):
         self._scheduler = scheduler
         self._workers = workers
 
-        tunnels = [self._scheduler.bokeh_tunnel]
-        tunnels.extend([worker.bokeh_tunnel for worker in workers])
-        self._diagnostics = DaskDiagnosticsImpl(tunnels=tunnels)
+        self._diagnostics = DaskDiagnosticsImpl(
+            scheduler_tunnel=self._scheduler.bokeh_tunnel,
+            worker_tunnels=[worker.bokeh_tunnel for worker in workers])
 
     def get_client(self) -> dask.distributed.Client:
         return dask.distributed.Client(address=self._scheduler.local_address)

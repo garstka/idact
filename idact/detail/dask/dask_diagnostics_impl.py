@@ -11,10 +11,16 @@ from idact.core.dask_deployment import DaskDiagnostics
 class DaskDiagnosticsImpl(DaskDiagnostics):
     """Implementation of the diagnostics interface."""
 
-    def __init__(self, tunnels: List[Tunnel]):
+    def __init__(self,
+                 scheduler_tunnel: Tunnel,
+                 worker_tunnels: List[Tunnel]):
         self._addresses = [
-            "http://localhost:{port}".format(port=tunnel.here)
-            for tunnel in tunnels]
+            "http://localhost:{port}/status".format(
+                port=scheduler_tunnel.here)]
+
+        self._addresses.extend(
+            ["http://localhost:{port}/main".format(port=tunnel.here)
+             for tunnel in worker_tunnels])
 
     @property
     def addresses(self) -> List[str]:

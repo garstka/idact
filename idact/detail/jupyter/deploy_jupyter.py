@@ -46,11 +46,14 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
         'export JUPYTER_RUNTIME_DIR="{runtime_dir}"'.format(
             runtime_dir=runtime_dir))
 
+    log_file = "{runtime_dir}/log".format(runtime_dir=runtime_dir)
     deployment_commands.append(
         'jupyter notebook'
         ' --ip 0.0.0.0'
         ' --port "{remote_port}"'
-        ' --no-browser'.format(remote_port=remote_port))
+        ' --no-browser > {log_file} 2>&1'.format(
+            remote_port=remote_port,
+            log_file=log_file))
 
     script_contents = get_deployment_script_contents(
         deployment_commands=deployment_commands,
