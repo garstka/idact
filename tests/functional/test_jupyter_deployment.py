@@ -7,8 +7,7 @@ from bitmath import MiB
 from idact import show_cluster, Walltime, Nodes
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
-from tests.helpers.check_local_http_connection import \
-    check_local_http_connection
+from tests.helpers.check_http_connection import check_local_http_connection
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location

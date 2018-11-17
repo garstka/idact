@@ -33,5 +33,5 @@ class JupyterDeployment(ABC):
 
     @abstractmethod
     def cancel_local(self):
-        """Closes the tunnel, but does not cancel the allocation."""
+        """Closes the tunnel, but does not cancel the deployment."""
         pass

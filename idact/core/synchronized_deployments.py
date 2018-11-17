@@ -7,6 +7,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from idact.core.dask_deployment import DaskDeployment
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Nodes
 
@@ -24,4 +25,10 @@ class SynchronizedDeployments(ABC):
     @abstractmethod
     def jupyter_deployments(self) -> List[JupyterDeployment]:
         """Synchronized Jupyter deployments."""
+        pass
+
+    @property
+    @abstractmethod
+    def dask_deployments(self) -> List[DaskDeployment]:
+        """Synchronized Dask deployments."""
         pass

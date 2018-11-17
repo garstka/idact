@@ -45,3 +45,8 @@ class DaskDeployment(ABC):
     def cancel(self):
         """Cancels the deployment."""
         pass
+
+    @abstractmethod
+    def cancel_local(self):
+        """Closes tunnels, but does not cancel the deployment."""
+        pass

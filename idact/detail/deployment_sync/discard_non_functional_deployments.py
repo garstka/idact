@@ -1,4 +1,5 @@
 from idact.core.synchronized_deployments import SynchronizedDeployments
+from idact.detail.dask.dask_deployment_impl import DaskDeploymentImpl
 from idact.detail.deployment_sync.synchronized_deployments_impl import \
     SynchronizedDeploymentsImpl
 from idact.detail.helper.stage_info import stage_debug
@@ -45,6 +46,27 @@ def discard_non_functional_deployments(
                                  "Cancelling tunnel to discarded notebook."):
                     jupyter_impl.cancel_local()
 
+    all_dask_deployments = []
+    for dask in deployments.dask_deployments:
+        dask_impl = dask
+        assert isinstance(dask_impl, DaskDeploymentImpl)
+        with stage_debug(log, "Checking whether Dask deployment"
+                              " is functional: %s.", dask_impl):
+            try:
+                validate_tunnel_http_connection(
+                    tunnel=dask_impl.scheduler.bokeh_tunnel)
+                all_dask_deployments.append(dask_impl)
+            except Exception:  # pylint: disable=broad-except
+                log.info("Discarding a Dask deployment,"
+                         " because it is no longer functional: %s.",
+                         dask_impl)
+                log.debug("Exception", exc_info=1)
+                with stage_debug(log,
+                                 "Cancelling tunnels for discarded Dask"
+                                 " deployment."):
+                    dask_impl.cancel_local()
+
     return SynchronizedDeploymentsImpl(
         nodes=all_nodes,
-        jupyter_deployments=all_jupyter_deployments)
+        jupyter_deployments=all_jupyter_deployments,
+        dask_deployments=all_dask_deployments)

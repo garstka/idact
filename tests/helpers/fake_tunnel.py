@@ -1,4 +1,7 @@
+from contextlib import contextmanager
+
 from idact import ClusterConfig
+from idact.detail.nodes.node_impl import NodeImpl
 from idact.detail.tunnel.tunnel_internal import TunnelInternal
 
 
@@ -37,6 +40,25 @@ class FakeTunnel(TunnelInternal):
             here=self._here,
             there=self._there)
 
+    def __repr__(self):
+        return str(self)
+
     @property
     def config(self) -> ClusterConfig:
         raise NotImplementedError()
+
+
+@contextmanager
+def use_fake_tunnel():
+    """A context manager that replaces :meth:`.NodeImpl.tunnel` with
+        a method returning :class:`.FakeTunnel`."""
+
+    def fake_tunnel(_, there: int, here: int):
+        return FakeTunnel(here=here, there=there)
+
+    saved_tunnel = NodeImpl.tunnel
+    try:
+        NodeImpl.tunnel = fake_tunnel
+        yield
+    finally:
+        NodeImpl.tunnel = saved_tunnel

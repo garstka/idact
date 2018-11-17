@@ -3,6 +3,8 @@ from typing import Tuple, Any, List
 
 from idact.core.config import ClusterConfig
 from idact.core.synchronized_deployments import SynchronizedDeployments
+from idact.detail.deployment_sync.dask_deployments. \
+    materialize_dask_deployment import materialize_dask_deployment
 from idact.detail.deployment_sync.deployment_definitions import \
     DeploymentDefinitions
 from idact.detail.deployment_sync.jupyter_deployments. \
@@ -23,23 +25,6 @@ def sorted_by_expiration_date(
             in sorted(to_sort, key=lambda value: value[1])]
 
 
-# pylint: disable=bad-continuation
-def sort_deployments_by_expiration_dates(
-    nodes: List[Tuple[Any, datetime.datetime]],
-    jupyter_deployments: List[Tuple[Any, datetime.datetime]]) \
-    -> Tuple[List[Any], List[Any]]:  # noqa
-    """Sorts each group of deployments by expiration dates.
-        Discards the expiration dates.
-
-        :param nodes: Allocation deployments.
-
-        :param jupyter_deployments: Jupyter deployments.
-
-    """
-    return (sorted_by_expiration_date(nodes),
-            sorted_by_expiration_date(jupyter_deployments))
-
-
 def report_pulled_deployments(deployments: SynchronizedDeploymentsImpl):
     """Prints pulled deployments.
 
@@ -51,6 +36,8 @@ def report_pulled_deployments(deployments: SynchronizedDeploymentsImpl):
         log.info("Pulled allocation deployment: %s", node)
     for jupyter in deployments.jupyter_deployments:
         log.info("Pulled Jupyter deployment: %s", jupyter)
+    for dask in deployments.dask_deployments:
+        log.info("Pulled Dask deployment: %s", dask)
 
 
 # pylint: disable=bad-continuation
@@ -68,31 +55,42 @@ def materialize_deployments(
 
     """
 
-    nodes_by_date = []
+    nodes_index = 0
+    jupyter_index = 1
+    dask_index = 2
+    deployments_by_date = ([], [], [])
+
     for uuid, definition in deployments.nodes.items():
         materialized_nodes = materialize_nodes(config=config,
                                                access_node=access_node,
                                                uuid=uuid,
                                                definition=definition)
-        nodes_by_date.append(
+        deployments_by_date[nodes_index].append(
             (materialized_nodes, definition.expiration_date))
 
-    jupyter_deployments_by_date = []
     for uuid, definition in deployments.jupyter_deployments.items():
         materialized_jupyter = materialize_jupyter_deployment(
             config=config,
             uuid=uuid,
             definition=definition)
-        jupyter_deployments_by_date.append(
+        deployments_by_date[jupyter_index].append(
             (materialized_jupyter, definition.expiration_date))
 
-    nodes, jupyter_deployments = sort_deployments_by_expiration_dates(
-        nodes=nodes_by_date,
-        jupyter_deployments=jupyter_deployments_by_date)
+    for uuid, definition in deployments.dask_deployments.items():
+        materialized_dask = materialize_dask_deployment(
+            config=config,
+            uuid=uuid,
+            definition=definition)
+        deployments_by_date[dask_index].append(
+            (materialized_dask, definition.expiration_date))
+
+    deployments_sorted = tuple(map(sorted_by_expiration_date,
+                                   deployments_by_date))
 
     synchronized_deployments = SynchronizedDeploymentsImpl(
-        nodes=nodes,
-        jupyter_deployments=jupyter_deployments)
+        nodes=deployments_sorted[nodes_index],
+        jupyter_deployments=deployments_sorted[jupyter_index],
+        dask_deployments=deployments_sorted[dask_index])
 
     report_pulled_deployments(deployments=synchronized_deployments)
 

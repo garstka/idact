@@ -7,7 +7,7 @@ from idact.detail.jupyter.deserialize_jupyter_deployment_impl import \
     deserialize_jupyter_deployment_impl
 from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
 from idact.detail.nodes.node_impl import NodeImpl
-from tests.helpers.fake_tunnel import FakeTunnel
+from tests.helpers.fake_tunnel import FakeTunnel, use_fake_tunnel
 
 
 def get_data_for_test():
@@ -49,18 +49,11 @@ def test_serialize_deserialize():
         'tunnel_here': 2222,
         'token': 'abcdefg'}
 
-    def fake_tunnel(_, there: int, here: int):
-        return FakeTunnel(here=here, there=there)
-
-    saved_tunnel = NodeImpl.tunnel
-    try:
-        NodeImpl.tunnel = fake_tunnel
+    with use_fake_tunnel():
         deserialized = deserialize_jupyter_deployment_impl(
             config=config,
             uuid=uuid,
             serialized=serialized)
-    finally:
-        NodeImpl.tunnel = saved_tunnel
 
     assert deserialized == value
 

@@ -26,11 +26,11 @@ from idact.detail.config.validation.validate_username import validate_username
 class ClusterConfigImpl(ClusterConfig):
     """Client-side cluster config.
 
-       For parameter description, see :class:`.ClusterConfig`.
+        For parameter description, see :class:`.ClusterConfig`.
 
-       For defaults, see :func:`.add_cluster`.
+        For defaults, see :func:`.add_cluster`.
 
-       For notebook defaults, see :mod:`.jupyter_app.main`
+        For notebook defaults, see :mod:`.jupyter_app.main`
 
     """
 

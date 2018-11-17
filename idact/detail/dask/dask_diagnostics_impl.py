@@ -29,3 +29,6 @@ class DaskDiagnosticsImpl(DaskDiagnostics):
     def open_all(self):
         for address in self._addresses:
             webbrowser.open(address)
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
