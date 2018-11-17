@@ -19,4 +19,6 @@ def get_default_retries() -> Dict[Retry, RetryConfig]:
         Retry.CANCEL_DEPLOYMENT: set_retry(count=5, seconds_between=1),
         Retry.SQUEUE_AFTER_SBATCH: set_retry(count=3, seconds_between=3),
         Retry.OPEN_TUNNEL: set_retry(count=3, seconds_between=5),
-        Retry.VALIDATE_HTTP_TUNNEL: set_retry(count=3, seconds_between=2)}
+        Retry.VALIDATE_HTTP_TUNNEL: set_retry(count=3, seconds_between=2),
+        Retry.TUNNEL_TRY_AGAIN_WITH_ANY_PORT: set_retry(count=1,
+                                                        seconds_between=0)}

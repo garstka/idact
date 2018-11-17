@@ -97,21 +97,14 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
                 config=node.config)
 
         with stage_debug(log, "Opening a tunnel to scheduler."):
-            tunnel = node.tunnel(there=remote_port)
+            tunnel = node.tunnel(here=remote_port, there=remote_port)
             stack.enter_context(close_tunnel_on_failure(tunnel))
-            log.debug("Diagnostics local port: %d", tunnel.here)
+            log.debug("Scheduler local port: %d", tunnel.here)
 
         with stage_debug(log, "Opening a tunnel to bokeh diagnostics server."):
-            try:
-                bokeh_tunnel = node.tunnel(there=bokeh_port, here=bokeh_port)
-            except RuntimeError:
-                log.warning("Failed to bind scheduler diagnostics tunnel"
-                            " to the same local port as on the node."
-                            " This is expected, if this host is the scheduler"
-                            " node.")
-                bokeh_tunnel = node.tunnel(there=bokeh_port)
-                log.info("Bound to port %d instead.", bokeh_tunnel.here)
+            bokeh_tunnel = node.tunnel(here=bokeh_port, there=bokeh_port)
             stack.enter_context(close_tunnel_on_failure(bokeh_tunnel))
+            log.debug("Diagnostics local port: %d", bokeh_tunnel.here)
 
         return DaskSchedulerDeployment(deployment=deployment,
                                        tunnel=tunnel,

@@ -7,7 +7,7 @@ from idact.detail.jupyter.deserialize_jupyter_deployment_impl import \
     deserialize_jupyter_deployment_impl
 from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
 from idact.detail.nodes.node_impl import NodeImpl
-from tests.helpers.fake_tunnel import FakeTunnelAnyLocalPort
+from tests.helpers.fake_tunnel import FakeTunnel
 
 
 def get_data_for_test():
@@ -28,7 +28,7 @@ def test_serialize_deserialize():
             pid=111,
             output='out1',
             runtime_dir='/dir'),
-        tunnel=FakeTunnelAnyLocalPort(there=1111),
+        tunnel=FakeTunnel(here=2222, there=1111),
         token='abcdefg',
         uuid=uuid)
 
@@ -46,11 +46,11 @@ def test_serialize_deserialize():
                        'output': 'out1',
                        'runtime_dir': '/dir'},
         'tunnel_there': 1111,
+        'tunnel_here': 2222,
         'token': 'abcdefg'}
 
-    def fake_tunnel(_, there: int, here=None):
-        assert here is None
-        return FakeTunnelAnyLocalPort(there=there)
+    def fake_tunnel(_, there: int, here: int):
+        return FakeTunnel(here=here, there=there)
 
     saved_tunnel = NodeImpl.tunnel
     try:

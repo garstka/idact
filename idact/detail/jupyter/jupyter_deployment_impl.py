@@ -90,6 +90,7 @@ class JupyterDeploymentImpl(JupyterDeployment, Serializable):
         return {'type': str(SerializableTypes.JUPYTER_DEPLOYMENT_IMPL),
                 'deployment': self._deployment.serialize(),
                 'tunnel_there': self._tunnel.there,
+                'tunnel_here': self._tunnel.here,
                 'token': self._token}
 
     def __eq__(self, other):

@@ -39,3 +39,6 @@ class Retry(Enum):
 
     VALIDATE_HTTP_TUNNEL = 11
     """Connect to an HTTP server behind an ssh tunnel."""
+
+    TUNNEL_TRY_AGAIN_WITH_ANY_PORT = 12
+    """Fall back to any port if specific port tunnel fails."""
