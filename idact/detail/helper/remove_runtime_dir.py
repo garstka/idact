@@ -23,7 +23,7 @@ def remove_runtime_dir(node: Node, runtime_dir: str):
     except RuntimeError:
         log = get_logger(__name__)
         log.warning("Failed to remove runtime dir: '%s'.", runtime_dir)
-        log.exception("Failed to remove runtime dir due to exception.")
+        log.debug("Failed to remove runtime dir due to exception.", exc_info=1)
 
 
 @contextmanager

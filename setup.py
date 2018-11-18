@@ -17,7 +17,8 @@ REQUIREMENTS = ['click>=6.7',
                 'distributed>=1.22.0',
                 'requests>=2.18.4',
                 'bokeh>=0.13.0',
-                'jupyter>=1.0.0']
+                'jupyter>=1.0.0',
+                'jupyterlab>=0.35.4']
 
 setup(
     author="Matt Garstka",

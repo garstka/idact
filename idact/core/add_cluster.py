@@ -26,7 +26,8 @@ def add_cluster(name: str,
                 disable_sshd: bool = False,
                 setup_actions: Optional[SetupActionsConfig] = None,
                 scratch: Optional[str] = None,
-                retries: Optional[Dict[Retry, RetryConfig]] = None) -> Cluster:
+                retries: Optional[Dict[Retry, RetryConfig]] = None,
+                use_jupyter_lab: bool = True) -> Cluster:
     """Adds a new cluster.
 
         :param name:
@@ -65,6 +66,9 @@ def add_cluster(name: str,
         :param retries:
             Retry config by action name.
             Defaults: see :func:`.get_default_retries`.
+        :param use_jupyter_lab:
+            Use Jupyter Lab instead of Jupyter Notebook.
+            Default: True.
        """
     log = get_logger(__name__)
     environment = EnvironmentProvider().environment
@@ -91,6 +95,7 @@ def add_cluster(name: str,
                                disable_sshd=disable_sshd,
                                setup_actions=setup_actions,
                                scratch=scratch,
-                               retries=retries)
+                               retries=retries,
+                               use_jupyter_lab=use_jupyter_lab)
     return environment.add_cluster(name=name,
                                    config=config)

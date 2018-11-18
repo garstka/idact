@@ -5,6 +5,7 @@ from pprint import pprint
 
 import pytest
 
+from idact import get_default_retries
 from idact.core.auth import AuthMethod
 from idact.detail.config.client. \
     client_cluster_config import ClusterConfigImpl
@@ -70,6 +71,8 @@ def test_client_cluster_config_create():
     assert config.setup_actions.jupyter == []
     assert config.setup_actions.dask == []
     assert config.scratch == "$HOME"
+    assert config.retries == get_default_retries()
+    assert config.use_jupyter_lab
 
 
 def test_client_config_validation_is_used():
@@ -127,7 +130,8 @@ def test_client_config_serialize():
                                           'dask': []},
                          'scratch': '$HOME',
                          'notebookDefaults': {},
-                         'retries': DEFAULT_RETRIES_JSON}
+                         'retries': DEFAULT_RETRIES_JSON,
+                         'useJupyterLab': True}
         },
         'logLevel': INFO
     }
@@ -183,7 +187,8 @@ def test_client_config_serialize_public_key():
                                           'dask': []},
                          'scratch': '$HOME',
                          'notebookDefaults': {},
-                         'retries': DEFAULT_RETRIES_JSON}
+                         'retries': DEFAULT_RETRIES_JSON,
+                         'useJupyterLab': True}
         }, 'logLevel': INFO}
     assert serialize_client_config_to_json(client_config) == expected_json
 
@@ -201,7 +206,8 @@ def test_client_config_deserialize_public_key():
                          'setupActions': {'jupyter': ['echo a'],
                                           'dask': []},
                          'scratch': '$HOME',
-                         'retries': {}}
+                         'retries': {},
+                         'useJupyterLab': True}
         },
         'logLevel': INFO
     }
@@ -223,7 +229,8 @@ EXPECTED_DEFAULT_JSON = {
                                       'dask': []},
                      'scratch': '$HOME',
                      'notebookDefaults': {},
-                     'retries': DEFAULT_RETRIES_JSON}
+                     'retries': DEFAULT_RETRIES_JSON,
+                     'useJupyterLab': True}
     },
     'logLevel': INFO
 }

@@ -45,7 +45,8 @@ class ClusterConfigImpl(ClusterConfig):
                  setup_actions: Optional[SetupActionsConfigImpl] = None,
                  scratch: Optional[str] = None,
                  notebook_defaults: Optional[dict] = None,
-                 retries: Optional[Dict[Retry, RetryConfig]] = None):
+                 retries: Optional[Dict[Retry, RetryConfig]] = None,
+                 use_jupyter_lab: bool = True):
         if install_key is None:
             install_key = True
         if disable_sshd is None:
@@ -58,6 +59,8 @@ class ClusterConfigImpl(ClusterConfig):
             notebook_defaults = {}
         if retries is None:
             retries = {}
+        if use_jupyter_lab is None:
+            use_jupyter_lab = True
 
         retries = provide_defaults_for_retries(retries)
 
@@ -91,6 +94,9 @@ class ClusterConfigImpl(ClusterConfig):
         self.notebook_defaults = notebook_defaults
 
         self._retries = validate_retry_config_dict(retries, 'retries')
+
+        self._use_jupyter_lab = None
+        self.use_jupyter_lab = use_jupyter_lab
 
     @property
     def host(self) -> str:
@@ -194,3 +200,11 @@ class ClusterConfigImpl(ClusterConfig):
     @property
     def retries(self) -> Dict[Retry, RetryConfig]:
         return self._retries
+
+    @property
+    def use_jupyter_lab(self) -> bool:
+        return self._use_jupyter_lab
+
+    @use_jupyter_lab.setter
+    def use_jupyter_lab(self, value: bool):
+        self._use_jupyter_lab = validate_bool(value, 'use_jupyter_lab')

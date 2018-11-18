@@ -7,3 +7,5 @@ jupyter-console==6.0.0
 jupyter-core==4.4.0
 pyzmq==17.1.2
 tornado==4.5.3
+jupyterlab==0.35.4
+jupyterlab-server==0.2.0

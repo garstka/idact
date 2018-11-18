@@ -91,10 +91,6 @@ def test_materialize_nodes_deployments():
     time_222 = base + datetime.timedelta(hours=20)
     time_333 = base + datetime.timedelta(hours=10)
 
-    print(str(get_expected_nodes_impl_for_test(config=config,
-                                               access_node=access_node,
-                                               uuid='111',
-                                               allocated_until=time_111)))
     expected_synchronized_deployments = SynchronizedDeploymentsImpl(
         nodes=[get_expected_nodes_impl_for_test(config=config,
                                                 access_node=access_node,
@@ -169,3 +165,32 @@ def test_materialize_nodes_deployments_different_expiration_dates():
 
     assert str(expected_synchronized_deployments) == (
         repr(expected_synchronized_deployments))
+
+
+def test_materialize_runtime_error_is_non_fatal():
+    """Deployments that raise an exception during materialization should
+        be treated the same way as expired deployments."""
+    config, access_node = get_common_data_for_test()
+
+    time_not_expired = utc_now() + datetime.timedelta(hours=10)
+
+    invalid_deployment_definitions = DeploymentDefinitions(
+        nodes={
+            '111': DeploymentDefinition(
+                value={'type': 'SerializableTypes.NODES_IMPL'},
+                expiration_date=time_not_expired)},
+        jupyter_deployments={
+            '222': DeploymentDefinition(
+                value={'type': 'SerializableTypes.JUPYTER_DEPLOYMENT_IMPL'},
+                expiration_date=time_not_expired)},
+        dask_deployments={
+            '333': DeploymentDefinition(
+                value={'type': 'SerializableTypes.DASK_DEPLOYMENT_IMPL'},
+                expiration_date=time_not_expired)})
+
+    synchronized_deployments = materialize_deployments(
+        config=config,
+        access_node=access_node,
+        deployments=invalid_deployment_definitions)
+
+    assert synchronized_deployments == SynchronizedDeploymentsImpl()

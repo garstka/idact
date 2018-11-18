@@ -42,7 +42,8 @@ def serialize_client_config_to_json(config: ClientConfig) -> dict:
                        'dask': cluster_config.setup_actions.dask},
                    'scratch': cluster_config.scratch,
                    'notebookDefaults': get_notebook_defaults(cluster_config),
-                   'retries': serialize_retries(cluster_config.retries)}
+                   'retries': serialize_retries(cluster_config.retries),
+                   'useJupyterLab': cluster_config.use_jupyter_lab}
             for name, cluster_config in config.clusters.items()},
         'logLevel': config.log_level}
 
@@ -68,7 +69,8 @@ def use_defaults_in_missing_fields(data: dict) -> bool:
         for key in ['key',
                     'installKey',
                     'disableSshd',
-                    'scratch']:
+                    'scratch',
+                    'useJupyterLab']:
             default(cluster, key, None)
         default(cluster, 'setupActions', {})
         default(cluster['setupActions'], 'jupyter', None)
@@ -105,7 +107,8 @@ def deserialize_client_config_from_json(data: dict) -> ClientConfig:
             scratch=value['scratch'],
             notebook_defaults=value['notebookDefaults'],
             retries=provide_defaults_for_retries(
-                deserialize_retries(value['retries']))
+                deserialize_retries(value['retries'])),
+            use_jupyter_lab=value['useJupyterLab']
         ) for name, value in data['clusters'].items()}
     return ClientConfig(clusters=clusters,
                         log_level=data['logLevel'])

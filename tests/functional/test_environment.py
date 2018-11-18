@@ -97,6 +97,7 @@ def get_default_config_contents(user: str) -> List[str]:
             "port": 22,
             "retries": DEFAULT_RETRIES_JSON,
             "scratch": "$HOME",
+            'useJupyterLab': True,
             "setupActions": {
                 "dask": [],
                 "jupyter": []
@@ -117,6 +118,7 @@ def get_modified_config_contents() -> List[str]:
             "port": 2222,
             "retries": DEFAULT_RETRIES_JSON,
             "scratch": "$HOME2",
+            'useJupyterLab': False,
             "setupActions": {
                 "dask": ["abc", "def"],
                 "jupyter": ["abc"]
@@ -159,6 +161,7 @@ def test_environment_create_modify_save_load():
             config.setup_actions.jupyter = ['abc']
             config.setup_actions.dask = ['abc', 'def']
             config.scratch = '$HOME2'
+            config.use_jupyter_lab = False
             set_log_level(logging.INFO)
 
             check_config_is_modified(config=config)

@@ -166,3 +166,14 @@ class ClusterConfig(ABC):
     def retries(self) -> Dict[Retry, RetryConfig]:
         """Retry config by retried action name."""
         pass
+
+    @property
+    @abstractmethod
+    def use_jupyter_lab(self) -> bool:
+        """Use Jupyter Lab instead of Jupyter Notebook."""
+        pass
+
+    @use_jupyter_lab.setter
+    @abstractmethod
+    def use_jupyter_lab(self, value: bool):
+        pass

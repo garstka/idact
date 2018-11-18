@@ -11,6 +11,9 @@ from idact.core.retry import Retry
 from idact.detail.deployment.cancel_on_failure import cancel_on_failure
 from idact.detail.deployment.create_deployment_dir import create_runtime_dir
 from idact.detail.deployment.deploy_generic import deploy_generic
+
+from idact.detail.deployment.get_command_to_append_local_bin import \
+    get_command_to_append_local_bin
 from idact.detail.deployment.get_deployment_script_contents import \
     get_deployment_script_contents
 from idact.detail.helper.get_free_remote_port import get_free_remote_port
@@ -41,17 +44,23 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
     with stage_debug(log, "Obtaining a free remote port."):
         remote_port = get_free_remote_port(node=node)
 
-    deployment_commands = []
-    deployment_commands.append(
+    if node.config.use_jupyter_lab:
+        jupyter_version = 'lab'
+    else:
+        jupyter_version = 'notebook'
+
+    deployment_commands = [
         'export JUPYTER_RUNTIME_DIR="{runtime_dir}"'.format(
-            runtime_dir=runtime_dir))
+            runtime_dir=runtime_dir),
+        get_command_to_append_local_bin()]
 
     log_file = "{runtime_dir}/log".format(runtime_dir=runtime_dir)
     deployment_commands.append(
-        'jupyter notebook'
+        'jupyter {jupyter_version}'
         ' --ip 0.0.0.0'
         ' --port "{remote_port}"'
         ' --no-browser > {log_file} 2>&1'.format(
+            jupyter_version=jupyter_version,
             remote_port=remote_port,
             log_file=log_file))
 
@@ -74,6 +83,8 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
                 with cd(runtime_dir):
                     nbserver_json_path = run("realpath $PWD/nbserver-*.json") \
                         .splitlines()[0]
+                run("cat '{log_file}' || exit 0".format(
+                    log_file=log_file))
                 run("cat '{nbserver_json_path}' > /dev/null".format(
                     nbserver_json_path=nbserver_json_path))
                 nbserver_json_str = get_remote_file(nbserver_json_path)

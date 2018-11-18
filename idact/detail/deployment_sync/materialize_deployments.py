@@ -54,6 +54,7 @@ def materialize_deployments(
         :param deployments: Definitions to materialize.
 
     """
+    log = get_logger(__name__)
 
     nodes_index = 0
     jupyter_index = 1
@@ -61,28 +62,43 @@ def materialize_deployments(
     deployments_by_date = ([], [], [])
 
     for uuid, definition in deployments.nodes.items():
-        materialized_nodes = materialize_nodes(config=config,
-                                               access_node=access_node,
-                                               uuid=uuid,
-                                               definition=definition)
-        deployments_by_date[nodes_index].append(
-            (materialized_nodes, definition.expiration_date))
+        try:
+            materialized_nodes = materialize_nodes(config=config,
+                                                   access_node=access_node,
+                                                   uuid=uuid,
+                                                   definition=definition)
+            deployments_by_date[nodes_index].append(
+                (materialized_nodes, definition.expiration_date))
+        except RuntimeError:
+            log.warning("Discarding a synchronized allocation deployment,"
+                        " unable to materialize: %s", uuid)
+            log.debug("Exception", exc_info=1)
 
     for uuid, definition in deployments.jupyter_deployments.items():
-        materialized_jupyter = materialize_jupyter_deployment(
-            config=config,
-            uuid=uuid,
-            definition=definition)
-        deployments_by_date[jupyter_index].append(
-            (materialized_jupyter, definition.expiration_date))
+        try:
+            materialized_jupyter = materialize_jupyter_deployment(
+                config=config,
+                uuid=uuid,
+                definition=definition)
+            deployments_by_date[jupyter_index].append(
+                (materialized_jupyter, definition.expiration_date))
+        except RuntimeError:
+            log.warning("Discarding a Jupyter deployment,"
+                        " unable to materialize: %s", uuid)
+            log.debug("Exception", exc_info=1)
 
     for uuid, definition in deployments.dask_deployments.items():
-        materialized_dask = materialize_dask_deployment(
-            config=config,
-            uuid=uuid,
-            definition=definition)
-        deployments_by_date[dask_index].append(
-            (materialized_dask, definition.expiration_date))
+        try:
+            materialized_dask = materialize_dask_deployment(
+                config=config,
+                uuid=uuid,
+                definition=definition)
+            deployments_by_date[dask_index].append(
+                (materialized_dask, definition.expiration_date))
+        except RuntimeError:
+            log.warning("Discarding a Dask deployment,"
+                        " unable to materialize: %s", uuid)
+            log.debug("Exception", exc_info=1)
 
     deployments_sorted = tuple(map(sorted_by_expiration_date,
                                    deployments_by_date))
