@@ -46,11 +46,12 @@ setup(
     install_requires=REQUIREMENTS,
     license="MIT license",
     long_description=README,
+    long_description_content_type='text/markdown',
     include_package_data=True,
     keywords='idact',
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.4.1',
+    version='0.4.2',
     zip_safe=False,
 )

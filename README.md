@@ -144,7 +144,7 @@ and other helpful information.
 
  - [Documentation - master](https://garstka.github.io/idact/master/html/index.html)
  - [Documentation - develop](https://garstka.github.io/idact/develop/html/index.html)
- - [All versions](https://garstka.github.io/idact/master/html/docs_by_version.html)
+ - [All versions](https://garstka.github.io/idact/develop/html/docs_by_version.html)
 
 ## Source code
 
