@@ -1,11 +1,13 @@
 # Development overview
 
-## Prepare dev environment
+## Clone sources
 
 ```
-git clone https://github.com/garstka/eng-project
-cd eng-project
+git clone https://github.com/garstka/idact
+cd idact
 ```
+
+## Install requirements
 
 With Conda:
 

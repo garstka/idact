@@ -24,19 +24,32 @@ COMMAND_CONVERT_TO_PNG = ("dot"
                           " classes_idact.dot")
 
 DIAGRAMS_TO_GENERATE = {
-    "core": "idact/core",
-    "detail-core": " idact/detail/nodes"
-                   " idact/detail/cluster_impl.py"
-                   " idact/detail/dask/dask_deployment_impl.py"
-                   " idact/detail/dask/dask_diagnostics_impl.py"
-                   " idact/detail/jupyter/jupyter_deployment_impl.py"
-                   " idact/detail/tunnel/first_hop_tunnel.py"
-                   " idact/detail/tunnel/multi_hop_tunnel.py"
-                   " idact/detail/deployment_sync"
-                   "/synchronized_deployments_impl.py"
-                   " idact/detail/config/client/client_cluster_config.py"
-                   " idact/detail/config/client/setup_actions_config.py"
-                   " idact/detail/config/client/retry_config_impl.py",
+    "core-nodes": " idact/core/cluster.py"
+                  " idact/core/node.py"
+                  " idact/core/node_resource_status.py"
+                  " idact/core/nodes.py"
+                  " idact/core/walltime.py",
+    "core-deployments": " idact/core/dask_deployment.py"
+                        " idact/core/jupyter_deployment.py"
+                        " idact/core/synchronized_deployments.py"
+                        " idact/core/tunnel.py",
+    "core-config-tunnels": " idact/core/config.py"
+                           " idact/core/tunnel.py",
+    "detail-core-nodes":
+        " idact/detail/nodes"
+        " idact/detail/cluster_impl.py",
+    "detail-core-deployments":
+        " idact/detail/dask/dask_deployment_impl.py"
+        " idact/detail/dask/dask_diagnostics_impl.py"
+        " idact/detail/jupyter/jupyter_deployment_impl.py"
+        " idact/detail/deployment_sync/synchronized_deployments_impl.py",
+    "detail-core-tunnels":
+        " idact/detail/tunnel/first_hop_tunnel.py"
+        " idact/detail/tunnel/multi_hop_tunnel.py",
+    "detail-core-config":
+        " idact/detail/config/client/client_cluster_config.py"
+        " idact/detail/config/client/setup_actions_config.py"
+        " idact/detail/config/client/retry_config_impl.py",
     "detail-allocation": "idact/detail/allocation"
                          " idact/detail/slurm",
     "detail-config": "idact/detail/config/client/client_config.py",
@@ -51,7 +64,7 @@ DIAGRAMS_TO_GENERATE = {
     "detail-other": "idact/detail/auth"
                     " idact/detail/environment"
                     " idact/detail/helper"
-                    " idact/detail/log"
+                    " idact/detail/log/debug_log_filter.py"
                     " idact/detail/serialization/serializable.py"
                     " idact/detail/tunnel/binding.py"}
 

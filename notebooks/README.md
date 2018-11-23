@@ -1,10 +1,10 @@
-# Demo notebooks
+# Tutorial notebooks
 
-You can use a local Jupyter Notebook to run a demonstration notebook.
+You can use a local Jupyter Notebook to run each tutorial notebook.
 
 ```
-python -m pip install jupyter
-jupyter notebook
+python -m pip install jupyterlab
+jupyter lab
 ```
 
 ## 01-ProSandbox.ipynb

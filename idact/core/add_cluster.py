@@ -3,6 +3,7 @@
 
    See :func:`.add_cluster`.
 """
+import os
 from typing import Optional, Union, Dict
 
 from idact.core.config import SetupActionsConfig, RetryConfig
@@ -81,7 +82,7 @@ def add_cluster(name: str,
             log.info("Generating public-private key pair.")
             key = generate_key(host=host, key_type=key)
         elif isinstance(key, str):
-            pass
+            key = os.path.expanduser(key)
         else:
             raise ValueError("Invalid key argument for public key"
                              " authentication.")

@@ -24,15 +24,20 @@ setup(
     author="Matt Garstka",
     author_email='matt@garstka.net',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: Information Technology',
         'Intended Audience :: Developers',
+        'Intended Audience :: Education',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: Microsoft :: Windows',
     ],
-    description=("Tools taking care of the tedious aspects"
-                 " of working with big data on a cluster."),
+    description=("A library that takes care of several tedious aspects"
+                 " of working with big data on an HPC cluster."),
     entry_points={
         'console_scripts': [
             'idact-notebook=idact.notebook:main',
@@ -46,6 +51,6 @@ setup(
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.4',
+    version='0.4.1',
     zip_safe=False,
 )
