@@ -32,6 +32,7 @@ def get_entry_point_script_contents(config: ClusterConfig) -> str:
              " s.bind((str(), 0)); print(s.getsockname()[1]);"
              " s.close()')\n"
              "mkdir -p {port_info_location}/{port_info_file}\n"
+             "chmod 700 {port_info_location}/{port_info_file}\n"
              "touch {port_info_location}/{port_info_file}/$(hostname):$SSHD_PORT\n"  # noqa, pylint: disable=line-too-long
              "export PATH=\"$PATH:/usr/sbin\"\n"
              " $(which sshd)"
@@ -40,6 +41,8 @@ def get_entry_point_script_contents(config: ClusterConfig) -> str:
              " -oListenAddress=0.0.0.0"
              " -oPort=$SSHD_PORT"
              " -oHostKey={shared_host_key_path}"
+             " -oProtocol=2"
+             " -oAllowUsers=$USER"
              " -oPermitRootLogin=no"
              " -oStrictModes=yes"
              " -oPubkeyAuthentication=yes"
@@ -49,7 +52,7 @@ def get_entry_point_script_contents(config: ClusterConfig) -> str:
              " -oKerberosAuthentication=no"
              " -oGSSAPIAuthentication=no"
              " -oUsePAM=no"
-             " -oSubsystem='sftp /usr/libexec/openssh/sftp-server'"
+             " -oSubsystem='sftp internal-sftp'"
              " -oX11Forwarding=yes\n"
              "exit $?").format(shared_host_key_path=SHARED_HOST_KEY_PATH,
                                port_info_location=PORT_INFO_LOCATION,

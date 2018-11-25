@@ -29,7 +29,7 @@ def test_scheduler_deployment_script():
         'echo ABC\n'
         'echo DEF\n'
         'export PATH="$PATH:$(python -m site --user-base)/bin"\n'
-        'dask-worker tcp://localhost:1111/ --host 0.0.0.0 --bokeh'
+        'dask-worker tcp://localhost:1111/ --host 127.0.0.1 --bokeh'
         ' --bokeh-port 2222 --nanny --reconnect --nprocs 1 --nthreads 12'
         ' --memory-limit 10737418240 --local-directory /scratch'
         ' > /home/user/log 2>&1\n'

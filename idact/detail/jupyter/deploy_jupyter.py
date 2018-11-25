@@ -57,7 +57,7 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
     log_file = "{runtime_dir}/log".format(runtime_dir=runtime_dir)
     deployment_commands.append(
         'jupyter {jupyter_version}'
-        ' --ip 0.0.0.0'
+        ' --ip 127.0.0.1'
         ' --port "{remote_port}"'
         ' --no-browser > {log_file} 2>&1'.format(
             jupyter_version=jupyter_version,

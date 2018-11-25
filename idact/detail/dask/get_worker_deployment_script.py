@@ -33,7 +33,7 @@ def get_worker_deployment_script(scheduler_address: str,
         get_command_to_append_local_bin(),
         'dask-worker'
         ' {scheduler_address}'
-        ' --host 0.0.0.0'
+        ' --host 127.0.0.1'
         ' --bokeh'
         ' --bokeh-port {bokeh_port}'
         ' --nanny'

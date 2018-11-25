@@ -15,7 +15,7 @@ from idact.detail.tunnel.first_hop_tunnel import FirstHopTunnel
 from idact.detail.tunnel.multi_hop_tunnel import MultiHopTunnel
 from idact.detail.tunnel.tunnel_internal import TunnelInternal
 
-ANY_ADDRESS = ("", 0)
+ANY_ADDRESS = ("127.0.0.1", 0)
 TUNNEL_KEEPALIVE = 30.0
 
 

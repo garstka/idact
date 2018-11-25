@@ -29,6 +29,7 @@ def test_entry_point_sshd():
                 " s.bind((str(), 0)); print(s.getsockname()[1]);"
                 " s.close()')\n"
                 "mkdir -p ~/.idact/sshd_ports/alloc-$IDACT_ALLOCATION_ID\n"
+                "chmod 700 ~/.idact/sshd_ports/alloc-$IDACT_ALLOCATION_ID\n"
                 "touch ~/.idact/sshd_ports/alloc-$IDACT_ALLOCATION_ID/$(hostname):$SSHD_PORT\n"  # noqa, pylint: disable=line-too-long
                 "export PATH=\"$PATH:/usr/sbin\"\n"
                 " $(which sshd)"
@@ -37,6 +38,8 @@ def test_entry_point_sshd():
                 " -oListenAddress=0.0.0.0"
                 " -oPort=$SSHD_PORT"
                 " -oHostKey=~/.ssh/ssh_host_rsa_key"
+                " -oProtocol=2"
+                " -oAllowUsers=$USER"
                 " -oPermitRootLogin=no"
                 " -oStrictModes=yes"
                 " -oPubkeyAuthentication=yes"
@@ -46,7 +49,7 @@ def test_entry_point_sshd():
                 " -oKerberosAuthentication=no"
                 " -oGSSAPIAuthentication=no"
                 " -oUsePAM=no"
-                " -oSubsystem='sftp /usr/libexec/openssh/sftp-server'"
+                " -oSubsystem='sftp internal-sftp'"
                 " -oX11Forwarding=yes\n"
                 "exit $?")
     assert formatted == expected

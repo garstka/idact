@@ -38,6 +38,8 @@ def upload_entry_point(contents: str,
         with capture_fabric_output_to_log():
             run("mkdir -p {entry_point_location}".format(
                 entry_point_location=ENTRY_POINT_LOCATION))
+            run("chmod 700 {entry_point_location}".format(
+                entry_point_location=ENTRY_POINT_LOCATION))
 
             file_name = get_random_file_name(
                 length=ENTRY_POINT_FILE_NAME_LENGTH)
