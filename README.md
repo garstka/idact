@@ -1,7 +1,10 @@
 # Welcome to idact!
 
-[![Build Status](https://travis-ci.com/garstka/idact.svg?token=cvggfL1vjmB383MxWGF4&branch=master)](https://travis-ci.com/garstka/idact)
-[![Build Status](https://travis-ci.com/garstka/idact.svg?token=cvggfL1vjmB383MxWGF4&branch=develop)](https://travis-ci.com/garstka/idact)
+[![Build Status - master](https://travis-ci.com/garstka/idact.svg?token=cvggfL1vjmB383MxWGF4&branch=master)](https://travis-ci.com/garstka/idact)
+[![Build Status - develop](https://travis-ci.com/garstka/idact.svg?token=cvggfL1vjmB383MxWGF4&branch=develop)](https://travis-ci.com/garstka/idact)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/idact.svg)](https://pypi.org/project/idact/)
+[![PyPI - License](https://img.shields.io/pypi/l/idact.svg)](https://pypi.org/project/idact/)
+[![PyPI](https://img.shields.io/pypi/v/idact.svg)](https://pypi.org/project/idact/)
 
 Idact, or *Interactive Data Analysis Convenience Tools*, is a Python 3.5+ library
 that takes care of several tedious aspects of working with big data
@@ -38,7 +41,8 @@ Python 3.5+.
  - Operating System: Linux
  - Job Scheduler: [Slurm Workload Manager](https://slurm.schedmd.com/)
  - SSH access to a login (head) node.
- - [Dask.distributed](http://distributed.dask.org/en/latest/)
+ - Shared $HOME directory between nodes.
+ - [Dask.distributed](http://distributed.dask.org/en/latest/) with [bokeh](https://bokeh.pydata.org/en/latest/).
  - [Jupyter Notebook](http://jupyter.org/)
   or [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/index.html)
 
@@ -67,6 +71,9 @@ node = cluster.get_access_node()
 node.connect()
 ```
 
+Tutorial:
+[01. Connecting to a cluster](https://garstka.github.io/idact/develop/html/_notebooks/01-Connecting_to_a_cluster.html)
+
 ### Allocating and deallocating nodes
 
 Nodes are allocated as a Slurm job.
@@ -88,6 +95,9 @@ except TimeoutError:
     nodes.cancel()
 ```
 
+Tutorial:
+[02. Allocating nodes](https://garstka.github.io/idact/develop/html/_notebooks/02-Allocating_nodes.html)
+
 ### Deploying Jupyter Notebook
 
 Jupyter Notebook is deployed on a cluster node,
@@ -97,6 +107,9 @@ and made accessible through an SSH tunnel.
 nb = nodes[0].deploy_notebook()
 nb.open_in_browser()
 ```
+
+Tutorial:
+[03. Deploying Jupyter](https://garstka.github.io/idact/develop/html/_notebooks/03-Deploying_Jupyter.html)
 
 ### Deploying Dask.distributed
 
@@ -111,6 +124,9 @@ client.submit(...)
 dd.diagnostics.open_all()
 ```
 
+Tutorial:
+[04. Deploying Dask](https://garstka.github.io/idact/develop/html/_notebooks/04-Deploying_Dask.html)
+
 ### Managing cluster config
 
 Local and remote cluster configuration can be saved, loaded,
@@ -124,6 +140,10 @@ push_environment()
 pull_environment()
 ```
 
+Tutorials:
+[01. Connecting to a cluster](https://garstka.github.io/idact/develop/html/_notebooks/01-Connecting_to_a_cluster.html),
+[05. Configuring idact on a cluster](https://garstka.github.io/idact/develop/html/_notebooks/05a-Configuring_idact_on_a_cluster_-_local_part.html)
+
 ### Managing deployments
 
 Deployment objects can be serialized between running program
@@ -136,6 +156,22 @@ push_deployment(dd)
 
 pull_deployments()
 ```
+
+Tutorials:
+[06. Working on a cluster](https://garstka.github.io/idact/develop/html/_notebooks/06a-Working_on_a_cluster_-_local_part.html),
+[07. Adjusting timeouts](https://garstka.github.io/idact/develop/html/_notebooks/07-Adjusting_timeouts.html)
+
+### Quick deployment app
+
+Quick deployment app allocates nodes and deploys Jupyter notebook
+from command line:
+
+```
+idact-notebook my-cluster --nodes 3 --walltime 0:20:00
+```
+
+Tutorial:
+[08. Using the quick deployment app](https://garstka.github.io/idact/develop/html/_notebooks/08a-Using_the_quick_deployment_app_-_local_part.html)
 
 ## Documentation
 

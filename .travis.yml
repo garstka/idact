@@ -88,6 +88,6 @@ deploy:
     secure: nj2YQY/LlvLIU1IWZKBCRjZ5s/7oK5N4iOZGWDw+RxWZUZ2DLA1QS3vAtXu8wiY4v80IQ9koq//igxKjOIRum8LVTxLbtzLs6eSnVjaeLOGqWp+GcKvcOFd8yifsq1wYbtHA+00QfjvmecrREwEGB0j0JGD9g9CwThy6nQmaxC0rAfKxh8Wk3ezK+cTU7fG5T0/fKvxDJvTrtoVjL+h0H1jzj/YvHK0cf/Cc9dgDjtt0v4rK3dfEuczte2SZbl+dyr4cPqDXeGjFDy0D+vw7Yel0V1r/6uH+lJoiN4lpLNWoCWkft4eoxh8tnNpBceCqHcx+/Bi07EjhqZN1ZKVPErtikpG2SyuewYCV2c+OgUiIu8keT9mZ9b7Rbpp3c2+WTBOzGtszOFhv/pq5h1ygJ+fjtjeXVxR6GJpNZr54ta4ialrXD3P45tF/vItpvU119BW+cy/Mvp9ooEDKLT1Y7k6o8WMDdeJoO+5iC9uJWur/42EhMjbhxZP+EuyGkTg1ElY1rERFZNOArCyOhatQVY9/JNR/IqNDebpB7+AAayMfe43gOkHLdL6M6E5lnSKOHbIXFpIME/LZmyY43p979o5pNq8OqQGHrjuFSwlZ2vUNJ9lqCFrifCLNMBkvXDEW+iIH8nM4r/tIxJsQPemUwpxAOsjR7ulcw1UMYBQfLTY=
   on:
     tags: true
+    condition: $DEPLOY_PYPI = 1
   distributions: "bdist_wheel"
   skip_existing: true
-  condition: $DEPLOY_PYPI = 1

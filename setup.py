@@ -25,16 +25,18 @@ setup(
     author_email='matt@garstka.net',
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Intended Audience :: Science/Research',
-        'Intended Audience :: Information Technology',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Education',
         'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
+        'Topic :: Scientific/Engineering',
+        'Topic :: System :: Distributed Computing',
+        'Topic :: Utilities',
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: Education',
+        'Intended Audience :: Developers',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Operating System :: POSIX :: Linux',
         'Operating System :: Microsoft :: Windows',
+        'Natural Language :: English',
     ],
     description=("A library that takes care of several tedious aspects"
                  " of working with big data on an HPC cluster."),
@@ -48,10 +50,13 @@ setup(
     long_description=README,
     long_description_content_type='text/markdown',
     include_package_data=True,
-    keywords='idact',
+    keywords=("interactive data analysis"
+              " dask distributed jupyter notebook deployment"
+              " slurm allocation cluster HPC"
+              " ssh tunnel"),
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.4.2',
+    version='0.4.3',
     zip_safe=False,
 )

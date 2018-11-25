@@ -121,3 +121,6 @@ def test_walltime_to_string():
                         hours=0,
                         minutes=0,
                         seconds=0)) == '123-00:00:00'
+
+    walltime = Walltime(days=1, hours=2, minutes=3, seconds=4)
+    assert str(walltime) == repr(walltime)

@@ -8,9 +8,9 @@
  - Make timeouts configurable.
  - Use a fallback port if desired local tunnel port is taken.
  - Improve Markdown documentation.
- - Improve tutorial notebooks.
+ - Add new tutorial notebooks.
  - Use JupyterLab by default.
- - Prepare for release on PyPI.
+ - Release on PyPI.
 
 ## 0.4
 

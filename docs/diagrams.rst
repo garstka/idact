@@ -45,8 +45,11 @@ abstract.
  - :py:class:`.Tunnel`
  - :py:class:`.Walltime`
 
-Core implementation classes - nodes
------------------------------------
+Core implementation classes
+---------------------------
+
+Nodes
+~~~~~
 
 .. figure:: diagrams/detail-core-nodes.png
     :scale: 50 %
@@ -63,8 +66,8 @@ Detail classes are never intended to be manually instantiated by the user.
  - :py:class:`.NodeResourceStatusImpl`
  - :py:class:`.NodesImpl`
 
-Core implementation classes - deployments
------------------------------------------
+Deployments
+~~~~~~~~~~~
 
 .. figure:: diagrams/detail-core-deployments.png
     :scale: 50 %
@@ -78,8 +81,8 @@ These classes implement the core interfaces related to deployments.
  - :py:class:`.JupyterDeploymentImpl`
  - :py:class:`.SynchronizedDeploymentsImpl`
 
-Core implementation classes - tunnels
--------------------------------------
+Tunnels
+~~~~~~~
 
 .. figure:: diagrams/detail-core-tunnels.png
     :scale: 50 %
@@ -91,8 +94,8 @@ These classes implement the core interfaces related to tunnels.
  - :py:class:`.FirstHopTunnel`
  - :py:class:`.MultiHopTunnel`
 
-Core implementation classes - config
-------------------------------------
+Config
+~~~~~~
 
 .. figure:: diagrams/detail-core-config.png
     :scale: 50 %
@@ -105,8 +108,11 @@ These classes implement the core interfaces related to config.
  - :py:class:`.RetryConfigImpl`
  - :py:class:`.SetupActionsConfigImpl`
 
-Detail classes - allocation
----------------------------
+Detail classes
+--------------
+
+Allocation
+~~~~~~~~~~
 
 .. figure:: diagrams/detail-allocation.png
     :scale: 50 %
@@ -123,8 +129,8 @@ Allocation detail classes:
  - :py:class:`.SlurmAllocation`
  - :py:class:`.SqueueResult`
 
-Detail classes - deployments
-----------------------------
+Deployments
+~~~~~~~~~~~
 
 .. figure:: diagrams/detail-deployment.png
     :scale: 50 %
@@ -142,8 +148,8 @@ Deployment detail classes:
  - :py:class:`.GenericDeployment`
  - :py:class:`.SshdPortInfo`
 
-Detail classes - deployment synchronization
--------------------------------------------
+Deployment synchronization
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: diagrams/detail-deployment-sync.png
     :scale: 50 %
@@ -156,8 +162,8 @@ Deployment detail classes:
  - :py:class:`.DeploymentDefinition`
  - :py:class:`.DeploymentDefinitions`
 
-Detail classes - config
------------------------
+Config
+~~~~~~
 
 .. figure:: diagrams/detail-config.png
     :scale: 50 %
@@ -172,8 +178,8 @@ environment.
 Config detail classes:
  - :py:class:`.ClientConfig`
 
-Detail classes - other
-----------------------
+Other
+~~~~~
 
 .. figure:: diagrams/detail-other.png
     :scale: 50 %
