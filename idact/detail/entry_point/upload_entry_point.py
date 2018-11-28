@@ -1,6 +1,7 @@
 """This module contains a function for uploading an entry point script."""
 
 from io import BytesIO
+from typing import Optional
 
 import fabric.tasks
 from fabric.contrib.files import exists
@@ -19,17 +20,23 @@ ENTRY_POINT_FILE_NAME_LENGTH = 32
 
 
 def upload_entry_point(contents: str,
-                       node: NodeInternal) -> str:
+                       node: NodeInternal,
+                       runtime_dir: Optional[str] = None) -> str:
     """Uploads the entry point script and returns its path.
 
         :param contents: Script contents.
 
         :param node: Node to upload the entry point to.
 
+        :param runtime_dir: Runtime dir for deployment script.
+                            Default: ~/.idact/entry_points.
+
     """
     log = get_logger(__name__)
 
     result = []
+
+    entry_point_location = runtime_dir if runtime_dir else ENTRY_POINT_LOCATION
 
     @fabric.decorators.task
     def task():
@@ -37,14 +44,14 @@ def upload_entry_point(contents: str,
             Fails if it couldn't be created."""
         with capture_fabric_output_to_log():
             run("mkdir -p {entry_point_location}".format(
-                entry_point_location=ENTRY_POINT_LOCATION))
+                entry_point_location=entry_point_location))
             run("chmod 700 {entry_point_location}".format(
-                entry_point_location=ENTRY_POINT_LOCATION))
+                entry_point_location=entry_point_location))
 
             file_name = get_random_file_name(
                 length=ENTRY_POINT_FILE_NAME_LENGTH)
             file_path = run("echo {entry_point_location}/{file_name}".format(
-                entry_point_location=ENTRY_POINT_LOCATION,
+                entry_point_location=entry_point_location,
                 file_name=file_name))
             file_exists = exists(file_path)
 

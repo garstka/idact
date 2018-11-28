@@ -26,7 +26,6 @@ def test_serialize_deserialize():
         deployment=GenericDeployment(
             node=NodeImpl(config=config),
             pid=111,
-            output='out1',
             runtime_dir='/dir'),
         tunnel=FakeTunnel(here=2222, there=1111),
         token='abcdefg',
@@ -43,7 +42,6 @@ def test_serialize_deserialize():
                                 'memory': None,
                                 'allocated_until': None},
                        'pid': 111,
-                       'output': 'out1',
                        'runtime_dir': '/dir'},
         'tunnel_there': 1111,
         'tunnel_here': 2222,

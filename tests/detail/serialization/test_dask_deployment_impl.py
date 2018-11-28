@@ -21,7 +21,6 @@ def get_data_for_test():
     deployment = GenericDeployment(
         node=NodeImpl(config=config),
         pid=111,
-        output='out1',
         runtime_dir='/dir1')
     serialized_deployment = deployment.serialize()
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates coverage and opens the report page in browser,
+"""Generates report for test coverage and opens the report page in browser,
    unless :command:`--no-show` option is set."""
 
 import os
@@ -10,7 +10,6 @@ import webbrowser
 COVERAGE = "{python} -m coverage".format(python=sys.executable)
 
 COMMANDS_COVERAGE = [
-    '{coverage} run --source idact -m pytest'.format(coverage=COVERAGE),
     '{coverage} report -m'.format(coverage=COVERAGE),
     '{coverage} html'.format(coverage=COVERAGE)]
 

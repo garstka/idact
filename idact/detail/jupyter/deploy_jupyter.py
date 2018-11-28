@@ -10,6 +10,7 @@ from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.retry import Retry
 from idact.detail.deployment.cancel_on_failure import cancel_on_failure
 from idact.detail.deployment.create_deployment_dir import create_runtime_dir
+from idact.detail.deployment.create_log_file import create_log_file
 from idact.detail.deployment.deploy_generic import deploy_generic
 
 from idact.detail.deployment.get_command_to_append_local_bin import \
@@ -54,7 +55,8 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
             runtime_dir=runtime_dir),
         get_command_to_append_local_bin()]
 
-    log_file = "{runtime_dir}/log".format(runtime_dir=runtime_dir)
+    log_file = create_log_file(node=node, runtime_dir=runtime_dir)
+
     deployment_commands.append(
         'jupyter {jupyter_version}'
         ' --ip 127.0.0.1'
@@ -72,7 +74,6 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
     with stage_debug(log, "Deploying script."):
         deployment = deploy_generic(node=node,
                                     script_contents=script_contents,
-                                    capture_output_seconds=5,
                                     runtime_dir=runtime_dir)
 
     with cancel_on_failure(deployment):

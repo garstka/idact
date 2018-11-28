@@ -28,11 +28,9 @@ class GenericDeployment(Serializable):
     def __init__(self,
                  node: NodeInternal,
                  pid: int,
-                 output: str,
                  runtime_dir: str):
         self._node = node
         self._pid = pid
-        self._output = output
         self._runtime_dir = runtime_dir
 
     @property
@@ -44,13 +42,6 @@ class GenericDeployment(Serializable):
     def pid(self) -> int:
         """Deployed program pid."""
         return self._pid
-
-    @property
-    def output(self) -> str:
-        """Console output captured for a few seconds after running
-            the program.
-        """
-        return self._output
 
     def cancel(self):
         """Kills the program and all its child processes.
@@ -93,7 +84,6 @@ class GenericDeployment(Serializable):
         return {'type': str(SerializableTypes.GENERIC_DEPLOYMENT),
                 'node': self._node.serialize(),
                 'pid': self._pid,
-                'output': self._output,
                 'runtime_dir': self._runtime_dir}
 
     def __eq__(self, other):

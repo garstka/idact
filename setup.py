@@ -57,6 +57,6 @@ setup(
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.4.3',
+    version='0.5',
     zip_safe=False,
 )

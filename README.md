@@ -2,6 +2,7 @@
 
 [![Build Status - master](https://travis-ci.com/garstka/idact.svg?token=cvggfL1vjmB383MxWGF4&branch=master)](https://travis-ci.com/garstka/idact)
 [![Build Status - develop](https://travis-ci.com/garstka/idact.svg?token=cvggfL1vjmB383MxWGF4&branch=develop)](https://travis-ci.com/garstka/idact)
+[![Coverage Status - master](https://coveralls.io/repos/github/garstka/idact/badge.svg?branch=master)](https://coveralls.io/github/garstka/idact?branch=master)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/idact.svg)](https://pypi.org/project/idact/)
 [![PyPI - License](https://img.shields.io/pypi/l/idact.svg)](https://pypi.org/project/idact/)
 [![PyPI](https://img.shields.io/pypi/v/idact.svg)](https://pypi.org/project/idact/)

@@ -14,7 +14,6 @@ def deserialize_generic_deployment(config: ClusterConfig,
             node=NodeImpl.deserialize(config=config,
                                       serialized=serialized['node']),
             pid=serialized['pid'],
-            output=serialized['output'],
             runtime_dir=serialized['runtime_dir'])
     except KeyError as e:
         raise RuntimeError("Unable to deserialize.") from e

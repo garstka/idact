@@ -12,6 +12,7 @@ from idact.detail.dask.get_scheduler_deployment_script import \
     get_scheduler_deployment_script
 from idact.detail.deployment.cancel_on_failure import cancel_on_failure
 from idact.detail.deployment.create_deployment_dir import create_runtime_dir
+from idact.detail.deployment.create_log_file import create_log_file
 from idact.detail.deployment.deploy_generic import deploy_generic
 from idact.detail.helper.get_free_remote_port import get_free_remote_ports
 from idact.detail.helper.get_remote_file import get_remote_file
@@ -64,7 +65,7 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
         with stage_debug(log, "Creating a scratch subdirectory."):
             scratch_subdir = create_scratch_subdir(node=node)
 
-        log_file = '{runtime_dir}/log'.format(runtime_dir=runtime_dir)
+        log_file = create_log_file(node=node, runtime_dir=runtime_dir)
 
         script_contents = get_scheduler_deployment_script(
             remote_port=remote_port,
@@ -78,7 +79,6 @@ def deploy_dask_scheduler(node: NodeInternal) -> DaskSchedulerDeployment:
         with stage_debug(log, "Deploying script."):
             deployment = deploy_generic(node=node,
                                         script_contents=script_contents,
-                                        capture_output_seconds=5,
                                         runtime_dir=runtime_dir)
             stack.enter_context(cancel_on_failure(deployment))
 

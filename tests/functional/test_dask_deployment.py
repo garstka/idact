@@ -3,7 +3,6 @@ from contextlib import ExitStack, contextmanager
 from pprint import pprint
 
 import dask.distributed
-import fabric.network
 import pytest
 import requests
 from bitmath import MiB
@@ -84,8 +83,6 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
     with cancel_on_exit(deployment):
         print(deployment)
         assert str(deployment) == repr(deployment)
-
-        fabric.network.disconnect_all()
 
         ps_lines = node.run(ps_dask_scheduler).splitlines()
         pprint(ps_lines)

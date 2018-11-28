@@ -1,6 +1,5 @@
 from contextlib import ExitStack
 
-import fabric.network
 import pytest
 from bitmath import MiB
 
@@ -44,23 +43,15 @@ def test_generic_deployment():
         stack.enter_context(
             remove_runtime_dir_on_failure(node=node,
                                           runtime_dir=runtime_dir))
-        script_contents = ("echo ABC"
-                           " && sleep 3"
-                           " && echo DEF"
-                           " && sleep 15"
-                           " && echo GHI")
+        script_contents = "echo ABC && sleep 30"
 
         assert isinstance(node, NodeInternal)
         deployment = deploy_generic(node=node,
                                     script_contents=script_contents,
-                                    capture_output_seconds=4,
                                     runtime_dir=runtime_dir)
         with cancel_on_exit(deployment):
             print(deployment)
 
-            assert deployment.output == "ABC\nDEF"
-
-            fabric.network.disconnect_all()
             node.run(
                 "kill -0 {pid}".format(pid=deployment.pid))
 

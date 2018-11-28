@@ -66,7 +66,7 @@ def test_notebook_app_run():
     environment_file = './idact.test.conf'
     args = [TEST_CLUSTER,
             '--environment', environment_file,
-            '--walltime', '0:00:45']
+            '--walltime', '0:00:20']
     with run_notebook_app(user=user,
                           environment_file=environment_file,
                           args=args) as result:
@@ -77,7 +77,7 @@ def test_notebook_app_run():
         assert "Nodes: 1\n" in output
         assert "Cores: 1\n" in output
         assert "Memory per node: 1GiB\n" in output
-        assert "Walltime: 0:00:45\n" in output
+        assert "Walltime: 0:00:20\n" in output
         assert "No native arguments." in output
         assert "Allocating nodes." in output
         assert "Pushing the allocation deployment." in output
@@ -105,7 +105,7 @@ def check_output_with_changed_allocation_parameters(output: str):
     assert "Nodes: 2\n" in output
     assert "Cores: 2\n" in output
     assert "Memory per node: 500MiB\n" in output
-    assert "Walltime: 0:00:45\n" in output
+    assert "Walltime: 0:00:20\n" in output
     assert "Native arguments:" in output
     assert "--partition -> debug" in output
     assert "Allocating nodes." in output
@@ -124,7 +124,7 @@ def test_notebook_app_run_save_defaults():
     environment_file = './idact.test.conf'
     args = [TEST_CLUSTER,
             '--environment', environment_file,
-            '--walltime', '0:00:45',
+            '--walltime', '0:00:20',
             '--save-defaults',
             '--nodes', '2',
             '--cores', '1',
@@ -140,7 +140,7 @@ def test_notebook_app_run_save_defaults():
         assert "Nodes: 2\n" in output
         assert "Cores: 1\n" in output
         assert "Memory per node: 500MiB\n" in output
-        assert "Walltime: 0:00:45\n" in output
+        assert "Walltime: 0:00:20\n" in output
         assert "Native arguments:" in output
         assert "--partition -> debug" in output
         assert "Allocating nodes." in output
@@ -160,7 +160,7 @@ def test_notebook_app_run_use_defaults():
     environment_file = './idact.test.conf'
     args = [TEST_CLUSTER,
             '--environment', environment_file,
-            '--walltime', '0:00:45']
+            '--walltime', '0:00:20']
     notebook_defaults = get_different_notebook_defaults_for_test()
     with run_notebook_app(user=user,
                           environment_file=environment_file,
@@ -173,7 +173,7 @@ def test_notebook_app_run_use_defaults():
         assert "Nodes: 2\n" in output
         assert "Cores: 1\n" in output
         assert "Memory per node: 500MiB\n" in output
-        assert "Walltime: 0:00:45\n" in output
+        assert "Walltime: 0:00:20\n" in output
         assert "Native arguments:" in output
         assert "--partition -> debug" in output
         assert "Allocating nodes." in output
@@ -193,7 +193,7 @@ def test_notebook_app_run_reset_defaults():
     environment_file = './idact.test.conf'
     args = [TEST_CLUSTER,
             '--environment', environment_file,
-            '--walltime', '0:00:45',
+            '--walltime', '0:00:20',
             '--reset-defaults']
     notebook_defaults = get_different_notebook_defaults_for_test()
     with run_notebook_app(user=user,
@@ -207,7 +207,7 @@ def test_notebook_app_run_reset_defaults():
         assert "Nodes: 1\n" in output
         assert "Cores: 1\n" in output
         assert "Memory per node: 1GiB\n" in output
-        assert "Walltime: 0:00:45\n" in output
+        assert "Walltime: 0:00:20\n" in output
         assert "No native arguments." in output
         assert "Allocating nodes." in output
         assert "Pushing the allocation deployment." in output

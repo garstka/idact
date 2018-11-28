@@ -1,7 +1,6 @@
 from contextlib import ExitStack, contextmanager
 from pprint import pprint
 
-import fabric.network
 from bitmath import MiB
 
 from idact import show_cluster, Walltime, Nodes
@@ -31,8 +30,6 @@ def deploy_jupyter(nodes: Nodes):
         assert str(deployment) == repr(deployment)
 
         assert deployment.local_port == local_port
-
-        fabric.network.disconnect_all()
 
         ps_jupyter_lines = node.run(ps_jupyter).splitlines()
         pprint(ps_jupyter_lines)
