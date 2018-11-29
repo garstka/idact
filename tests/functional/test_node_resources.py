@@ -16,8 +16,8 @@ from tests.helpers.testing_environment import TEST_CLUSTER
 
 def check_resources_in_believable_range(resources: NodeResourceStatus):
     print(resources.cpu_usage)
-    assert resources.cpu_usage > 0.0
-    assert resources.cpu_usage <= 100.0
+    assert resources.cpu_usage >= 0.0
+    assert resources.cpu_usage <= 110.0
     print(resources.memory_usage)
     assert resources.memory_usage.value > 0.0
     assert resources.memory_usage.value < 2.0
