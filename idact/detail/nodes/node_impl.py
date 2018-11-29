@@ -30,6 +30,7 @@ from idact.detail.serialization.serializable_types import SerializableTypes
 from idact.detail.tunnel.build_tunnel import build_tunnel
 from idact.detail.tunnel.get_bindings_with_single_gateway import \
     get_bindings_with_single_gateway
+from idact.detail.tunnel.ssh_tunnel import SshTunnel
 from idact.detail.tunnel.tunnel_internal import TunnelInternal
 from idact.detail.tunnel.validate_tunnel_ports import validate_tunnel_ports
 
@@ -202,6 +203,10 @@ class NodeImpl(NodeInternal):
                 "Unable to tunnel {there} on node '{host}'.".format(
                     there=there,
                     host=self._host)) from e
+
+    def tunnel_ssh(self,
+                   here: Optional[int] = None) -> TunnelInternal:
+        return SshTunnel(tunnel=self.tunnel(here=self.port, there=self.port))
 
     def deploy_notebook(self, local_port: int = 8080) -> JupyterDeployment:
         return deploy_jupyter(node=self,

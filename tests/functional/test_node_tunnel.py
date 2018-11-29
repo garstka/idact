@@ -52,6 +52,15 @@ def run_tunnel_test(user: str, nodes: Nodes):
                         seconds_between_retries=2)
         assert "text/html" in request.headers['Content-type']
 
+        ssh_tunnel = node.tunnel_ssh()
+        stack.enter_context(close_tunnel_on_exit(ssh_tunnel))
+
+        assert str(ssh_tunnel) == repr(ssh_tunnel)
+        assert str(ssh_tunnel).startswith("ssh ")
+        assert user in str(ssh_tunnel)
+        assert str(ssh_tunnel.here) in str(ssh_tunnel)
+        assert ssh_tunnel.there == node.port
+
     assert not nodes.running()
     with pytest.raises(RuntimeError):
         nodes.wait()

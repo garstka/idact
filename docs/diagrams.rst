@@ -93,6 +93,8 @@ These classes implement the core interfaces related to tunnels.
 
  - :py:class:`.FirstHopTunnel`
  - :py:class:`.MultiHopTunnel`
+ - :py:class:`.SshTunnel`
+ - :py:class:`.TunnelInternal`
 
 Config
 ~~~~~~

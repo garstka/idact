@@ -49,6 +49,17 @@ class Node(ABC):
         pass
 
     @abstractmethod
+    def tunnel_ssh(self,
+                   here: Optional[int] = None) -> TunnelInternal:
+        """Creates an SSH tunnel to the SSH server on this node.
+            If the specified local port is taken, defaults to any port.
+
+            :param here: Local port, or None for any port.
+
+        """
+        pass
+
+    @abstractmethod
     def deploy_notebook(self,
                         local_port: int = 8080) -> JupyterDeployment:
         """Deploys a Jupyter notebook on the node..

@@ -45,7 +45,9 @@ DIAGRAMS_TO_GENERATE = {
         " idact/detail/deployment_sync/synchronized_deployments_impl.py",
     "detail-core-tunnels":
         " idact/detail/tunnel/first_hop_tunnel.py"
-        " idact/detail/tunnel/multi_hop_tunnel.py",
+        " idact/detail/tunnel/multi_hop_tunnel.py"
+        " idact/detail/tunnel/ssh_tunnel.py"
+        " idact/detail/tunnel/tunnel_internal.py",
     "detail-core-config":
         " idact/detail/config/client/client_cluster_config.py"
         " idact/detail/config/client/setup_actions_config.py"
