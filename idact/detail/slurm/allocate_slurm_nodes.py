@@ -2,8 +2,9 @@
 
 from idact.core.config import ClusterConfig
 from idact.core.nodes import Nodes
+from idact.core.retry import Retry
 from idact.detail.allocation.allocation_parameters import AllocationParameters
-from idact.detail.helper.retry import retry
+from idact.detail.helper.retry import retry_with_config
 from idact.detail.helper.stage_info import stage_debug
 from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.get_access_node import get_access_node
@@ -41,9 +42,9 @@ def allocate_slurm_nodes(parameters: AllocationParameters,
     try:
         with stage_debug(log, "Obtaining info about job %d using squeue.",
                          job_id):
-            job = retry(run_squeue_task,
-                        retries=3,
-                        seconds_between_retries=3)
+            job = retry_with_config(run_squeue_task,
+                                    name=Retry.SQUEUE_AFTER_SBATCH,
+                                    config=config)
     except Exception as e:  # noqa, pylint: disable=broad-except
         run_scancel(job_id=job_id, node=access_node)
         raise RuntimeError("Unable to obtain job info"

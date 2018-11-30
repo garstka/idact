@@ -12,12 +12,16 @@ from idact.core.environment import load_environment, save_environment, \
     pull_environment, push_environment
 from idact.core.tunnel import Tunnel
 from idact.core.jupyter_deployment import JupyterDeployment
-from idact.core.config import ClusterConfig, SetupActionsConfig
+from idact.core.config import ClusterConfig, SetupActionsConfig, RetryConfig
 from idact.core.dask_deployment import DaskDeployment, DaskDiagnostics
 from idact.core.deploy_dask import deploy_dask
 from idact.core.remove_cluster import remove_cluster
 from idact.core.node_resource_status import NodeResourceStatus
 from idact.core.synchronized_deployments import SynchronizedDeployments
+from idact.core.get_default_retries import get_default_retries
+from idact.core.retry import Retry
+from idact.core.set_retry import set_retry
+
 from idact import _IMPORTED
 from idact import add_cluster as add_cluster2
 from idact import show_cluster as show_cluster2
@@ -43,6 +47,10 @@ from idact import pull_environment as pull_environment2
 from idact import push_environment as push_environment2
 from idact import NodeResourceStatus as NodeResourceStatus2
 from idact import SynchronizedDeployments as SynchronizedDeployments2
+from idact import RetryConfig as RetryConfig2
+from idact import get_default_retries as get_default_retries2
+from idact import Retry as Retry2
+from idact import set_retry as set_retry2
 
 IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (show_cluster, show_cluster2),
@@ -67,7 +75,11 @@ IMPORT_PAIRS_CORE_MAIN = [(add_cluster, add_cluster2),
                           (pull_environment, pull_environment2),
                           (push_environment, push_environment2),
                           (NodeResourceStatus, NodeResourceStatus2),
-                          (SynchronizedDeployments, SynchronizedDeployments2)]
+                          (SynchronizedDeployments, SynchronizedDeployments2),
+                          (RetryConfig, RetryConfig2),
+                          (get_default_retries, get_default_retries2),
+                          (Retry, Retry2),
+                          (set_retry, set_retry2)]
 
 CORE_IMPORTS = [add_cluster,
                 load_environment,
@@ -92,14 +104,18 @@ CORE_IMPORTS = [add_cluster,
                 pull_environment,
                 push_environment,
                 NodeResourceStatus,
-                SynchronizedDeployments]
+                SynchronizedDeployments,
+                RetryConfig,
+                get_default_retries,
+                Retry,
+                set_retry]
 
 
 def test_aliases():
     """Tests classes and functions imported from the core package
        to the top level package.
     """
-    assert len(_IMPORTED) == 24
+    assert len(_IMPORTED) == 28
 
     for core, main in IMPORT_PAIRS_CORE_MAIN:
         assert core is main

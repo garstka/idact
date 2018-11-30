@@ -4,9 +4,19 @@ Class diagrams
 Core classes
 ------------
 
-.. figure:: diagrams/core.png
+.. figure:: diagrams/core-nodes.png
     :scale: 50 %
-    :alt: Core class diagram
+    :alt: Core class diagram - nodes
+    :figclass: align-center
+
+.. figure:: diagrams/core-deployments.png
+    :scale: 50 %
+    :alt: Core class diagram - deployments
+    :figclass: align-center
+
+.. figure:: diagrams/core-config-tunnels.png
+    :scale: 50 %
+    :alt: Core class diagram - config and tunnels
     :figclass: align-center
 
 Core classes are essentially a collection of user-facing interfaces.
@@ -18,16 +28,18 @@ Most of the core classes are intended to hide implementation details by being
 abstract.
 
 :py:mod:`idact` core classes:
- - :py:class:`.AuthMethod`
+ - :py:class:`.AuthMethod` (Enum not shown)
  - :py:class:`.Cluster`
  - :py:class:`.ClusterConfig`
  - :py:class:`.DaskDeployment`
  - :py:class:`.DaskDiagnostics`
  - :py:class:`.JupyterDeployment`
- - :py:class:`.KeyType`
+ - :py:class:`.KeyType` (Enum not shown)
  - :py:class:`.Node`
  - :py:class:`.NodeResourceStatus`
  - :py:class:`.Nodes`
+ - :py:class:`.Retry` (Enum not shown)
+ - :py:class:`.RetryConfig`
  - :py:class:`.SetupActionsConfig`
  - :py:class:`.SynchronizedDeployments`
  - :py:class:`.Tunnel`
@@ -36,32 +48,73 @@ abstract.
 Core implementation classes
 ---------------------------
 
-.. figure:: diagrams/detail-core.png
+Nodes
+~~~~~
+
+.. figure:: diagrams/detail-core-nodes.png
     :scale: 50 %
     :alt: Core implementation class diagram
     :figclass: align-center
 
-These classes implement the core interfaces.
+These classes implement the core interfaces related to nodes.
 
-They are never intended to be manually instantiated by the user.
+Detail classes are never intended to be manually instantiated by the user.
 
-Core implementation classes:
- - :py:class:`.ClusterConfigImpl`
  - :py:class:`.ClusterImpl`
- - :py:class:`.DaskDeploymentImpl`
- - :py:class:`.DaskDiagnosticsImpl`
- - :py:class:`.FirstHopTunnel`
- - :py:class:`.JupyterDeploymentImpl`
- - :py:class:`.MultiHopTunnel`
  - :py:class:`.NodeImpl`
  - :py:class:`.NodeInternal`
  - :py:class:`.NodeResourceStatusImpl`
  - :py:class:`.NodesImpl`
- - :py:class:`.SetupActionsConfigImpl`
+
+Deployments
+~~~~~~~~~~~
+
+.. figure:: diagrams/detail-core-deployments.png
+    :scale: 50 %
+    :alt: Core implementation class diagram - deployments
+    :figclass: align-center
+
+These classes implement the core interfaces related to deployments.
+
+ - :py:class:`.DaskDeploymentImpl`
+ - :py:class:`.DaskDiagnosticsImpl`
+ - :py:class:`.JupyterDeploymentImpl`
  - :py:class:`.SynchronizedDeploymentsImpl`
 
-Allocation detail classes
--------------------------
+Tunnels
+~~~~~~~
+
+.. figure:: diagrams/detail-core-tunnels.png
+    :scale: 50 %
+    :alt: Core implementation class diagram - tunnels
+    :figclass: align-center
+
+These classes implement the core interfaces related to tunnels.
+
+ - :py:class:`.FirstHopTunnel`
+ - :py:class:`.MultiHopTunnel`
+ - :py:class:`.SshTunnel`
+ - :py:class:`.TunnelInternal`
+
+Config
+~~~~~~
+
+.. figure:: diagrams/detail-core-config.png
+    :scale: 50 %
+    :alt: Core implementation class diagram - config
+    :figclass: align-center
+
+These classes implement the core interfaces related to config.
+
+ - :py:class:`.ClusterConfigImpl`
+ - :py:class:`.RetryConfigImpl`
+ - :py:class:`.SetupActionsConfigImpl`
+
+Detail classes
+--------------
+
+Allocation
+~~~~~~~~~~
 
 .. figure:: diagrams/detail-allocation.png
     :scale: 50 %
@@ -78,8 +131,8 @@ Allocation detail classes:
  - :py:class:`.SlurmAllocation`
  - :py:class:`.SqueueResult`
 
-Deployment detail classes
--------------------------
+Deployments
+~~~~~~~~~~~
 
 .. figure:: diagrams/detail-deployment.png
     :scale: 50 %
@@ -97,8 +150,8 @@ Deployment detail classes:
  - :py:class:`.GenericDeployment`
  - :py:class:`.SshdPortInfo`
 
-Deployment synchronization detail classes
------------------------------------------
+Deployment synchronization
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: diagrams/detail-deployment-sync.png
     :scale: 50 %
@@ -111,8 +164,8 @@ Deployment detail classes:
  - :py:class:`.DeploymentDefinition`
  - :py:class:`.DeploymentDefinitions`
 
-Config detail classes
----------------------
+Config
+~~~~~~
 
 .. figure:: diagrams/detail-config.png
     :scale: 50 %
@@ -127,8 +180,8 @@ environment.
 Config detail classes:
  - :py:class:`.ClientConfig`
 
-Other detail classes
---------------------
+Other
+~~~~~
 
 .. figure:: diagrams/detail-other.png
     :scale: 50 %
@@ -140,9 +193,10 @@ above.
 
 Other detail classes:
  - :py:class:`.Binding`
+ - :py:class:`.DebugLogFilter`
  - :py:class:`.Environment`
  - :py:class:`.EnvironmentProvider`
  - :py:class:`.GetpassExecutedError`
- - :py:class:`.LoggerProvider`
+ - :py:class:`.LoggerProvider` (not shown)
  - :py:class:`.PasswordCache`
  - :py:class:`.Serializable`

@@ -12,6 +12,8 @@ from idact.detail.auth.authenticate import authenticate
 from idact.detail.entry_point.sshd_port_info \
     import PORT_INFO_DIR_NAME_FORMAT, PORT_INFO_LOCATION
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.log.get_logger import get_logger
 
 
@@ -39,10 +41,14 @@ def fetch_port_info(allocation_id: int,
             port_info_location=PORT_INFO_LOCATION,
             port_info_dir=port_info_dir)
 
-        if exists(dir_path):
-            with cd(dir_path):
-                files = run("echo *", pty=False)
-                result.append(files)
+        with capture_fabric_output_to_log():
+            dir_exists = exists(dir_path)
+
+        if dir_exists:
+            with capture_fabric_output_to_log():
+                with cd(dir_path):
+                    files = run("echo *", pty=False)
+                    result.append(files)
         else:
             log.warning("Port info directory not found.")
             result.append("")

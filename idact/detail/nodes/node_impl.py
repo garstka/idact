@@ -10,20 +10,31 @@ import fabric.decorators
 from fabric.exceptions import CommandTimeout
 from fabric.state import env
 
+from idact.core.retry import Retry
 from idact.core.config import ClusterConfig
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.node_resource_status import NodeResourceStatus
 from idact.detail.auth.authenticate import authenticate
-from idact.detail.config.validation.validate_port import validate_port
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
+from idact.detail.helper.retry import retry_with_config
+from idact.detail.helper.stage_info import stage_debug
 from idact.detail.helper.utc_from_str import utc_from_str
 from idact.detail.helper.utc_now import utc_now
 from idact.detail.jupyter.deploy_jupyter import deploy_jupyter
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
+from idact.detail.log.get_logger import get_logger
 from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.nodes.node_resource_status_impl import NodeResourceStatusImpl
 from idact.detail.serialization.serializable_types import SerializableTypes
-from idact.detail.tunnel.binding import Binding
 from idact.detail.tunnel.build_tunnel import build_tunnel
+from idact.detail.tunnel.get_bindings_with_single_gateway import \
+    get_bindings_with_single_gateway
+from idact.detail.tunnel.ssh_tunnel import SshTunnel
+from idact.detail.tunnel.tunnel_internal import TunnelInternal
+from idact.detail.tunnel.validate_tunnel_ports import validate_tunnel_ports
+
+ANY_TUNNEL_PORT = 0
 
 
 class NodeImpl(NodeInternal):
@@ -72,9 +83,10 @@ class NodeImpl(NodeInternal):
             @fabric.decorators.task
             def task():
                 """Runs the command with a timeout."""
-                return fabric.operations.run(command,
-                                             pty=False,
-                                             timeout=timeout)
+                with capture_fabric_output_to_log():
+                    return fabric.operations.run(command,
+                                                 pty=False,
+                                                 timeout=timeout)
 
             return self.run_task(task=task,
                                  install_keys=install_keys)
@@ -152,33 +164,49 @@ class NodeImpl(NodeInternal):
 
     def tunnel(self,
                there: int,
-               here: Optional[int] = None):
+               here: Optional[int] = None) -> TunnelInternal:
         try:
-            here = here if here is not None else 0
-            validate_port(there)
-            if here != 0:
-                validate_port(here)
+            log = get_logger(__name__)
+            with stage_debug(log, "Opening tunnel %s -> %d to %s",
+                             here, there, self):
+                self._ensure_allocated()
 
-            self._ensure_allocated()
+                here, there = validate_tunnel_ports(here=here,
+                                                    there=there)
 
-            bindings = [Binding("", here),
-                        Binding(self._host, self._port),
-                        Binding("127.0.0.1", there)]
+                first_try = [True]
 
-            with authenticate(host=self._host,
-                              port=self._port,
-                              config=self._config):
-                return build_tunnel(bindings=bindings,
-                                    hostname=self._config.host,
-                                    port=self._config.port,
-                                    ssh_username=self._config.user,
-                                    ssh_password=env.password,
-                                    ssh_pkey=env.key_filename)
+                def get_bindings_and_build_tunnel() -> TunnelInternal:
+                    bindings = get_bindings_with_single_gateway(
+                        here=here if first_try[0] else ANY_TUNNEL_PORT,
+                        node_host=self._host,
+                        node_port=self._port,
+                        there=there)
+                    first_try[0] = False
+                    return build_tunnel(config=self._config,
+                                        bindings=bindings,
+                                        ssh_password=env.password,
+                                        ssh_pkey=env.key_filename)
+
+                with authenticate(host=self._host,
+                                  port=self._port,
+                                  config=self._config):
+                    if here == ANY_TUNNEL_PORT:
+                        return get_bindings_and_build_tunnel()
+                    return retry_with_config(
+                        get_bindings_and_build_tunnel,
+                        name=Retry.TUNNEL_TRY_AGAIN_WITH_ANY_PORT,
+                        config=self._config)
+
         except RuntimeError as e:
             raise RuntimeError(
                 "Unable to tunnel {there} on node '{host}'.".format(
                     there=there,
                     host=self._host)) from e
+
+    def tunnel_ssh(self,
+                   here: Optional[int] = None) -> TunnelInternal:
+        return SshTunnel(tunnel=self.tunnel(here=self.port, there=self.port))
 
     def deploy_notebook(self, local_port: int = 8080) -> JupyterDeployment:
         return deploy_jupyter(node=self,

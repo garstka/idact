@@ -16,6 +16,8 @@ from idact.detail.auth.get_public_key_location import get_public_key_location
 from idact.detail.helper.raise_on_remote_fail import raise_on_remote_fail
 from idact.detail.helper.stage_info import stage_debug
 from idact.detail.helper.yn_prompt import yn_prompt
+from idact.detail.log.capture_fabric_output_to_log import \
+    capture_fabric_output_to_log
 from idact.detail.log.get_logger import get_logger
 
 
@@ -108,30 +110,34 @@ def install_key(config: ClusterConfig,
             to the authorized keys file if it's not been added already."""
         with stage_debug(log, "Creating authorized keys file: %s",
                          authorized_keys_path):
-            run("mkdir -p ~/.ssh")
-            run("chmod 700 ~/.ssh")
-            run("touch '{authorized_keys_path}'".format(
-                authorized_keys_path=authorized_keys_path))
-            run("chmod 644 '{authorized_keys_path}'".format(
-                authorized_keys_path=authorized_keys_path))
+            with capture_fabric_output_to_log():
+                run("mkdir -p ~/.ssh")
+                run("chmod 700 ~/.ssh")
+                run("touch '{authorized_keys_path}'".format(
+                    authorized_keys_path=authorized_keys_path))
+                run("chmod 644 '{authorized_keys_path}'".format(
+                    authorized_keys_path=authorized_keys_path))
 
         with stage_debug(log, "Downloading authorized keys file."):
-            authorized_keys_fd = BytesIO()
-            get(authorized_keys_path, authorized_keys_fd)
-            authorized_keys_contents = \
-                authorized_keys_fd.getvalue().decode('ascii').splitlines()
+            with capture_fabric_output_to_log():
+                authorized_keys_fd = BytesIO()
+                get(authorized_keys_path, authorized_keys_fd)
+                authorized_keys_contents = \
+                    authorized_keys_fd.getvalue().decode('ascii').splitlines()
 
         if public_key not in authorized_keys_contents:
             with stage_debug(log, "Appending to authorized keys file."):
                 log.debug("Warning: This operation is not atomic on NFS.")
-                run("echo '{public_key}' >> {authorized_keys_path}".format(
-                    public_key=public_key,
-                    authorized_keys_path=authorized_keys_path))
+                with capture_fabric_output_to_log():
+                    run("echo '{public_key}' >> {authorized_keys_path}".format(
+                        public_key=public_key,
+                        authorized_keys_path=authorized_keys_path))
 
         with stage_debug(log, "Checking if public key was added."):
-            run("grep '{public_key}' '{authorized_keys_path}'".format(
-                public_key=public_key,
-                authorized_keys_path=authorized_keys_path))
+            with capture_fabric_output_to_log():
+                run("grep '{public_key}' '{authorized_keys_path}'".format(
+                    public_key=public_key,
+                    authorized_keys_path=authorized_keys_path))
 
     with raise_on_remote_fail(exception=RuntimeError):
         fabric.tasks.execute(task)

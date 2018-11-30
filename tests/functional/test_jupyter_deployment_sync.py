@@ -3,9 +3,7 @@ from contextlib import ExitStack
 from idact import show_cluster
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
-from idact.detail.jupyter.jupyter_deployment_impl import JupyterDeploymentImpl
-from tests.helpers.check_local_http_connection import \
-    check_local_http_connection
+from tests.helpers.check_http_connection import check_local_http_connection
 from tests.helpers.clear_deployment_sync_data import clear_deployment_sync_data
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
@@ -48,11 +46,10 @@ def test_able_to_sync_jupyter():
             check_local_http_connection(port=jupyter.local_port)
             check_local_http_connection(port=jupyter_2.local_port)
         finally:
-            assert isinstance(jupyter_2, JupyterDeploymentImpl)
             jupyter_2.cancel_local()
 
 
-def test_cancelled_node_allocation_is_discarded_on_pull():
+def test_cancelled_jupyter_allocation_is_discarded_on_pull():
     user = USER_48
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())

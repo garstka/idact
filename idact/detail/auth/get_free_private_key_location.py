@@ -86,6 +86,7 @@ def get_free_private_key_location(key_type: KeyType) -> str:
 
     location = os.environ.get('IDACT_KEY_LOCATION',
                               default=os.path.expanduser('~/.ssh'))
+    os.makedirs(location, exist_ok=True)
 
     prefix = KEY_NAME_PREFIX[key_type]
 

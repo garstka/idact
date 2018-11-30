@@ -24,6 +24,7 @@ def test_worker_deployment_script():
         '#!/usr/bin/env bash\n'
         'echo ABC\n'
         'echo DEF\n'
+        'export PATH="$PATH:$(python -m site --user-base)/bin"\n'
         'dask-scheduler --host 0.0.0.0 --port 1111 --bokeh --bokeh-port 2222'
         ' --no-show --local-directory /scratch'
         ' > /home/user/log 2>&1\n'

@@ -5,6 +5,8 @@ import shlex
 import bitmath
 
 from idact.core.config import ClusterConfig
+from idact.detail.deployment.get_command_to_append_local_bin import \
+    get_command_to_append_local_bin
 from idact.detail.deployment.get_deployment_script_contents import \
     get_deployment_script_contents
 
@@ -28,6 +30,7 @@ def get_worker_deployment_script(scheduler_address: str,
 
     """
     deployment_commands = [
+        get_command_to_append_local_bin(),
         'dask-worker'
         ' {scheduler_address}'
         ' --host 0.0.0.0'

@@ -1,9 +1,11 @@
 """Tests for client config."""
 
 from logging import INFO, DEBUG
+from pprint import pprint
 
 import pytest
 
+from idact import get_default_retries
 from idact.core.auth import AuthMethod
 from idact.detail.config.client. \
     client_cluster_config import ClusterConfigImpl
@@ -13,6 +15,7 @@ from idact.detail.config.client.client_config_serialize import \
 from idact.detail.config.client.setup_actions_config import \
     SetupActionsConfigImpl
 from idact.detail.log.logger_provider import LoggerProvider
+from tests.helpers.config_defaults import DEFAULT_RETRIES_JSON
 
 VALID_CLIENT_CLUSTER_CONFIG = ClusterConfigImpl(host='abc',
                                                 port=22,
@@ -68,6 +71,8 @@ def test_client_cluster_config_create():
     assert config.setup_actions.jupyter == []
     assert config.setup_actions.dask == []
     assert config.scratch == "$HOME"
+    assert config.retries == get_default_retries()
+    assert config.use_jupyter_lab
 
 
 def test_client_config_validation_is_used():
@@ -124,8 +129,9 @@ def test_client_config_serialize():
                          'setupActions': {'jupyter': [],
                                           'dask': []},
                          'scratch': '$HOME',
-                         'portInfoRetries': 5,
-                         'notebookDefaults': {}}
+                         'notebookDefaults': {},
+                         'retries': DEFAULT_RETRIES_JSON,
+                         'useJupyterLab': True}
         },
         'logLevel': INFO
     }
@@ -146,15 +152,21 @@ def test_client_config_deserialize():
                          'setupActions': {'jupyter': [],
                                           'dask': []},
                          'scratch': '$HOME',
-                         'portInfoRetries': 5}
+                         'retries': {}}
         },
         'logLevel': DEBUG
     }
-    client_config = ClientConfig(clusters={
-        'cluster1': ClusterConfigImpl(host='abc',
-                                      user='user',
-                                      port=22,
-                                      auth=AuthMethod.ASK)}, log_level=DEBUG)
+    client_config = ClientConfig(
+        clusters={
+            'cluster1': ClusterConfigImpl(
+                host='abc',
+                user='user',
+                port=22,
+                auth=AuthMethod.ASK)},
+        log_level=DEBUG)
+
+    deserialized = deserialize_client_config_from_json(input_json)
+    pprint([i.__dict__ for i in deserialized.clusters.values()])
     assert deserialize_client_config_from_json(input_json) == client_config
 
 
@@ -174,8 +186,9 @@ def test_client_config_serialize_public_key():
                          'setupActions': {'jupyter': ['echo a'],
                                           'dask': []},
                          'scratch': '$HOME',
-                         'portInfoRetries': 5,
-                         'notebookDefaults': {}}
+                         'notebookDefaults': {},
+                         'retries': DEFAULT_RETRIES_JSON,
+                         'useJupyterLab': True}
         }, 'logLevel': INFO}
     assert serialize_client_config_to_json(client_config) == expected_json
 
@@ -193,7 +206,8 @@ def test_client_config_deserialize_public_key():
                          'setupActions': {'jupyter': ['echo a'],
                                           'dask': []},
                          'scratch': '$HOME',
-                         'portInfoRetries': 5}
+                         'retries': {},
+                         'useJupyterLab': True}
         },
         'logLevel': INFO
     }
@@ -214,8 +228,9 @@ EXPECTED_DEFAULT_JSON = {
                      'setupActions': {'jupyter': [],
                                       'dask': []},
                      'scratch': '$HOME',
-                     'portInfoRetries': 5,
-                     'notebookDefaults': {}}
+                     'notebookDefaults': {},
+                     'retries': DEFAULT_RETRIES_JSON,
+                     'useJupyterLab': True}
     },
     'logLevel': INFO
 }

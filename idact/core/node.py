@@ -10,7 +10,7 @@ from typing import Optional
 
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.node_resource_status import NodeResourceStatus
-from idact.core.tunnel import Tunnel
+from idact.detail.tunnel.tunnel_internal import TunnelInternal
 
 
 class Node(ABC):
@@ -38,12 +38,24 @@ class Node(ABC):
     @abstractmethod
     def tunnel(self,
                there: int,
-               here: Optional[int] = None) -> Tunnel:
+               here: Optional[int] = None) -> TunnelInternal:
         """Creates an SSH tunnel from node to localhost.
+            If the specified local port is taken, defaults to any port.
 
             :param there: Remote port to tunnel.
 
             :param here: Local port, or None for any port.
+        """
+        pass
+
+    @abstractmethod
+    def tunnel_ssh(self,
+                   here: Optional[int] = None) -> TunnelInternal:
+        """Creates an SSH tunnel to the SSH server on this node.
+            If the specified local port is taken, defaults to any port.
+
+            :param here: Local port, or None for any port.
+
         """
         pass
 
@@ -53,6 +65,8 @@ class Node(ABC):
         """Deploys a Jupyter notebook on the node..
 
             :param local_port: Local notebook access port.
+                               Default: 8080, or random if it's unavailable.
+
         """
         pass
 

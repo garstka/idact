@@ -15,7 +15,7 @@ from idact.detail.auth.install_key import install_key
 from idact.detail.auth.install_shared_home_key import install_shared_home_key
 from idact.detail.entry_point.get_entry_point_script_contents import \
     COMPUTE_NODE_AUTHORIZED_KEYS
-from idact.detail.helper.stage_info import stage_info, stage_debug
+from idact.detail.helper.stage_info import stage_info
 from idact.detail.log.get_logger import get_logger
 
 
@@ -134,9 +134,9 @@ def authenticate(host: str,
 
         access_node = get_host_string(config=config)
         if install_shared_keys:
-            with stage_debug(log, "Installing key in %s for access to compute"
-                                  " nodes",
-                             COMPUTE_NODE_AUTHORIZED_KEYS):
+            with stage_info(log, "Installing key in '%s' for access to compute"
+                                 " nodes.",
+                            COMPUTE_NODE_AUTHORIZED_KEYS):
                 install_keys_using_current_authentication(
                     access_node=access_node,
                     config=config)

@@ -3,7 +3,9 @@ from contextlib import contextmanager
 from logging import DEBUG
 
 from idact import AuthMethod
+from idact.core.retry import Retry
 from idact.core.set_log_level import set_log_level
+from idact.core.set_retry import set_retry
 from idact.detail.config.client.client_cluster_config \
     import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
@@ -36,7 +38,7 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
         port=get_testing_port(),
         user=user,
         auth=auth,
-        port_info_retries=0)
+        retries={Retry.PORT_INFO: set_retry(count=0)})
     EnvironmentProvider(
         initial_environment=EnvironmentImpl(
             config=ClientConfig(

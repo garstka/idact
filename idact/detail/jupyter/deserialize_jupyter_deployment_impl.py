@@ -18,7 +18,8 @@ def deserialize_jupyter_deployment_impl(
         deployment = deserialize_generic_deployment(
             config=config,
             serialized=serialized['deployment'])
-        tunnel = deployment.node.tunnel(there=serialized['tunnel_there'])
+        tunnel = deployment.node.tunnel(there=serialized['tunnel_there'],
+                                        here=serialized['tunnel_here'])
         return JupyterDeploymentImpl(
             deployment=deployment,
             tunnel=tunnel,

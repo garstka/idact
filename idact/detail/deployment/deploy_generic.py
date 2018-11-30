@@ -11,7 +11,6 @@ from idact.detail.nodes.node_internal import NodeInternal
 
 def deploy_generic(node: NodeInternal,
                    script_contents: str,
-                   capture_output_seconds: int,
                    runtime_dir: str) -> GenericDeployment:
     """Deploys a program on the node.
 
@@ -19,24 +18,21 @@ def deploy_generic(node: NodeInternal,
 
         :param script_contents: Deployment script contents.
 
-        :param capture_output_seconds: Seconds to wait for command output.
-
         :param runtime_dir: Runtime dir to remove.
 
     """
     log = get_logger(__name__)
     with stage_debug(log, "Uploading entry point."):
         script_path = upload_entry_point(contents=script_contents,
-                                         node=node)
+                                         node=node,
+                                         runtime_dir=runtime_dir)
 
     with stage_debug(log, "Executing the deployment command."):
         output = node.run(get_deployment_command(
-            script_path=script_path,
-            capture_output_seconds=capture_output_seconds))
+            script_path=script_path))
 
     lines = output.splitlines()
     pid = int(lines[0])
     return GenericDeployment(node=node,
                              pid=pid,
-                             output='\n'.join(lines[1:]),
                              runtime_dir=runtime_dir)

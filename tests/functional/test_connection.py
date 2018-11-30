@@ -1,5 +1,4 @@
 from fabric.decorators import task
-from fabric.network import disconnect_all
 from fabric.operations import run
 from fabric.state import env
 from fabric.tasks import execute
@@ -29,4 +28,3 @@ def test_connection():
             'TIME  NODES NODELIST(REASON)')
     finally:
         env.password = None
-        disconnect_all()

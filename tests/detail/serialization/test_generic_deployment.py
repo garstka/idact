@@ -19,7 +19,6 @@ def test_serialize_deserialize():
     config = get_config_for_test()
     value = GenericDeployment(node=NodeImpl(config=config),
                               pid=1,
-                              output='out',
                               runtime_dir='/dir')
     serialized = value.serialize()
     assert serialized == {'type': 'SerializableTypes.GENERIC_DEPLOYMENT',
@@ -30,7 +29,6 @@ def test_serialize_deserialize():
                                    'memory': None,
                                    'allocated_until': None},
                           'pid': 1,
-                          'output': 'out',
                           'runtime_dir': '/dir'}
 
     deserialized = deserialize_generic_deployment(config=config,

@@ -1,10 +1,11 @@
 import requests
 
-from idact.core.tunnel import Tunnel
-from idact.detail.helper.retry import retry
+from idact.core.retry import Retry
+from idact.detail.helper.retry import retry_with_config
+from idact.detail.tunnel.tunnel_internal import TunnelInternal
 
 
-def validate_tunnel_http_connection(tunnel: Tunnel):
+def validate_tunnel_http_connection(tunnel: TunnelInternal):
     """Checks whether there is an HTTP server replying to a request through
         the tunnel.
 
@@ -17,8 +18,8 @@ def validate_tunnel_http_connection(tunnel: Tunnel):
             return session.get("http://127.0.0.1:{local_port}".format(
                 local_port=tunnel.here))
 
-    request = retry(access_server,
-                    retries=3,
-                    seconds_between_retries=2)
+    request = retry_with_config(access_server,
+                                name=Retry.VALIDATE_HTTP_TUNNEL,
+                                config=tunnel.config)
     if "text/html" not in request.headers['Content-type']:
         raise RuntimeError("Unable to obtain a HTML response.")

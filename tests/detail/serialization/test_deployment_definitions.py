@@ -36,7 +36,8 @@ def test_serialize_deserialize():
                           'value': {'c': 3,
                                     'd': '4'},
                           'expiration_date': '2018-11-16T17:18:00+00:00'}},
-        'jupyter_deployments': {}}
+        'jupyter_deployments': {},
+        'dask_deployments': {}}
 
     deserialized = DeploymentDefinitions.deserialize(serialized=serialized)
     assert deserialized == value
@@ -52,5 +53,5 @@ def test_invalid_serialized_type():
 def test_missing_serialized_keys():
     serialized = {'type': 'SerializableTypes.DEPLOYMENT_DEFINITIONS'}
 
-    with pytest.raises(RuntimeError):
-        DeploymentDefinitions.deserialize(serialized=serialized)
+    deserialized = DeploymentDefinitions.deserialize(serialized=serialized)
+    assert deserialized == DeploymentDefinitions()

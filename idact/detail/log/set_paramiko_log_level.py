@@ -1,12 +1,12 @@
 """This module contains a function for setting the log level for paramiko."""
 import logging
 
+from idact.detail.log.get_logger import get_debug_logger
 
-def set_paramiko_log_level(level: int):
-    """Sets the log level for paramiko.
+PARAMIKO_LOG_LEVEL = logging.WARNING
 
-        :param level: Log level.
 
-    """
-    logger = logging.getLogger("paramiko")
-    logger.setLevel(level)
+def set_paramiko_log_level():
+    """Sets the log level for paramiko."""
+    transport = get_debug_logger('paramiko.transport')
+    transport.setLevel(PARAMIKO_LOG_LEVEL)

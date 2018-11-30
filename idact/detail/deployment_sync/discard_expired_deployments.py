@@ -47,6 +47,15 @@ def discard_expired_deployments(
             else:
                 unexpired_jupyter_deployments[uuid] = jupyter
 
+        unexpired_dask_deployments = {}
+        for uuid, dask in deployments.dask_deployments.items():
+            if dask.expiration_date < discard_now:
+                log.warning("Discarding a Dask deployment,"
+                            " because it has expired: %s", uuid)
+            else:
+                unexpired_dask_deployments[uuid] = dask
+
         return DeploymentDefinitions(
             nodes=unexpired_nodes,
-            jupyter_deployments=unexpired_jupyter_deployments)
+            jupyter_deployments=unexpired_jupyter_deployments,
+            dask_deployments=unexpired_dask_deployments)

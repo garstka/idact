@@ -6,6 +6,8 @@ import pytest
 
 from idact import show_cluster, push_environment, AuthMethod, add_cluster, \
     show_clusters
+from idact.core.get_default_retries import get_default_retries
+from idact.core.retry import Retry
 from idact.detail.auth.set_password import set_password
 from idact.detail.config.client.client_cluster_config import ClusterConfigImpl
 from idact.detail.config.client.client_config import ClientConfig
@@ -56,7 +58,8 @@ def check_able_to_merge_push_environment(user: str,
         cluster = show_cluster(name=TEST_CLUSTER)
         cluster.config.key = None
         cluster.config.install_key = False
-        cluster.config.port_info_retries = 5
+        cluster.config.retries[Retry.PORT_INFO] = \
+            get_default_retries()[Retry.PORT_INFO]
 
         assert len(show_clusters()) == 1
         node = cluster.get_access_node()
@@ -104,22 +107,22 @@ def check_able_to_merge_push_environment(user: str,
         # Remote key was kept unchanged.
         remote_clusters = remote_environment_after_push.config.clusters
         assert len(remote_clusters) == 2
-        assert remote_clusters[TEST_CLUSTER] == ClusterConfigImpl(
+        assert remote_clusters[TEST_CLUSTER].__dict__ == ClusterConfigImpl(
             host=get_testing_host(),
             port=get_testing_port(),
             user=user,
             auth=AuthMethod.ASK,
             key='key_remote',
-            install_key=True)
+            install_key=True).__dict__
 
         # New cluster was sanitized
-        assert remote_clusters[fake_cluster] == ClusterConfigImpl(
+        assert remote_clusters[fake_cluster].__dict__ == ClusterConfigImpl(
             host='fakehost',
             port=2,
             user=user,
             auth=AuthMethod.ASK,
             key=None,
-            install_key=True)
+            install_key=True).__dict__
 
 
 def test_push_environment_to_default_location_with_merge():
@@ -171,7 +174,8 @@ def check_able_to_push_new_environment(user: str,
         cluster = show_cluster(name=TEST_CLUSTER)
         cluster.config.key = None
         cluster.config.install_key = False
-        cluster.config.port_info_retries = 5
+        cluster.config.retries[Retry.PORT_INFO] = \
+            get_default_retries()[Retry.PORT_INFO]
 
         assert len(show_clusters()) == 1
         node = cluster.get_access_node()

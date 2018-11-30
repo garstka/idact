@@ -1,4 +1,4 @@
-# Config file for automatic testing at travis-ci.org
+# Config file for automatic testing at travis-ci.com
 
 language: python
 services:
@@ -6,7 +6,6 @@ services:
 addons:
   apt:
     packages:
-     - sshpass
      - graphviz
      - expect-dev
      - pandoc
@@ -14,16 +13,16 @@ matrix:
   include:
     - name: "Python 3.6 support"
       python: 3.6
-      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=1 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=0 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=1
+      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=1 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=0 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=1 DEPLOY_PYPI=0 DEPLOY_COVERAGE=1
     - name: "Python 3.5 support"
       python: 3.5
-      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=1 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=0 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=0
+      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=1 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=0 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=0 DEPLOY_PYPI=0 DEPLOY_COVERAGE=0
     - name: "Pip install support"
       python: 3.6.6
-      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=1 REQUIREMENTS_DEV_TXT=0 REQUIREMENTS_TEST_TXT=1 CONDA_DEV_ENV=0 PYTEST_ONLY=1 RUN_TESTS=0 BUILD_COVERAGE=0 BUILD_DOCS=0 DEPLOY_DOCS=0
+      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=1 REQUIREMENTS_DEV_TXT=0 REQUIREMENTS_TEST_TXT=1 CONDA_DEV_ENV=0 PYTEST_ONLY=1 RUN_TESTS=0 BUILD_COVERAGE=0 BUILD_DOCS=0 DEPLOY_DOCS=0 DEPLOY_PYPI=1 DEPLOY_COVERAGE=0
     - name: "Conda development support"
       python: 3.6
-      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=0 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=1 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=0
+      env: SLURM_CENTOS_VERSION=7 SLURM_VERSION=17.02.10 PIP_INSTALL=0 REQUIREMENTS_DEV_TXT=0 REQUIREMENTS_TEST_TXT=0 CONDA_DEV_ENV=1 PYTEST_ONLY=0 RUN_TESTS=1 BUILD_COVERAGE=1 BUILD_DOCS=1 DEPLOY_DOCS=0 DEPLOY_PYPI=0 DEPLOY_COVERAGE=0
 before_install:
   - source scripts/testing_setup/container_prepare_envs.sh
   - printenv | sort
@@ -54,15 +53,6 @@ install:
   - python scripts/testing_setup/full_setup.py
   - docker ps
 script:
-  - docker exec $SLURM_CONTAINER sinfo
-  - docker exec $SLURM_CONTAINER scontrol show partition
-  - docker exec $SLURM_CONTAINER sbatch --wrap="sleep 10"
-  - docker exec $SLURM_CONTAINER squeue
-  - sleep 5
-  - docker exec $SLURM_CONTAINER squeue
-  - sleep 10
-  - docker exec $SLURM_CONTAINER squeue
-  - sshpass -p pass-50 ssh -o "StrictHostKeyChecking no" -p 2222 user-50@localhost bash -c "squeue"
   - if [ $PIP_INSTALL -eq 1 ]; then mv idact idact_tmp ; fi
   - if [ $PYTEST_ONLY -eq 1 ]; then python -mpytest tests ; fi
   - if [ $PIP_INSTALL -eq 1 ]; then mv idact_tmp idact ; fi
@@ -74,8 +64,21 @@ script:
 after_success:
   - python scripts/testing_setup/full_teardown.py
   - if [ $DEPLOY_DOCS -eq 1 ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then unbuffer python scripts/deploy_docs.py; fi
+  - if [ $DEPLOY_COVERAGE -eq 1 ]; then unbuffer coveralls ; fi
 env:
   global:
     secure: OD71Zl92cLE6wk+P/0P1MxbG6QhsgW4973XpL8FLMP1soe0GcWZREbafy3C60cI8xED0JNeYQ/mgX0I3U5fusnHylix8dt0njSH3pAfrxOxzX13ayIuk7Rl56IdcVXqNfCIvv9mwFEX/oiGbJcF773q0+4SKklhtAD5z7gedbJSLBV+yC/L8BuykE0Yk6asrQmZ9kVGz5FRcBZwpAj0ZwkR0aZIT6Jn9AnamMVRWsSmRC7xOtpxtbDEg8aeEOKY5O6LOFzSdoqQBqrd1Tnvln2wXmJ2wQCI9raeheT1+6WojV6c68kRGlWy0CQRu3bYcPzdXXsNBMhEeGsondhUkuqi6F9j6mAIDGX2IuGwsqIJ9dUJYfTaUBlNawFZm28RfxoHC+t0FHDb7nOm28f3z0yplnyWu+zLTwhgeje5GQORnjWiD47BM36Zb44zC2muvzxJS1CDw6RHGcm+0OAtnW8LNxyW2hLR0eLx7H2Dbkudnn3GspWqv6UJNXJAqUJm7+YA1tVYGSUWOzGa9lLXosoi0BQ9ro6NivcDrjDK08r1qdCIetYhcnh4OKlXkSXsfw4FcaxNp3Qj2t1/R+kAAUfDnjOn8/4Zl/7str11LHimbUutOEynLWZSI5tbKPnLP6t0buVOHsKuaHZHlNtZlss9tNXesNmMGhucbkMtNa4A=
 notifications:
   email: false
+before_deploy:
+  - python -m pip install -r requirements_deploy.txt
+deploy:
+  provider: pypi
+  user: "garstka"
+  password:
+    secure: nj2YQY/LlvLIU1IWZKBCRjZ5s/7oK5N4iOZGWDw+RxWZUZ2DLA1QS3vAtXu8wiY4v80IQ9koq//igxKjOIRum8LVTxLbtzLs6eSnVjaeLOGqWp+GcKvcOFd8yifsq1wYbtHA+00QfjvmecrREwEGB0j0JGD9g9CwThy6nQmaxC0rAfKxh8Wk3ezK+cTU7fG5T0/fKvxDJvTrtoVjL+h0H1jzj/YvHK0cf/Cc9dgDjtt0v4rK3dfEuczte2SZbl+dyr4cPqDXeGjFDy0D+vw7Yel0V1r/6uH+lJoiN4lpLNWoCWkft4eoxh8tnNpBceCqHcx+/Bi07EjhqZN1ZKVPErtikpG2SyuewYCV2c+OgUiIu8keT9mZ9b7Rbpp3c2+WTBOzGtszOFhv/pq5h1ygJ+fjtjeXVxR6GJpNZr54ta4ialrXD3P45tF/vItpvU119BW+cy/Mvp9ooEDKLT1Y7k6o8WMDdeJoO+5iC9uJWur/42EhMjbhxZP+EuyGkTg1ElY1rERFZNOArCyOhatQVY9/JNR/IqNDebpB7+AAayMfe43gOkHLdL6M6E5lnSKOHbIXFpIME/LZmyY43p979o5pNq8OqQGHrjuFSwlZ2vUNJ9lqCFrifCLNMBkvXDEW+iIH8nM4r/tIxJsQPemUwpxAOsjR7ulcw1UMYBQfLTY=
+  on:
+    tags: true
+    condition: $DEPLOY_PYPI = 1
+  distributions: "bdist_wheel"
+  skip_existing: true

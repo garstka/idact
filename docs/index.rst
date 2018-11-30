@@ -1,23 +1,25 @@
-Welcome to idact!
+
+.. mdinclude:: ../README.md
+
+
+Table Of Contents
 =================
 
 For public API reference see :py:mod:`idact`.
 
-For internals see :py:mod:`idact.detail`.
-
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Full documentation:
 
    self
-   readme
-   api/idact
    notebooks
+   api/idact
    development_overview
    diagrams
    testing_setup
    api/tests
    scripts
+   docs_by_version
    changelog
    license
 

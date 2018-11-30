@@ -1,0 +1,11 @@
+bokeh==1.0.1
+dask==0.20.1
+distributed==1.24.0
+jupyter==1.0.0
+jupyter-client==5.2.3
+jupyter-console==6.0.0
+jupyter-core==4.4.0
+pyzmq==17.1.2
+tornado==4.5.3
+jupyterlab==0.35.4
+jupyterlab-server==0.2.0

@@ -3,6 +3,7 @@ from typing import Union
 from idact.core.nodes import Nodes
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.dask_deployment import DaskDeployment
+from idact.detail.dask.dask_deployment_impl import DaskDeploymentImpl
 from idact.detail.deployment_sync.get_deployment_definition \
     import get_deployment_definition
 from idact.detail.deployment_sync.deployment_definitions import \
@@ -33,6 +34,10 @@ def add_deployment_definition(deployments: DeploymentDefinitions,
     elif isinstance(deployment, JupyterDeployment):
         assert isinstance(deployment, JupyterDeploymentImpl)
         target = deployments.jupyter_deployments
+        uuid = deployment.uuid
+    elif isinstance(deployment, DaskDeployment):
+        assert isinstance(deployment, DaskDeploymentImpl)
+        target = deployments.dask_deployments
         uuid = deployment.uuid
     else:
         raise NotImplementedError()

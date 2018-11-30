@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5
+
+ - Hide errors from lower level libraries as debug information.
+ - Log debug info to a file.
+ - Fix top memory usage parsing bug.
+ - Make timeouts configurable.
+ - Use a fallback port if desired local tunnel port is taken.
+ - Improve Markdown documentation.
+ - Add new tutorial notebooks.
+ - Use JupyterLab by default.
+ - Release on PyPI.
+
 ## 0.4
 
 More Dask stability improvements and new features:

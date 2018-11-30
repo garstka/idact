@@ -4,6 +4,8 @@
 import shlex
 
 from idact.core.config import ClusterConfig
+from idact.detail.deployment.get_command_to_append_local_bin import \
+    get_command_to_append_local_bin
 from idact.detail.deployment.get_deployment_script_contents import \
     get_deployment_script_contents
 
@@ -23,6 +25,7 @@ def get_scheduler_deployment_script(remote_port: int,
 
     """
     deployment_commands = [
+        get_command_to_append_local_bin(),
         'dask-scheduler'
         ' --host 0.0.0.0'
         ' --port {remote_port}'

@@ -100,3 +100,6 @@ class Walltime:
             hours=self._hours,
             minutes=self._minutes,
             seconds=self._seconds)
+
+    def __repr__(self):
+        return str(self)

@@ -3,6 +3,9 @@ from typing import Union
 from idact.core.dask_deployment import DaskDeployment
 from idact.core.jupyter_deployment import JupyterDeployment
 from idact.core.nodes import Nodes
+from idact.detail.dask.dask_deployment_impl import DaskDeploymentImpl
+from idact.detail.deployment_sync.dask_deployments. \
+    get_dask_deployment_definition import get_dask_deployment_definition
 from idact.detail.deployment_sync.deployment_definition import \
     DeploymentDefinition
 from idact.detail.deployment_sync.jupyter_deployments. \
@@ -28,5 +31,8 @@ def get_deployment_definition(deployment: Union[Nodes,
     if isinstance(deployment, JupyterDeployment):
         assert isinstance(deployment, JupyterDeploymentImpl)
         return get_jupyter_deployment_definition(jupyter_deployment=deployment)
+    if isinstance(deployment, DaskDeployment):
+        assert isinstance(deployment, DaskDeploymentImpl)
+        return get_dask_deployment_definition(dask_deployment=deployment)
 
     raise NotImplementedError()

@@ -6,12 +6,15 @@ import pytest
 from idact import show_cluster
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
+from idact.detail.helper.put_remote_file import put_file_on_node
+from idact.detail.nodes.node_internal import NodeInternal
+from idact.detail.serialization.serializable_types import SerializableTypes
 from tests.helpers.clear_deployment_sync_data import clear_deployment_sync_data
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import USER_43, get_test_user_password, \
-    USER_44, USER_45, USER_46
+    USER_44, USER_45, USER_46, USER_57
 from tests.helpers.testing_environment import TEST_CLUSTER
 
 
@@ -180,3 +183,48 @@ def test_clear_deployments():
 
             deployments = cluster.pull_deployments()
             assert not deployments.nodes
+
+
+def test_migrate_deployments():
+    """Migrating from an old version of the deployments file should work
+        without fatal errors."""
+    user = USER_57
+    with ExitStack() as stack:
+        stack.enter_context(disable_pytest_stdin())
+        stack.enter_context(set_up_key_location())
+        stack.enter_context(reset_environment(user))
+        stack.enter_context(set_password(get_test_user_password(user)))
+        stack.enter_context(clear_deployment_sync_data(user))
+
+        cluster = show_cluster(name=TEST_CLUSTER)
+        access_node = cluster.get_access_node()
+        assert isinstance(access_node, NodeInternal)
+
+        def check_deployments_file_exists():
+            access_node.run("cat ~/.idact/.deployments")
+
+        nodes = cluster.allocate_nodes()
+        stack.enter_context(cancel_on_exit(nodes))
+        nodes.wait(timeout=10)
+
+        with pytest.raises(RuntimeError):
+            check_deployments_file_exists()
+
+        remote_path = access_node.run("echo ~/.idact/.deployments")
+        put_file_on_node(node=access_node,
+                         remote_path=remote_path,
+                         contents='{{"type": "{type}"}}'.format(
+                             type=SerializableTypes.DEPLOYMENT_DEFINITIONS))
+
+        deployments = cluster.pull_deployments()
+        assert not deployments.nodes
+
+        cluster.push_deployment(deployment=nodes)
+
+        deployments = cluster.pull_deployments()
+        assert len(deployments.nodes) == 1
+
+        cluster.clear_pushed_deployments()
+
+        with pytest.raises(RuntimeError):
+            check_deployments_file_exists()

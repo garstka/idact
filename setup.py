@@ -16,21 +16,30 @@ REQUIREMENTS = ['click>=6.7',
                 'dask>=0.18.2',
                 'distributed>=1.22.0',
                 'requests>=2.18.4',
-                'bokeh>=0.13.0']
+                'bokeh>=0.13.0',
+                'jupyter>=1.0.0',
+                'jupyterlab>=0.35.4']
 
 setup(
     author="Matt Garstka",
     author_email='matt@garstka.net',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
+        'Topic :: Scientific/Engineering',
+        'Topic :: System :: Distributed Computing',
+        'Topic :: Utilities',
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: Education',
+        'Intended Audience :: Developers',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: Microsoft :: Windows',
+        'Natural Language :: English',
     ],
-    description=("Tools taking care of the tedious aspects"
-                 " of working with big data on a cluster."),
+    description=("A library that takes care of several tedious aspects"
+                 " of working with big data on an HPC cluster."),
     entry_points={
         'console_scripts': [
             'idact-notebook=idact.notebook:main',
@@ -39,11 +48,15 @@ setup(
     install_requires=REQUIREMENTS,
     license="MIT license",
     long_description=README,
+    long_description_content_type='text/markdown',
     include_package_data=True,
-    keywords='idact',
+    keywords=("interactive data analysis"
+              " dask distributed jupyter notebook deployment"
+              " slurm allocation cluster HPC"
+              " ssh tunnel"),
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.4',
+    version='0.5',
     zip_safe=False,
 )
