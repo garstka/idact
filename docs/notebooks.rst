@@ -170,3 +170,29 @@ Contents
     :maxdepth: 3
 
     _notebooks/08b-Using_the_quick_deployment_app_-_remote_part.ipynb
+
+
+09. Demo analysis
+-----------------
+
+Overview
+~~~~~~~~
+
+ - Download a large quantity of CSV data for analysis.
+ - Load the data using Dask on the cluster.
+ - Convert the data to a more suitable format: Apache Parquet.
+ - Load the data from Parquet.
+ - Perform a simple data analysis.
+
+Contents
+~~~~~~~~
+
+.. toctree::
+    :maxdepth: 3
+
+    _notebooks/09a-Demo_analysis_-_local_part.ipynb
+
+.. toctree::
+    :maxdepth: 3
+
+    _notebooks/09b-Demo_analysis_-_remote_part.ipynb

@@ -126,7 +126,8 @@ dd.diagnostics.open_all()
 ```
 
 Tutorial:
-[04. Deploying Dask](https://garstka.github.io/idact/develop/html/_notebooks/04-Deploying_Dask.html)
+[04. Deploying Dask](https://garstka.github.io/idact/develop/html/_notebooks/04-Deploying_Dask.html),
+[09. Demo analysis](https://garstka.github.io/idact/develop/html/_notebooks/09a-Demo_analysis_-_local_part.html)
 
 ### Managing cluster config
 
