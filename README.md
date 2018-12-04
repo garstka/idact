@@ -138,8 +138,8 @@ and copied to and from the cluster.
 save_environment()
 load_environment()
 
-push_environment()
-pull_environment()
+push_environment(cluster)
+pull_environment(cluster)
 ```
 
 Tutorials:
@@ -152,11 +152,11 @@ Deployment objects can be serialized between running program
 instances, local or remote.
 
 ```python
-push_deployment(nodes)
-push_deployment(nb)
-push_deployment(dd)
+cluster.push_deployment(nodes)
+cluster.push_deployment(nb)
+cluster.push_deployment(dd)
 
-pull_deployments()
+cluster.pull_deployments()
 ```
 
 Tutorials:
