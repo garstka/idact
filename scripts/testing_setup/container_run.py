@@ -12,10 +12,14 @@ PULL_CONTAINER_COMMAND = "docker pull {SLURM_IMAGE}"
 RUN_COMMAND = "docker run -d -p {SLURM_SSH_PORT}:22 -it -h ernie " \
               "--name {SLURM_CONTAINER} {SLURM_IMAGE}"
 
-ADD_MEMORY_COMMAND = "docker exec {SLURM_CONTAINER} " \
-                     "sed -i" \
-                     " 's/RealMemory=1000/RealMemory=2000/g'" \
-                     " /etc/slurm/slurm.conf"
+ADD_MEMORY_COMMAND = (
+    "docker exec {SLURM_CONTAINER} "
+    "sed -i"
+    " 's/RealMemory=1000/RealMemory=2000/g;"
+    " s/MaxNodes=1/MaxNodes=2/g;"
+    " s/PartitionName=normal Nodes=c"
+    "/PartitionName=debug Nodes=c/g'"
+    " /etc/slurm/slurm.conf")
 
 SLEEP_BEFORE_RESTART = 10
 
