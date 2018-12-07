@@ -1,7 +1,11 @@
 # Testing setup
 
-The `testing_setup` directory contains scripts for running a testing container with SLURM and
-access via ssh.
+The `testing_setup` directory contains scripts for running a test container with Slurm
+and access via ssh.
+
+The containers are by Giovanni Torres:
+[docker-centos7-slurm](https://github.com/giovtorres/docker-centos7-slurm),
+[docker-centos6-slurm](https://github.com/giovtorres/docker-centos6-slurm).
 
 ## Requirements
 
@@ -23,7 +27,7 @@ python full_teardown.py
 docker attach slurm-docker
 ```
 
-## Submit basic SLURM job
+## Submit basic Slurm job
 
 ```
 sbatch --wrap="sleep 10"
