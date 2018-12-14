@@ -1,7 +1,9 @@
 """Contents of this module are intended to be imported into
    the top-level package.
 
-   See :class:`.SetupActionsConfig`, :class:`.ClusterConfig`.
+   See :class:`.SetupActionsConfig`, :class:`.ClusterConfig`,
+   :class:`.RetryConfig`.
+
 """
 
 from abc import ABC, abstractmethod
@@ -10,7 +12,7 @@ from idact.core.auth import AuthMethod
 from idact.core.retry import Retry
 
 
-class SetupActionsConfig:
+class SetupActionsConfig(ABC):
     """Commands to run before deployment."""
 
     @property
@@ -36,7 +38,7 @@ class SetupActionsConfig:
         pass
 
 
-class RetryConfig:
+class RetryConfig(ABC):
     """Retry config for an action."""
 
     @property

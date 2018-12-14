@@ -1,3 +1,10 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :func:`.get_default_retries`.
+
+"""
+
 from typing import Dict
 
 from idact.core.config import RetryConfig

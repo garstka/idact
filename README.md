@@ -148,7 +148,7 @@ Tutorials:
 
 ### Managing deployments
 
-Deployment objects can be serialized between running program
+Deployment objects can be serialized and copied between running program
 instances, local or remote.
 
 ```python
