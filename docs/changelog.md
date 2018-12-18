@@ -3,6 +3,7 @@
 ## 0.6
 
  - Added support for CentOS 6.
+ - Documentation and tutorial improvements.
 
 ## 0.5
 

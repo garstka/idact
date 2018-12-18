@@ -13,7 +13,7 @@ MAJOR, MINOR = sys.version_info[0:2]
 COMMANDS_INSTALL_PYTHON = [
     "yum -y install https://centos{SLURM_CENTOS_VERSION}"
     ".iuscommunity.org/ius-release.rpm".format(
-        SLURM_CENTOS_VERSION=os.environ['SLURM_CENTOS_VERSION']),
+        SLURM_CENTOS_VERSION=os.environ.get('SLURM_CENTOS_VERSION')),
     "yum -y install"
     " sqlite-devel"
     " python{major}{minor}u"
