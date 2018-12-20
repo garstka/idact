@@ -169,7 +169,7 @@ Quick deployment app allocates nodes and deploys Jupyter notebook
 from command line:
 
 ```
-idact-notebook my-cluster --nodes 3 --walltime 0:20:00
+idact-notebook short-cluster-name --nodes 3 --walltime 0:20:00
 ```
 
 Tutorial:
