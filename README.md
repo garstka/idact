@@ -61,10 +61,10 @@ Cluster can be accessed with a public/private key pair via SSH.
 
 ```python
 from idact import *
-cluster = add_cluster(name="my-cluster",
+cluster = add_cluster(name="short-cluster-name",
                       user="user",
-                      host="localhost",
-                      port=2222,
+                      host="login-node.cluster.example.com",
+                      port=22,
                       auth=AuthMethod.PUBLIC_KEY,
                       key="~/.ssh/id_rsa",
                       install_key=False)
