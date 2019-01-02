@@ -30,7 +30,7 @@ def get_remote_environment_path(node: Node,
         path = node.run("printenv IDACT_CONFIG_PATH || echo {}".format(
             DEFAULT_REMOTE_ENVIRONMENT_PATH))
 
-    path = node.run("realpath {}".format(path))
+    path = node.run("readlink -vf {}".format(path))
     if not path:
         raise RuntimeError("Unable to determine remote config path.")
 

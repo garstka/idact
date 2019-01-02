@@ -1,7 +1,13 @@
 # Changelog
 
+## 0.6
+
+ - Added support for CentOS 6.
+ - Documentation and tutorial improvements.
+
 ## 0.5
 
+First open-source release.
  - Hide errors from lower level libraries as debug information.
  - Log debug info to a file.
  - Fix top memory usage parsing bug.
@@ -11,6 +17,8 @@
  - Add new tutorial notebooks.
  - Use JupyterLab by default.
  - Release on PyPI.
+ - Added a way to quickly create a tunnel to ssh into a node
+  from command line.
 
 ## 0.4
 

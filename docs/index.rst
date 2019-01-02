@@ -15,6 +15,7 @@ For public API reference see :py:mod:`idact`.
    notebooks
    api/idact
    development_overview
+   prometheus
    diagrams
    testing_setup
    api/tests

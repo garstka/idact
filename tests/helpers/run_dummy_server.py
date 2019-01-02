@@ -19,13 +19,13 @@ def run_dummy_server(user: str,
     with paramiko_connect(user=user) as ssh:
         try:
             ssh.exec_command(
-                "python3 -m http.server {server_port}".format(
+                "python -m SimpleHTTPServer {server_port}".format(
                     server_port=server_port))
             sleep(timeout)
         finally:
             ssh.exec_command("kill"
                              " `ps -U $USER"
-                             " | grep python3"
+                             " | grep python"
                              " | awk '{ print $1 }'`")
 
 

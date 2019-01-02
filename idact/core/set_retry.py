@@ -1,3 +1,9 @@
+"""Contents of this module are intended to be imported into
+   the top-level package.
+
+   See :func:`.set_retry`.
+"""
+
 from idact.core.config import RetryConfig
 from idact.detail.config.client.retry_config_impl import RetryConfigImpl
 

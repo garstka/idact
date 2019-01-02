@@ -8,7 +8,8 @@ import traceback
 
 PREFIX = "docker exec {SLURM_CONTAINER} "
 
-KEY_TYPES = ['rsa', 'dsa', 'ecdsa', 'ed25519']
+KEY_TYPES = ['rsa', 'dsa', 'ecdsa']
+OPTIONAL_KEY_TYPES = ['ed25519']
 COMMAND = "bash -c \"echo -e 'y\\n' |" \
           " ssh-keygen -f /etc/ssh/ssh_host_{type}_key -N '' -t {type}\""
 
@@ -19,6 +20,8 @@ def main():
         prefix = PREFIX.format(SLURM_CONTAINER=os.environ['SLURM_CONTAINER'])
         for key_type in KEY_TYPES:
             sub.check_call(prefix + COMMAND.format(type=key_type), shell=True)
+        for key_type in OPTIONAL_KEY_TYPES:
+            print(sub.getstatusoutput(prefix + COMMAND.format(type=key_type)))
 
         return 0
     except Exception as e:  # pylint: disable=broad-except

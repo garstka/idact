@@ -61,10 +61,10 @@ Cluster can be accessed with a public/private key pair via SSH.
 
 ```python
 from idact import *
-cluster = add_cluster(name="my-cluster",
+cluster = add_cluster(name="short-cluster-name",
                       user="user",
-                      host="localhost",
-                      port=2222,
+                      host="login-node.cluster.example.com",
+                      port=22,
                       auth=AuthMethod.PUBLIC_KEY,
                       key="~/.ssh/id_rsa",
                       install_key=False)
@@ -126,7 +126,8 @@ dd.diagnostics.open_all()
 ```
 
 Tutorial:
-[04. Deploying Dask](https://garstka.github.io/idact/develop/html/_notebooks/04-Deploying_Dask.html)
+[04. Deploying Dask](https://garstka.github.io/idact/develop/html/_notebooks/04-Deploying_Dask.html),
+[09. Demo analysis](https://garstka.github.io/idact/develop/html/_notebooks/09a-Demo_analysis_-_local_part.html)
 
 ### Managing cluster config
 
@@ -137,8 +138,8 @@ and copied to and from the cluster.
 save_environment()
 load_environment()
 
-push_environment()
-pull_environment()
+push_environment(cluster)
+pull_environment(cluster)
 ```
 
 Tutorials:
@@ -147,15 +148,15 @@ Tutorials:
 
 ### Managing deployments
 
-Deployment objects can be serialized between running program
+Deployment objects can be serialized and copied between running program
 instances, local or remote.
 
 ```python
-push_deployment(nodes)
-push_deployment(nb)
-push_deployment(dd)
+cluster.push_deployment(nodes)
+cluster.push_deployment(nb)
+cluster.push_deployment(dd)
 
-pull_deployments()
+cluster.pull_deployments()
 ```
 
 Tutorials:
@@ -168,7 +169,7 @@ Quick deployment app allocates nodes and deploys Jupyter notebook
 from command line:
 
 ```
-idact-notebook my-cluster --nodes 3 --walltime 0:20:00
+idact-notebook short-cluster-name --nodes 3 --walltime 0:20:00
 ```
 
 Tutorial:

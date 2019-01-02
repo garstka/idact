@@ -20,7 +20,7 @@ def get_deployment_definitions_parent_path(node: Node) -> str:
         :param node: Node to run commands on.
 
     """
-    return node.run("realpath {}".format(DEPLOYMENT_DEFINITIONS_PATH))
+    return node.run("readlink -vf {}".format(DEPLOYMENT_DEFINITIONS_PATH))
 
 
 def get_deployment_definitions_file_path(node: Node) -> str:
@@ -29,8 +29,9 @@ def get_deployment_definitions_file_path(node: Node) -> str:
         :param node: Node to run commands on.
 
     """
-    return node.run("realpath {}/{}".format(DEPLOYMENT_DEFINITIONS_PATH,
-                                            DEPLOYMENT_DEFINITIONS_FILENAME))
+    return node.run("readlink -vf {}/{}".format(
+        DEPLOYMENT_DEFINITIONS_PATH,
+        DEPLOYMENT_DEFINITIONS_FILENAME))
 
 
 def deployment_definitions_file_exists(node: NodeInternal) -> bool:

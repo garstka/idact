@@ -82,8 +82,8 @@ def deploy_jupyter(node: NodeInternal, local_port: int) -> JupyterDeployment:
             """Loads notebook parameters from a json file."""
             with capture_fabric_output_to_log():
                 with cd(runtime_dir):
-                    nbserver_json_path = run("realpath $PWD/nbserver-*.json") \
-                        .splitlines()[0]
+                    nbserver_json_path = run(
+                        "readlink -vf $PWD/nbserver-*.json").splitlines()[0]
                 run("cat '{log_file}' || exit 0".format(
                     log_file=log_file))
                 run("cat '{nbserver_json_path}' > /dev/null".format(

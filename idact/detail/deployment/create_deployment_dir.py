@@ -22,6 +22,6 @@ def create_runtime_dir(node: NodeInternal) -> str:
 
     node.run('mkdir -p {}'.format(formatted_runtime_dir))
     node.run('chmod 700 {}'.format(formatted_runtime_dir))
-    runtime_dir = node.run("realpath {}".format(formatted_runtime_dir))
+    runtime_dir = node.run("readlink -vf {}".format(formatted_runtime_dir))
 
     return runtime_dir

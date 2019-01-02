@@ -52,6 +52,14 @@ jupyter lab
 
  - Use the idact-notebook app to quickly deploy a notebook to work with.
 
+## 09. Demo analysis
+
+ - Download a large quantity of CSV data for analysis.
+ - Load the data using Dask on the cluster.
+ - Convert the data to a more suitable format: Apache Parquet.
+ - Load the data from Parquet.
+ - Perform a simple data analysis.
+
 # Rendered versions
 
 You can find a rendered version of each notebook in the HTML documentation,

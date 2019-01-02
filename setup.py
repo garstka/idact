@@ -7,18 +7,8 @@ from setuptools import setup, find_packages
 with open('README.md') as readme_file:
     README = readme_file.read()
 
-REQUIREMENTS = ['click>=6.7',
-                'fabric3>=1.14',
-                'bitmath>=1.3.1.2',
-                'python-dateutil>=2.7.2',
-                'sshtunnel>=0.1.4',
-                'paramiko>=2.4.1',
-                'dask>=0.18.2',
-                'distributed>=1.22.0',
-                'requests>=2.18.4',
-                'bokeh>=0.13.0',
-                'jupyter>=1.0.0',
-                'jupyterlab>=0.35.4']
+with open('requirements.txt') as requirements_file:
+    REQUIREMENTS = [i for i in requirements_file.readlines() if i]
 
 setup(
     author="Matt Garstka",
@@ -57,6 +47,6 @@ setup(
     name='idact',
     packages=find_packages(include=['idact']),
     url='https://github.com/garstka/idact',
-    version='0.5',
+    version='0.6',
     zip_safe=False,
 )

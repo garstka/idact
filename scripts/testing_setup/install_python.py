@@ -11,7 +11,9 @@ DOCKER_EXEC = "docker exec {SLURM_CONTAINER} "
 MAJOR, MINOR = sys.version_info[0:2]
 
 COMMANDS_INSTALL_PYTHON = [
-    "yum -y install https://centos7.iuscommunity.org/ius-release.rpm",
+    "yum -y install https://centos{SLURM_CENTOS_VERSION}"
+    ".iuscommunity.org/ius-release.rpm".format(
+        SLURM_CENTOS_VERSION=os.environ.get('SLURM_CENTOS_VERSION')),
     "yum -y install"
     " sqlite-devel"
     " python{major}{minor}u"

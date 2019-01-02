@@ -17,6 +17,7 @@ COMMANDS_INSTALL_JUPYTER = [
 
 COMMANDS_INSTALL_JUPYTER_HUB = [
     "yum -y install npm",
+    "npm config set strict-ssl false",
     "npm install -y -g configurable-http-proxy",
     "python{major}.{minor} -mpip install jupyterhub".format(
         major=MAJOR,
