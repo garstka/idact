@@ -35,7 +35,7 @@ def test_environment():
         cluster = add_cluster(name=TEST_CLUSTER,
                               user=user,
                               host='localhost',
-                              port=os.environ.get('SLURM_PORT', 2222))
+                              port=2222)
 
         clusters = show_clusters()
         assert show_cluster(name=TEST_CLUSTER) is cluster

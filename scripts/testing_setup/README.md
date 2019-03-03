@@ -1,11 +1,8 @@
 # Testing setup
 
 The `testing_setup` directory contains scripts for running a test container with Slurm
-and access via ssh.
+with ssh access ([idact-test-environment](https://github.com/garstka/idact-test-environment)).
 
-The containers are by Giovanni Torres:
-[docker-centos7-slurm](https://github.com/giovtorres/docker-centos7-slurm),
-[docker-centos6-slurm](https://github.com/giovtorres/docker-centos6-slurm).
 
 ## Requirements
 
@@ -14,7 +11,6 @@ Docker on Linux, Internet access.
 ## Usage
 
 ```
-source container_defaults.sh
 source container_prepare_envs.sh
 python full_setup.py
 (...)
@@ -24,20 +20,13 @@ python full_teardown.py
 ## Attach root console
 
 ```
-docker attach slurm-docker
-```
-
-## Submit basic Slurm job
-
-```
-sbatch --wrap="sleep 10"
-squeue
+docker attach idact-test-container
 ```
 
 ## Ssh as user
 
 ```
-ssh -o "StrictHostKeyChecking no" -p $SLURM_SSH_PORT user-1@localhost
+ssh -o "StrictHostKeyChecking no" -p $IDACT_TEST_CONTAINER_SSH_PORT user-1@localhost
 ```
 
 Password corresponds to user number, in this case: pass-1
@@ -46,7 +35,7 @@ Password corresponds to user number, in this case: pass-1
 
 ```
 ssh-keygen -t rsa
-ssh-copy-id -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa.pub -p $SLURM_SSH_PORT user-1@localhost
+ssh-copy-id -o "StrictHostKeyChecking no" -i ~/.ssh/id_rsa.pub -p $IDACT_TEST_CONTAINER_SSH_PORT user-1@localhost
 ```
 
 ## How to run tests on Windows
@@ -80,34 +69,15 @@ putty -P 2222 user-1@localhost
 Click "No" to skip caching the server key fingerprint, in order to avoid
 the problem below.
 
+Sample port forwarding from Windows:
+
+```
+putty -N -L 8080:localhost:8080 user-1@localhost -P 2222
+```
+
 ### Possible problem
 
  - When using port forwarding for testing, the key fingerprint of the server
   may need to be manually removed from `known_hosts` (or the equivalent)
   after a setup-teardown cycle.
  - On Linux, this is taken care of by the setup script.
-
-## Software installed on top of base container
-
-### Python 3.6
-
-```
-python3.6
-pip3.6
-```
-
-### Jupyter
-
-Jupyter Notebook, Jupyter Lab and JupyterHub are installed.
-
-```
-jupyter notebook --ip 127.0.0.1 --port 8080
-jupyter lab --ip 127.0.0.1 --port 8080
-jupyterhub
-```
-
-Sample port forwarding from Windows:
-
-```
-putty -N -L 8080:localhost:8080 user-1@localhost -P 2222
-```
