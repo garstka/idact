@@ -6,6 +6,8 @@ import subprocess
 
 REPO_NAME = "garstka/idact-test-environment"
 
+SLURM_ATTEMPTS = 5
+
 
 def get_branch_name():
     return (
@@ -37,8 +39,26 @@ def get_run_command():
             '--name', os.environ['IDACT_TEST_CONTAINER'], get_image_name()]
 
 
+def get_ping_slurm_command():
+    return ['docker', 'exec', os.environ['IDACT_TEST_CONTAINER'],
+            'sbatch', '--wrap=echo']
+
+
+def validate_slurm():
+    for i in range(1, SLURM_ATTEMPTS + 1):
+        try:
+            subprocess.check_call(get_ping_slurm_command())
+            return
+        except subprocess.CalledProcessError as e:
+            print("Trying to reach Slurm, attempt {i}/{total} failed.".format(
+                i=i, total=SLURM_ATTEMPTS))
+            if i == SLURM_ATTEMPTS:
+                raise e
+
+
 def main():
     subprocess.check_call(get_run_command())
+    validate_slurm()
 
 
 if __name__ == '__main__':
