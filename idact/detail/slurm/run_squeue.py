@@ -132,7 +132,9 @@ def run_squeue(node: Node) -> Dict[int, SqueueResult]:
     """
 
     now = utc_now()
-    output = node.run("squeue --format '%A|%D|%L|%r|%R|%T'")
+    output = node.run("squeue"
+                      " --user $USER"
+                      " --format '%A|%D|%L|%r|%R|%T'")
     lines = output.splitlines()[1:]  # Ignore header.
     results = {squeue_result.job_id: squeue_result
                for squeue_result
