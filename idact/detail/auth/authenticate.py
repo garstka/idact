@@ -116,7 +116,7 @@ def authenticate(host: str,
 
     previous_abort_on_prompts = env.abort_on_prompts
     env.shell = "/bin/bash --noprofile -l -c"
-    env.key = None
+    env.pop('key', None)  # Do not use an in-memory key.
     env.user = config.user
     env.abort_on_prompts = True
     log = get_logger(__name__)

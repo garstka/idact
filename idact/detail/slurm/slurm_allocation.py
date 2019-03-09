@@ -17,6 +17,10 @@ from idact.detail.serialization.serializable_types import SerializableTypes
 from idact.detail.slurm.run_scancel import run_scancel
 from idact.detail.slurm.run_squeue import run_squeue
 
+WAIT_SQUEUE_INTERVAL = 0.5
+STILL_PENDING_MESSAGE_EVERY_N_SQUEUE = 6
+STILL_PENDING_MESSAGE = "Still pending or configuring..."
+
 
 class SlurmAllocation(Allocation):
     """Corresponds to a Slurm job.
@@ -54,7 +58,6 @@ class SlurmAllocation(Allocation):
 
     def wait(self, timeout: Optional[float]):
         log = get_logger(__name__)
-        interval = 3
         end = None
         log.debug("Waiting for allocation of job %d...", self._job_id)
         if timeout is not None:
@@ -63,6 +66,7 @@ class SlurmAllocation(Allocation):
         if self._done_waiting:
             raise RuntimeError("Already waited.")
 
+        iterations = 0
         while True:
             squeue = run_squeue(node=self._access_node)
 
@@ -76,8 +80,12 @@ class SlurmAllocation(Allocation):
                 if end is not None and utc_now() >= end:
                     raise TimeoutError("Timed out while waiting "
                                        "for allocation.")
-                log.info("Still pending or configuring...")
-                sleep(interval)
+                if iterations % STILL_PENDING_MESSAGE_EVERY_N_SQUEUE == 0:
+                    log.info(STILL_PENDING_MESSAGE)
+                else:
+                    log.debug(STILL_PENDING_MESSAGE)
+                iterations += 1
+                sleep(WAIT_SQUEUE_INTERVAL)
                 continue
             try:
                 if job.state != 'RUNNING':

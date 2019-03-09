@@ -82,8 +82,8 @@ def serialize_deployment_definitions_to_cluster(
         serialized = deployments.serialize()
         file_contents = json.dumps(serialized, sort_keys=True, indent=4)
         parent_path = get_deployment_definitions_parent_path(node=node)
-        node.run("mkdir -p {}".format(parent_path))
-        node.run("chmod 700 {}".format(parent_path))
+        node.run("mkdir -p {parent_path}"
+                 " && chmod 700 {parent_path}".format(parent_path=parent_path))
         path = get_deployment_definitions_file_path(node=node)
         put_file_on_node(node=node,
                          remote_path=path,

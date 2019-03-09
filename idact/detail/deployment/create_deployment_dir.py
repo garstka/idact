@@ -20,8 +20,10 @@ def create_runtime_dir(node: NodeInternal) -> str:
     formatted_runtime_dir = DEPLOYMENT_RUNTIME_DIR_FORMAT.format(
         deployment_id=deployment_id)
 
-    node.run('mkdir -p {}'.format(formatted_runtime_dir))
-    node.run('chmod 700 {}'.format(formatted_runtime_dir))
+    node.run(
+        "mkdir -p {formatted_runtime_dir}"
+        " && chmod 700 {formatted_runtime_dir}".format(
+            formatted_runtime_dir=formatted_runtime_dir))
     runtime_dir = node.run("readlink -vf {}".format(formatted_runtime_dir))
 
     return runtime_dir

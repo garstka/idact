@@ -6,7 +6,9 @@ from bitmath import MiB
 from idact import show_cluster, Walltime, Nodes
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
+from idact.detail.helper.retry import retry
 from tests.helpers.check_http_connection import check_local_http_connection
+from tests.helpers.check_no_output import check_no_output
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
@@ -39,9 +41,8 @@ def deploy_jupyter(nodes: Nodes):
 
         yield node
 
-    ps_jupyter_lines = node.run(ps_jupyter).splitlines()
-    pprint(ps_jupyter_lines)
-    assert not ps_jupyter_lines
+    retry(lambda: check_no_output(node=node, command=ps_jupyter),
+          retries=5, seconds_between_retries=1)
 
 
 def test_jupyter_deployment():

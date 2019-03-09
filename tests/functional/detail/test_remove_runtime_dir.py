@@ -16,8 +16,8 @@ from tests.helpers.testing_environment import TEST_CLUSTER
 
 def check_will_remove_empty(node: Node):
     # will remove an empty dir
-    node.run("mkdir dir1")
-    node.run("ls dir1")
+    node.run("mkdir dir1"
+             " && ls dir1")
     remove_runtime_dir(node=node,
                        runtime_dir="dir1")
     with pytest.raises(RuntimeError):
@@ -34,10 +34,10 @@ def check_will_ignore_non_existent(node: Node):
 
 def check_will_remove_files(node: Node):
     # will remove a dir with files in it
-    node.run("mkdir dir3")
-    node.run("touch dir3/file1")
-    node.run("touch dir3/file2")
-    node.run("ls dir3")
+    node.run("mkdir dir3"
+             " && touch dir3/file1"
+             " && touch dir3/file2"
+             " && ls dir3")
     remove_runtime_dir(node=node,
                        runtime_dir="dir3")
     with pytest.raises(RuntimeError):
@@ -47,15 +47,15 @@ def check_will_remove_files(node: Node):
 def check_will_not_remove_dotfiles(node: Node):
     # will not remove a dir when there are dot files
     # but non-dotfiles will be removed
-    node.run("mkdir dir4")
-    node.run("touch dir4/file1")
-    node.run("touch dir4/file2")
-    node.run("touch dir4/.file3")
-    node.run("ls dir4")
+    node.run("mkdir dir4"
+             " && touch dir4/file1"
+             " && touch dir4/file2"
+             " && touch dir4/.file3"
+             " && ls dir4")
     remove_runtime_dir(node=node,
                        runtime_dir="dir4")
-    node.run("ls dir4")
-    node.run("ls dir4/.file3")
+    node.run("ls dir4"
+             " && ls dir4/.file3")
     with pytest.raises(RuntimeError):
         node.run("ls dir4/file1")
     with pytest.raises(RuntimeError):
@@ -65,17 +65,17 @@ def check_will_not_remove_dotfiles(node: Node):
 def check_will_not_remove_nested_dirs(node: Node):
     # will not remove nested dirs or their content
     # but regular files will be removed
-    node.run("mkdir dir5")
-    node.run("touch dir5/file1")
-    node.run("touch dir5/file2")
-    node.run("mkdir dir5/subdir1")
-    node.run("touch dir5/subdir1/file3")
-    node.run("ls dir5")
+    node.run("mkdir dir5"
+             " && touch dir5/file1"
+             " && touch dir5/file2"
+             " && mkdir dir5/subdir1"
+             " && touch dir5/subdir1/file3"
+             " && ls dir5")
     remove_runtime_dir(node=node,
                        runtime_dir="dir4")
-    node.run("ls dir5")
-    node.run("ls dir5/subdir1")
-    node.run("ls dir5/subdir1/file3")
+    node.run("ls dir5"
+             " && ls dir5/subdir1"
+             " && ls dir5/subdir1/file3")
     with pytest.raises(RuntimeError):
         node.run("ls dir4/file1")
     with pytest.raises(RuntimeError):

@@ -13,6 +13,8 @@ from idact.core.deploy_dask import deploy_dask
 from idact.detail.auth.set_password import set_password
 from idact.detail.dask.dask_worker_deployment import DaskWorkerDeployment
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
+from idact.detail.helper.retry import retry
+from tests.helpers.check_no_output import check_no_output
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.save_opened_in import save_opened_in
@@ -35,8 +37,8 @@ def check_submission_works(node: Node, client: dask.distributed.Client):
         "Will try to find out the version"
         " of python executable: {python_executable}".format(
             python_executable=python_executable))
-    print("If this fails, make sure the testing setup was"
-          " created by the same, or close Python version"
+    print("If this fails, make sure the testing setup has"
+          " the same, or close Python version"
           " (major and minor version components must match).")
 
     command = (
@@ -53,8 +55,8 @@ def check_submission_works(node: Node, client: dask.distributed.Client):
         print("Python version mismatch: local {} vs remote {}".format(
             local_version, remote_version))
 
-    print("If the task submission fails, make sure the testing setup was"
-          " created by the same, or close Python version.")
+    print("If the task submission fails, make sure the testing setup has"
+          " the same, or close Python version.")
     print("Update the local Python installation if possible.")
     print("If this still doesn't work, update your Dask library.")
 
@@ -112,13 +114,11 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
 
         yield node
 
-    ps_lines = node.run(ps_dask_scheduler).splitlines()
-    pprint(ps_lines)
-    assert not ps_lines
+    retry(lambda: check_no_output(node=node, command=ps_dask_scheduler),
+          retries=5, seconds_between_retries=1)
 
-    ps_lines = node.run(ps_dask_worker).splitlines()
-    pprint(ps_lines)
-    assert not ps_lines
+    retry(lambda: check_no_output(node=node, command=ps_dask_worker),
+          retries=5, seconds_between_retries=1)
 
 
 def test_dask_deployment():
@@ -259,7 +259,7 @@ def test_dask_deployment_with_redeploy_failure():
         stored_validate_worker = \
             idact.detail.dask.deploy_dask_impl.validate_worker
 
-        def fake_validate_worker(_: DaskWorkerDeployment):
+        def fake_validate_worker(worker: DaskWorkerDeployment):
             print("Fake worker validation.")
             raise ValueError("Fake worker validation fail.")
 
