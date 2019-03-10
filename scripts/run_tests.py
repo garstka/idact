@@ -35,7 +35,7 @@ def main(argv):
     """Main script function."""
     os.chdir(WORKING_DIR)
 
-    jobs = argv[2] if len(argv) == 3 and argv[1] == '-n' else 1
+    jobs = argv[2] if len(argv) == 3 and argv[1] == '-n' else '1'
     os.environ['IDACT_TESTING_PROCESS_COUNT'] = jobs
 
     codes = [(command, run(command.format(jobs=jobs)))
