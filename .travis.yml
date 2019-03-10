@@ -57,7 +57,7 @@ install:
   - docker ps
 script:
   - if [ $PIP_INSTALL -eq 1 ]; then mv idact idact_tmp ; fi
-  - if [ $PYTEST_ONLY -eq 1 ]; then python -mpytest -n $TEST_JOBS tests ; fi
+  - if [ $PYTEST_ONLY -eq 1 ]; then export IDACT_TESTING_PROCESS_COUNT=$TEST_JOBS && python -mpytest -n $TEST_JOBS tests ; fi
   - if [ $PIP_INSTALL -eq 1 ]; then mv idact_tmp idact ; fi
   - if [ $PIP_INSTALL -eq 1 ]; then idact-notebook --help ; fi
   - if [ $RUN_TESTS -eq 1 ]; then unbuffer python scripts/run_tests.py -n $TEST_JOBS ; fi
