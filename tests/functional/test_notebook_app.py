@@ -87,7 +87,6 @@ def test_notebook_app_run():
                 " deployments from cluster, you can use"
                 " the following snippet.") in output
         assert "Notebook address: http://localhost:" in output
-        assert "Nodes are still running." in output
         assert "Nodes are no longer running." in output
         assert result.exit_code == 0
 
@@ -116,7 +115,6 @@ def check_output_with_changed_allocation_parameters(output: str):
             " deployments from cluster, you can use"
             " the following snippet.") in output
     assert "Notebook address: http://localhost:" in output
-    assert "Nodes are still running." in output
     assert "Nodes are no longer running." in output
 
 
@@ -151,7 +149,6 @@ def test_notebook_app_run_save_defaults():
                 " deployments from cluster, you can use"
                 " the following snippet.") in output
         assert "Notebook address: http://localhost:" in output
-        assert "Nodes are still running." in output
         assert "Nodes are no longer running." in output
         assert result.exit_code == 0
 
@@ -184,7 +181,6 @@ def test_notebook_app_run_use_defaults():
                 " deployments from cluster, you can use"
                 " the following snippet.") in output
         assert "Notebook address: http://localhost:" in output
-        assert "Nodes are still running." in output
         assert "Nodes are no longer running." in output
         assert result.exit_code == 0
 
@@ -217,6 +213,5 @@ def test_notebook_app_run_reset_defaults():
                 " deployments from cluster, you can use"
                 " the following snippet.") in output
         assert "Notebook address: http://localhost:" in output
-        assert "Nodes are still running." in output
         assert "Nodes are no longer running." in output
         assert result.exit_code == 0
