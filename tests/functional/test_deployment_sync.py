@@ -15,14 +15,14 @@ from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import USER_43, get_test_user_password, \
     USER_44, USER_45, USER_46, USER_57
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, SLURM_WAIT_TIMEOUT
 
 
 def test_able_to_sync_nodes_before_and_after_wait():
     user = USER_43
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -44,7 +44,7 @@ def test_able_to_sync_nodes_before_and_after_wait():
             assert len(deployments.nodes) == 1
             nodes_2 = deployments.nodes[0]
             assert len(nodes_2) == 1
-            nodes_2.wait(timeout=10)
+            nodes_2.wait(timeout=SLURM_WAIT_TIMEOUT)
             assert nodes_2.running()
             node_2 = nodes_2[0]
 
@@ -84,7 +84,7 @@ def test_nodes_sync_does_not_work_when_waiting_twice():
     user = USER_44
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -95,7 +95,7 @@ def test_nodes_sync_does_not_work_when_waiting_twice():
         with cancel_on_exit(nodes):
             cluster.push_deployment(deployment=nodes)
 
-            nodes.wait(timeout=10)
+            nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
             assert nodes.running()
             node = nodes[0]
             assert node.port != 22
@@ -104,7 +104,7 @@ def test_nodes_sync_does_not_work_when_waiting_twice():
             assert len(deployments.nodes) == 1
             nodes_2 = deployments.nodes[0]
 
-            nodes_2.wait(timeout=10)
+            nodes_2.wait(timeout=SLURM_WAIT_TIMEOUT)
             assert nodes_2.running()
             node_2 = nodes_2[0]
 
@@ -116,7 +116,7 @@ def test_cancelled_node_allocation_is_discarded_on_pull():
     user = USER_45
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -125,7 +125,7 @@ def test_cancelled_node_allocation_is_discarded_on_pull():
 
         nodes = cluster.allocate_nodes()
         try:
-            nodes.wait(timeout=10)
+            nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
             assert nodes.running()
 
             cluster.push_deployment(deployment=nodes)
@@ -147,7 +147,7 @@ def test_clear_deployments():
     user = USER_46
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -160,7 +160,7 @@ def test_clear_deployments():
 
         nodes = cluster.allocate_nodes()
         with cancel_on_exit(nodes):
-            nodes.wait(timeout=10)
+            nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
             assert nodes.running()
 
             with pytest.raises(RuntimeError):
@@ -191,7 +191,7 @@ def test_migrate_deployments():
     user = USER_57
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -205,7 +205,7 @@ def test_migrate_deployments():
 
         nodes = cluster.allocate_nodes()
         stack.enter_context(cancel_on_exit(nodes))
-        nodes.wait(timeout=10)
+        nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
 
         with pytest.raises(RuntimeError):
             check_deployments_file_exists()

@@ -3,20 +3,21 @@ from contextlib import ExitStack
 from idact import show_cluster
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
+from idact.detail.helper.get_free_local_port import get_free_local_port
 from tests.helpers.check_http_connection import check_local_http_connection
 from tests.helpers.clear_deployment_sync_data import clear_deployment_sync_data
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import get_test_user_password, USER_47, USER_48
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, SLURM_WAIT_TIMEOUT
 
 
 def test_able_to_sync_jupyter():
     user = USER_47
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -26,9 +27,9 @@ def test_able_to_sync_jupyter():
         nodes = cluster.allocate_nodes()
         stack.enter_context(cancel_on_exit(nodes))
         node = nodes[0]
-        nodes.wait(timeout=10)
+        nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
 
-        local_port = 2223
+        local_port = get_free_local_port()
         jupyter = node.deploy_notebook(local_port=local_port)
         stack.enter_context(cancel_on_exit(jupyter))
 
@@ -53,7 +54,7 @@ def test_cancelled_jupyter_allocation_is_discarded_on_pull():
     user = USER_48
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -63,9 +64,9 @@ def test_cancelled_jupyter_allocation_is_discarded_on_pull():
         nodes = cluster.allocate_nodes()
         stack.enter_context(cancel_on_exit(nodes))
         node = nodes[0]
-        nodes.wait(timeout=10)
+        nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
 
-        local_port = 2223
+        local_port = get_free_local_port()
         jupyter = node.deploy_notebook(local_port=local_port)
         try:
             deployments = cluster.pull_deployments()

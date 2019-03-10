@@ -19,12 +19,13 @@ from tests.helpers.clear_environment import clear_environment
 from tests.helpers.config_defaults import DEFAULT_RETRIES_JSON
 from tests.helpers.test_users import USER_2, get_test_user_password, USER_19, \
     USER_25, USER_26
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, \
+    get_test_environment_file
 
 
 def test_environment():
     user = USER_2
-    test_environment_file = './idact.test.conf'
+    test_environment_file = get_test_environment_file(user=user)
     with ExitStack() as stack:
         stack.enter_context(clear_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
@@ -129,8 +130,8 @@ def get_modified_config_contents() -> List[str]:
 
 def test_environment_create_modify_save_load():
     user = USER_19
-    test_environment_file = './idact.test.conf'
-    test_environment_file2 = './idact.test2.conf'
+    test_environment_file = get_test_environment_file(user=user)
+    test_environment_file2 = get_test_environment_file(user=user) + '_2'
     with ExitStack() as stack:
         stack.enter_context(clear_environment(user))
 

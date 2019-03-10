@@ -33,3 +33,4 @@ dependencies:
     - "jupyter>=1.0.0"
     - "jupyterlab>=0.35.4"
     - "coveralls>=1.5.1"
+    - "pytest-xdist>=1.26.1"

@@ -17,8 +17,6 @@ class GenericDeployment(Serializable):
 
         :param pid: Process id.
 
-        :param output: Initial script output.
-
         :param runtime_dir: Runtime dir to remove.
 
     """

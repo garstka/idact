@@ -9,14 +9,14 @@ from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import get_test_user_password, USER_55, USER_56
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, SLURM_WAIT_TIMEOUT
 
 
 def test_able_to_sync_dask():
     user = USER_55
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -25,7 +25,7 @@ def test_able_to_sync_dask():
 
         nodes = cluster.allocate_nodes()
         stack.enter_context(cancel_on_exit(nodes))
-        nodes.wait(timeout=10)
+        nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
 
         dask = deploy_dask(nodes)
         stack.enter_context(cancel_on_exit(dask))
@@ -53,7 +53,7 @@ def test_cancelled_dask_allocation_is_discarded_on_pull():
     user = USER_56
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
         stack.enter_context(clear_deployment_sync_data(user))
@@ -62,7 +62,7 @@ def test_cancelled_dask_allocation_is_discarded_on_pull():
 
         nodes = cluster.allocate_nodes()
         stack.enter_context(cancel_on_exit(nodes))
-        nodes.wait(timeout=10)
+        nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
 
         dask = deploy_dask(nodes)
         stack.enter_context(cancel_on_exit(dask))

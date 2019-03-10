@@ -5,6 +5,8 @@ from fabric.tasks import execute
 
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.test_users import USER_29, get_test_user_password
+from tests.helpers.testing_environment import get_testing_port, \
+    get_testing_host
 
 
 def test_connection():
@@ -14,7 +16,9 @@ def test_connection():
 
     try:
         user = USER_29
-        host = "{user}@localhost:2222".format(user=user)
+        host = "{user}@{host}:{port}".format(user=user,
+                                             host=get_testing_host(),
+                                             port=get_testing_port())
         password = get_test_user_password(user)
 
         with disable_pytest_stdin():

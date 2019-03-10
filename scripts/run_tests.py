@@ -10,10 +10,13 @@ WORKING_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '../'))
 
 PYTEST = "{python} -mpytest -v".format(python=sys.executable)
 
+IDACT_TESTING_PROCESS_COUNT = 4
+
 TESTS_TO_RUN = [
     '{pytest} --flake8 -m flake8'.format(pytest=PYTEST),
     '{pytest} --pylint -m pylint'.format(pytest=PYTEST),
-    '{pytest} -vv --cache-clear --cov=idact tests'.format(pytest=PYTEST)]
+    '{pytest} -n {{jobs}} -vv --cache-clear --cov=idact tests'.format(
+        pytest=PYTEST)]
 
 
 def run(command):
@@ -28,11 +31,14 @@ def run(command):
     return rc
 
 
-def main():
+def main(argv):
     """Main script function."""
     os.chdir(WORKING_DIR)
 
-    codes = [(command, run(command))
+    jobs = argv[2] if len(argv) == 3 and argv[1] == '-n' else 1
+    os.environ['IDACT_TESTING_PROCESS_COUNT'] = jobs
+
+    codes = [(command, run(command.format(jobs=jobs)))
              for command in TESTS_TO_RUN]
     failed = [(command, code)
               for command, code in codes if code != 0]
@@ -51,4 +57,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))

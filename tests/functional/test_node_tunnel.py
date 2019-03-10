@@ -9,6 +9,8 @@ import idact.detail.nodes.node_impl
 from idact import show_cluster, Walltime, Nodes, AuthMethod
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
+from idact.detail.helper.get_free_local_port import get_free_local_port
+from idact.detail.helper.get_free_remote_port import get_free_remote_port
 from idact.detail.helper.retry import retry
 from idact.detail.tunnel.close_tunnel_on_exit import close_tunnel_on_exit
 from idact.detail.tunnel.tunnel_internal import TunnelInternal
@@ -20,17 +22,18 @@ from tests.helpers.run_dummy_server import start_dummy_server_thread
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import get_test_user_password, USER_5, USER_13, \
     USER_53, USER_54
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, \
+    SLURM_WAIT_TIMEOUT, get_testing_process_count
 
 
 def run_tunnel_test(user: str, nodes: Nodes):
     node = nodes[0]
-    nodes.wait(timeout=10)
+    nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
     assert nodes.running()
     with ExitStack() as stack:
         stack.enter_context(cancel_on_exit(nodes))
-        there = 8000
-        here = 2223
+        there = get_free_remote_port(node=nodes[0])
+        here = get_free_local_port()
         server = start_dummy_server_thread(user=user, server_port=there)
         stack.enter_context(join_on_exit(server))
 
@@ -48,7 +51,7 @@ def run_tunnel_test(user: str, nodes: Nodes):
                 local_port=here))
 
         request = retry(access_dummy_server,
-                        retries=3,
+                        retries=3 * get_testing_process_count(),
                         seconds_between_retries=2)
         assert "text/html" in request.headers['Content-type']
 
@@ -73,7 +76,7 @@ def test_node_tunnel():
     user = USER_5
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -91,7 +94,7 @@ def test_node_tunnel_public_key():
     user = USER_13
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user=user,
                                               auth=AuthMethod.PUBLIC_KEY))
 
@@ -111,7 +114,7 @@ def test_node_tunnel_fall_back_when_local_port_taken():
     user = USER_53
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -123,10 +126,10 @@ def test_node_tunnel_fall_back_when_local_port_taken():
         stack.enter_context(cancel_on_exit(nodes))
 
         node = nodes[0]
-        nodes.wait(timeout=10)
+        nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
 
-        there = 8000
-        here = 2223
+        there = get_free_remote_port(node=node)
+        here = get_free_local_port()
 
         tunnel_1 = node.tunnel(there=there, here=here)
         stack.enter_context(close_tunnel_on_exit(tunnel_1))
@@ -144,7 +147,7 @@ def test_node_tunnel_fall_back_when_local_port_free_but_fails():
     user = USER_54
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -156,10 +159,10 @@ def test_node_tunnel_fall_back_when_local_port_free_but_fails():
         stack.enter_context(cancel_on_exit(nodes))
 
         node = nodes[0]
-        nodes.wait(timeout=10)
+        nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
 
-        there = 8000
-        here = 2223
+        there = get_free_remote_port(node=node)
+        here = get_free_local_port()
 
         real_build_tunnel = idact.detail.nodes.node_impl.build_tunnel
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

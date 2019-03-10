@@ -5,6 +5,7 @@ import re
 from idact.core.auth import KeyType
 from idact.detail.auth.generate_key import generate_key, RSA_BITS
 from tests.helpers.set_up_key_location import set_up_key_location
+from tests.helpers.test_local_users import LOCAL_USER_6, LOCAL_USER_7
 
 
 def check_key_pair(host: str, path: str):
@@ -29,11 +30,12 @@ def check_key_pair(host: str, path: str):
 
 def test_generate_key_when_location_is_free():
     """Key location is free."""
+    user = LOCAL_USER_6
     random.seed(571303)
 
     assert RSA_BITS == 4096
     result_paths = []
-    with set_up_key_location():
+    with set_up_key_location(user):
         for i in range(4):
             result_paths += [
                 generate_key(host='host{}'.format(i),
@@ -54,8 +56,9 @@ def test_generate_key_when_location_is_free():
 
 def test_generate_key_when_location_is_taken():
     """Key location is taken, must fall back."""
+    user = LOCAL_USER_7
     random.seed(571303)
-    with set_up_key_location():
+    with set_up_key_location(user):
         def get_expected_path(file_name: str) -> str:
             return os.path.join(os.environ['IDACT_KEY_LOCATION'], file_name)
 

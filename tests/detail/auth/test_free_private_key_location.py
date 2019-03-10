@@ -11,6 +11,8 @@ from idact.detail.auth.get_free_private_key_location import \
     get_key_path, try_generate_unique_path, get_free_private_key_location, \
     KEY_NAME_SUFFIX_RETRIES
 from tests.helpers.set_up_key_location import set_up_key_location
+from tests.helpers.test_local_users import LOCAL_USER_1, LOCAL_USER_2, \
+    LOCAL_USER_3, LOCAL_USER_4, LOCAL_USER_5
 
 
 def test_get_key_suffix():
@@ -44,9 +46,10 @@ def test_get_key_path():
 
 def test_try_generate_unique_path_when_location_is_free():
     """Free paths, can fail."""
+    user = LOCAL_USER_1
     random.seed(571303)
     result_paths = []
-    with set_up_key_location():
+    with set_up_key_location(user):
         for suffix_length in [2, 4, 8]:
             for _ in range(2):
                 result_paths += [try_generate_unique_path(
@@ -67,7 +70,8 @@ def test_try_generate_unique_path_when_location_is_free():
 
 def test_try_generate_unique_path_when_location_is_taken():
     """Some paths are taken, can fail."""
-    with set_up_key_location():
+    user = LOCAL_USER_2
+    with set_up_key_location(user):
         def try_generate() -> Optional[str]:
             return try_generate_unique_path(
                 suffix_length=2,
@@ -107,9 +111,10 @@ def test_try_generate_unique_path_when_location_is_taken():
 
 def test_get_free_private_key_location_when_location_is_free():
     """Free paths."""
+    user = LOCAL_USER_3
     random.seed(571303)
     result_paths = []
-    with set_up_key_location():
+    with set_up_key_location(user):
         for _ in range(8):
             result_paths += [
                 get_free_private_key_location(key_type=KeyType.RSA)]
@@ -128,9 +133,10 @@ def test_get_free_private_key_location_when_location_is_free():
 
 def test_get_free_private_key_location_when_location_is_taken():
     """Some paths are taken, use fallbacks."""
+    user = LOCAL_USER_4
     random.seed(571303)
     assert KEY_NAME_SUFFIX_RETRIES == 4
-    with set_up_key_location():
+    with set_up_key_location(user):
         def get_expected_path(file_name: str) -> str:
             return os.path.join(os.environ['IDACT_KEY_LOCATION'], file_name)
 
@@ -154,9 +160,10 @@ def test_get_free_private_key_location_when_location_is_taken():
 
 def test_get_free_private_key_location_when_all_locations_are_taken():
     """All generated file paths are taken, even with fallbacks."""
+    user = LOCAL_USER_5
     random.seed(571303)
 
-    with set_up_key_location():
+    with set_up_key_location(user):
         def get_expected_path(file_name: str) -> str:
             return os.path.join(os.environ['IDACT_KEY_LOCATION'], file_name)
 

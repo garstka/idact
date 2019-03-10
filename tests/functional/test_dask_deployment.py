@@ -21,7 +21,8 @@ from tests.helpers.save_opened_in import save_opened_in
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import get_test_user_password, USER_18, \
     USER_17, USER_20, USER_24, USER_41, USER_42
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, \
+    SLURM_WAIT_TIMEOUT, get_testing_process_count
 
 
 def check_submission_works(node: Node, client: dask.distributed.Client):
@@ -78,8 +79,12 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
     ps_dask_scheduler = "ps -u $USER | grep [d]ask-scheduler ; exit 0"
 
     node = nodes[0]
-    nodes.wait(timeout=10)
+    nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
     assert nodes.running()
+
+    ps_lines = node.run(ps_dask_worker).splitlines()
+    pprint(ps_lines)
+    assert not ps_lines
 
     deployment = deploy_dask(nodes=nodes)
     with cancel_on_exit(deployment):
@@ -92,7 +97,8 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
 
         ps_lines = node.run(ps_dask_worker).splitlines()
         pprint(ps_lines)
-        assert len(ps_lines) == len(nodes)
+        # some workers may have been redeployed
+        assert len(ps_lines) >= len(nodes)
 
         client = deployment.get_client()
         print(client)
@@ -115,17 +121,17 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
         yield node
 
     retry(lambda: check_no_output(node=node, command=ps_dask_scheduler),
-          retries=5, seconds_between_retries=1)
+          retries=5 * get_testing_process_count(), seconds_between_retries=1)
 
     retry(lambda: check_no_output(node=node, command=ps_dask_worker),
-          retries=5, seconds_between_retries=1)
+          retries=5 * get_testing_process_count(), seconds_between_retries=1)
 
 
 def test_dask_deployment():
     user = USER_17
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -144,7 +150,7 @@ def test_dask_deployment_with_setup_actions():
     user = USER_18
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -165,7 +171,7 @@ def test_cannot_deploy_dask_on_zero_nodes():
     user = USER_20
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -178,7 +184,7 @@ def test_dask_deployment_with_absolute_scratch_path():
     user = USER_24
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -199,7 +205,7 @@ def test_dask_deployment_with_redeploy_on_validation_failure():
     user = USER_41
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -244,7 +250,7 @@ def test_dask_deployment_with_redeploy_failure():
     user = USER_42
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
