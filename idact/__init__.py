@@ -33,7 +33,7 @@ from idact.core.cluster import Cluster
 
 __author__ = """Matt Garstka"""
 __email__ = 'matt@garstka.net'
-__version__ = '0.6'
+__version__ = '0.7'
 
 _IMPORTED = {add_cluster,
              load_environment,
