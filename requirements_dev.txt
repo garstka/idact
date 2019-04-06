@@ -11,7 +11,7 @@ bokeh>=0.13.0
 jupyter>=1.0.0
 jupyterlab>=0.35.4
 
-sphinx>=1.7.4
+sphinx>=1.7.4,<=1.8.4
 pytest-cov>=2.5.1
 pytest>=4.4.0
 pytest-flake8>=1.0.1
