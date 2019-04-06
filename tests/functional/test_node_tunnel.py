@@ -51,7 +51,7 @@ def run_tunnel_test(user: str, nodes: Nodes):
                 local_port=here))
 
         request = retry(access_dummy_server,
-                        retries=3 * get_testing_process_count(),
+                        retries=5 * get_testing_process_count(),
                         seconds_between_retries=2)
         assert "text/html" in request.headers['Content-type']
 
