@@ -222,6 +222,7 @@ def test_dask_deployment_with_redeploy_on_validation_failure():
 
         fake_validation_counter = [0]
 
+        # pylint: disable=unused-argument
         def fake_validate_worker(worker: DaskWorkerDeployment):
             current_count = fake_validation_counter[0]
             fake_validation_counter[0] = current_count + 1
@@ -229,8 +230,7 @@ def test_dask_deployment_with_redeploy_on_validation_failure():
             print("Fake worker validation.")
             if current_count == 0:
                 raise RuntimeError("Fake worker validation: First node fail.")
-            print("Defaulting to real worker validation.")
-            stored_validate_worker(worker=worker)
+            print("Deciding the worker is valid.")
 
         try:
             idact.detail.dask.deploy_dask_impl.validate_worker = \
