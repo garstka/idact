@@ -18,6 +18,8 @@ from tests.helpers.test_users import USER_49, get_test_user_password, \
 from tests.helpers.testing_environment import TEST_CLUSTER, \
     get_test_environment_file
 
+NOTEBOOK_TEST_RUN_ENVIRONMENT_VARIABLE = 'IDACT_TEST_NOTEBOOK_APP_TEST_RUN'
+
 
 @contextmanager
 def run_notebook_app(user: str,
@@ -52,9 +54,11 @@ def run_notebook_app(user: str,
             saved_open_in_browser = JupyterDeploymentImpl.open_in_browser
             JupyterDeploymentImpl.open_in_browser = fake_open_in_browser
             try:
+                os.environ[NOTEBOOK_TEST_RUN_ENVIRONMENT_VARIABLE] = ''
                 result = runner.invoke(main, args=args)
             finally:
                 JupyterDeploymentImpl.open_in_browser = saved_open_in_browser
+                del os.environ[NOTEBOOK_TEST_RUN_ENVIRONMENT_VARIABLE]
             print("\n\n\nClick output of the notebook app run:")
             print(result.output)
             yield result
@@ -67,7 +71,7 @@ def test_notebook_app_run():
     environment_file = get_test_environment_file(user=user)
     args = [TEST_CLUSTER,
             '--environment', environment_file,
-            '--walltime', '0:00:40']
+            '--walltime', '0:10:00']
     with run_notebook_app(user=user,
                           environment_file=environment_file,
                           args=args) as result:
@@ -78,7 +82,7 @@ def test_notebook_app_run():
         assert "Nodes: 1\n" in output
         assert "Cores: 1\n" in output
         assert "Memory per node: 1GiB\n" in output
-        assert "Walltime: 0:00:40\n" in output
+        assert "Walltime: 0:10:00\n" in output
         assert "No native arguments." in output
         assert "Allocating nodes." in output
         assert "Pushing the allocation deployment." in output
@@ -87,6 +91,8 @@ def test_notebook_app_run():
                 " deployments from cluster, you can use"
                 " the following snippet.") in output
         assert "Notebook address: http://localhost:" in output
+        assert "Nodes are still running." in output
+        assert "This is a test run, cancelling the allocation." in output
         assert "Nodes are no longer running." in output
         assert result.exit_code == 0
 
@@ -105,7 +111,7 @@ def check_output_with_changed_allocation_parameters(output: str):
     assert "Nodes: 2\n" in output
     assert "Cores: 2\n" in output
     assert "Memory per node: 500MiB\n" in output
-    assert "Walltime: 0:00:40\n" in output
+    assert "Walltime: 0:10:00\n" in output
     assert "Native arguments:" in output
     assert "--partition -> debug" in output
     assert "Allocating nodes." in output
@@ -115,6 +121,8 @@ def check_output_with_changed_allocation_parameters(output: str):
             " deployments from cluster, you can use"
             " the following snippet.") in output
     assert "Notebook address: http://localhost:" in output
+    assert "Nodes are still running." in output
+    assert "This is a test run, cancelling the allocation." in output
     assert "Nodes are no longer running." in output
 
 
@@ -123,7 +131,7 @@ def test_notebook_app_run_save_defaults():
     environment_file = get_test_environment_file(user=user)
     args = [TEST_CLUSTER,
             '--environment', environment_file,
-            '--walltime', '0:00:40',
+            '--walltime', '0:10:00',
             '--save-defaults',
             '--nodes', '2',
             '--cores', '1',
@@ -139,7 +147,7 @@ def test_notebook_app_run_save_defaults():
         assert "Nodes: 2\n" in output
         assert "Cores: 1\n" in output
         assert "Memory per node: 500MiB\n" in output
-        assert "Walltime: 0:00:40\n" in output
+        assert "Walltime: 0:10:00\n" in output
         assert "Native arguments:" in output
         assert "--partition -> debug" in output
         assert "Allocating nodes." in output
@@ -149,6 +157,8 @@ def test_notebook_app_run_save_defaults():
                 " deployments from cluster, you can use"
                 " the following snippet.") in output
         assert "Notebook address: http://localhost:" in output
+        assert "Nodes are still running." in output
+        assert "This is a test run, cancelling the allocation." in output
         assert "Nodes are no longer running." in output
         assert result.exit_code == 0
 
@@ -158,7 +168,7 @@ def test_notebook_app_run_use_defaults():
     environment_file = get_test_environment_file(user=user)
     args = [TEST_CLUSTER,
             '--environment', environment_file,
-            '--walltime', '0:00:40']
+            '--walltime', '0:10:00']
     notebook_defaults = get_different_notebook_defaults_for_test()
     with run_notebook_app(user=user,
                           environment_file=environment_file,
@@ -171,7 +181,7 @@ def test_notebook_app_run_use_defaults():
         assert "Nodes: 2\n" in output
         assert "Cores: 1\n" in output
         assert "Memory per node: 500MiB\n" in output
-        assert "Walltime: 0:00:40\n" in output
+        assert "Walltime: 0:10:00\n" in output
         assert "Native arguments:" in output
         assert "--partition -> debug" in output
         assert "Allocating nodes." in output
@@ -181,6 +191,8 @@ def test_notebook_app_run_use_defaults():
                 " deployments from cluster, you can use"
                 " the following snippet.") in output
         assert "Notebook address: http://localhost:" in output
+        assert "Nodes are still running." in output
+        assert "This is a test run, cancelling the allocation." in output
         assert "Nodes are no longer running." in output
         assert result.exit_code == 0
 
@@ -190,7 +202,7 @@ def test_notebook_app_run_reset_defaults():
     environment_file = get_test_environment_file(user=user)
     args = [TEST_CLUSTER,
             '--environment', environment_file,
-            '--walltime', '0:00:40',
+            '--walltime', '0:10:00',
             '--reset-defaults']
     notebook_defaults = get_different_notebook_defaults_for_test()
     with run_notebook_app(user=user,
@@ -204,7 +216,7 @@ def test_notebook_app_run_reset_defaults():
         assert "Nodes: 1\n" in output
         assert "Cores: 1\n" in output
         assert "Memory per node: 1GiB\n" in output
-        assert "Walltime: 0:00:40\n" in output
+        assert "Walltime: 0:10:00\n" in output
         assert "No native arguments." in output
         assert "Allocating nodes." in output
         assert "Pushing the allocation deployment." in output
@@ -213,5 +225,7 @@ def test_notebook_app_run_reset_defaults():
                 " deployments from cluster, you can use"
                 " the following snippet.") in output
         assert "Notebook address: http://localhost:" in output
+        assert "Nodes are still running." in output
+        assert "This is a test run, cancelling the allocation." in output
         assert "Nodes are no longer running." in output
         assert result.exit_code == 0

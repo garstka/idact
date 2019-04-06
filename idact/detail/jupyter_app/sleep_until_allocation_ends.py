@@ -1,3 +1,4 @@
+import os
 from time import sleep
 
 import click
@@ -12,4 +13,9 @@ def sleep_until_allocation_ends(nodes: Nodes):
     while nodes.running():
         click.echo("Nodes are still running.")
         sleep(SLEEP_INTERVAL)
+
+        if 'IDACT_TEST_NOTEBOOK_APP_TEST_RUN' in os.environ:
+            click.echo("This is a test run, cancelling the allocation.")
+            nodes.cancel()
+
     click.echo(click.style("Nodes are no longer running.", fg='red'))
