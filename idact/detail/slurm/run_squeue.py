@@ -43,7 +43,7 @@ def extract_squeue_format_L(now: datetime.datetime,
 
     value = value.replace('-', ':')
     colons = value.count(':')
-    if colons > 3:
+    if colons not in range(1, 4):
         raise ValueError('Unexpected format.')
     value = '0:' * (3 - colons) + value
     days, hours, minutes, seconds = value.split(':')
@@ -132,7 +132,9 @@ def run_squeue(node: Node) -> Dict[int, SqueueResult]:
     """
 
     now = utc_now()
-    output = node.run("squeue --format '%A|%D|%L|%r|%R|%T'")
+    output = node.run("squeue"
+                      " --user $USER"
+                      " --format '%A|%D|%L|%r|%R|%T'")
     lines = output.splitlines()[1:]  # Ignore header.
     results = {squeue_result.job_id: squeue_result
                for squeue_result

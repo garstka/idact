@@ -2,6 +2,7 @@
 
  - [master](https://garstka.github.io/idact/master/html/index.html)
  - [develop](https://garstka.github.io/idact/develop/html/index.html)
+ - [0.7](https://garstka.github.io/idact/0.7/html/index.html)
  - [0.6](https://garstka.github.io/idact/0.6/html/index.html)
  - [0.5.1](https://garstka.github.io/idact/0.5.1/html/index.html)
  - [0.5](https://garstka.github.io/idact/0.5/html/index.html)

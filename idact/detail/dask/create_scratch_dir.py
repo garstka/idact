@@ -40,8 +40,10 @@ def create_scratch_subdir(node: NodeInternal) -> str:
         "{scratch}/{subdir}".format(
             scratch=scratch,
             subdir=SCRATCH_SUBDIR))
-    node.run("mkdir -p {}".format(scratch_subdir))
-    node.run("chmod 700 {}".format(scratch_subdir))
+    node.run(
+        "mkdir -p {scratch_subdir}"
+        " && chmod 700 {scratch_subdir}".format(
+            scratch_subdir=scratch_subdir))
     scratch_subdir_realpath = node.run("readlink -vf {}".format(
         scratch_subdir))
 

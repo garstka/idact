@@ -9,8 +9,6 @@ from idact.detail.nodes.node_internal import NodeInternal
 from idact.detail.serialization.serializable import Serializable
 from idact.detail.serialization.serializable_types import SerializableTypes
 
-CANCEL_TIMEOUT = 5
-
 
 class GenericDeployment(Serializable):
     """Deployment of a program on a node.
@@ -18,8 +16,6 @@ class GenericDeployment(Serializable):
         :param node: Node the program is running on.
 
         :param pid: Process id.
-
-        :param output: Initial script output.
 
         :param runtime_dir: Runtime dir to remove.
 
@@ -55,20 +51,18 @@ class GenericDeployment(Serializable):
 
         parent_pid = self._pid
         node = self._node
+        tree = ' '.join([str(pid)
+                         for pid
+                         in ptree(pid=parent_pid, node=node)])
 
         def cancel_task():
-            """Kills a list of processes, waits and fails if all are still
+            """Kills the process tree and fails if the parent is still
                 running after a timeout."""
-            tree = ' '.join([str(pid)
-                             for pid
-                             in ptree(pid=parent_pid, node=node)])
             node.run(
                 "kill {tree}"
-                "; sleep {timeout}"
-                "; kill -0 {pid} && exit 1 || exit 0".format(
+                "; kill -0 {parent_pid} && exit 1 || exit 0".format(
                     tree=tree,
-                    pid=self._pid,
-                    timeout=CANCEL_TIMEOUT))
+                    parent_pid=parent_pid))
 
         log = get_logger(__name__)
         with remove_runtime_dir_on_exit(node=self._node,

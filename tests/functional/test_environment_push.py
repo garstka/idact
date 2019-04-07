@@ -6,7 +6,6 @@ import pytest
 
 from idact import show_cluster, push_environment, AuthMethod, add_cluster, \
     show_clusters
-from idact.core.get_default_retries import get_default_retries
 from idact.core.retry import Retry
 from idact.detail.auth.set_password import set_password
 from idact.detail.config.client.client_cluster_config import ClusterConfigImpl
@@ -20,6 +19,8 @@ from idact.detail.nodes.node_internal import NodeInternal
 from tests.functional.test_environment_pull import \
     BASHRC_CONTENTS_WITH_IDACT_CONFIG_PATH_SET
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
+from tests.helpers.get_default_retries_heavy_load import \
+    get_default_retries_heavy_load
 from tests.helpers.paramiko_connect import paramiko_connect
 from tests.helpers.remove_remote_file import remove_remote_file
 from tests.helpers.reset_environment import reset_environment
@@ -59,7 +60,7 @@ def check_able_to_merge_push_environment(user: str,
         cluster.config.key = None
         cluster.config.install_key = False
         cluster.config.retries[Retry.PORT_INFO] = \
-            get_default_retries()[Retry.PORT_INFO]
+            get_default_retries_heavy_load()[Retry.PORT_INFO]
 
         assert len(show_clusters()) == 1
         node = cluster.get_access_node()
@@ -113,7 +114,8 @@ def check_able_to_merge_push_environment(user: str,
             user=user,
             auth=AuthMethod.ASK,
             key='key_remote',
-            install_key=True).__dict__
+            install_key=True,
+            retries=get_default_retries_heavy_load()).__dict__
 
         # New cluster was sanitized
         assert remote_clusters[fake_cluster].__dict__ == ClusterConfigImpl(
@@ -175,7 +177,7 @@ def check_able_to_push_new_environment(user: str,
         cluster.config.key = None
         cluster.config.install_key = False
         cluster.config.retries[Retry.PORT_INFO] = \
-            get_default_retries()[Retry.PORT_INFO]
+            get_default_retries_heavy_load()[Retry.PORT_INFO]
 
         assert len(show_clusters()) == 1
         node = cluster.get_access_node()
@@ -214,7 +216,8 @@ def check_able_to_push_new_environment(user: str,
             user=user,
             auth=AuthMethod.ASK,
             key=None,
-            install_key=True)
+            install_key=True,
+            retries=get_default_retries_heavy_load())
 
         assert remote_clusters[fake_cluster] == ClusterConfigImpl(
             host='fakehost',

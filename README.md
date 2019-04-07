@@ -53,6 +53,13 @@ Python 3.5+.
 python -m pip install idact
 ```
 
+If you're using [Conda](https://conda.io/docs/), you may want to update
+your environment first:
+
+```
+conda update --all
+```
+
 ## Code samples
 
 ### Accessing a cluster

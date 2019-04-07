@@ -32,8 +32,8 @@ def install_shared_home_key():
             key if it's not been generated already."""
         with stage_info(log, "Creating the ssh directory."):
             with capture_fabric_output_to_log():
-                run("mkdir -p ~/.ssh")
-                run("chmod 700 ~/.ssh")
+                run("mkdir -p ~/.ssh"
+                    " && chmod 700 ~/.ssh")
 
         with capture_fabric_output_to_log():
             file_exists = exists(SHARED_HOST_KEY_PATH)

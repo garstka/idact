@@ -48,7 +48,11 @@ def fetch_port_info(allocation_id: int,
             with capture_fabric_output_to_log():
                 with cd(dir_path):
                     files = run("echo *", pty=False)
-                    result.append(files)
+                    if files[0] != "*":
+                        result.append(files)
+                    else:
+                        log.warning("Port info files not found.")
+                        result.append("")
         else:
             log.warning("Port info directory not found.")
             result.append("")

@@ -11,13 +11,13 @@ from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import USER_15, get_test_user_password
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, SLURM_WAIT_TIMEOUT
 
 
 def check_will_remove_empty(node: Node):
     # will remove an empty dir
-    node.run("mkdir dir1")
-    node.run("ls dir1")
+    node.run("mkdir dir1"
+             " && ls dir1")
     remove_runtime_dir(node=node,
                        runtime_dir="dir1")
     with pytest.raises(RuntimeError):
@@ -34,10 +34,10 @@ def check_will_ignore_non_existent(node: Node):
 
 def check_will_remove_files(node: Node):
     # will remove a dir with files in it
-    node.run("mkdir dir3")
-    node.run("touch dir3/file1")
-    node.run("touch dir3/file2")
-    node.run("ls dir3")
+    node.run("mkdir dir3"
+             " && touch dir3/file1"
+             " && touch dir3/file2"
+             " && ls dir3")
     remove_runtime_dir(node=node,
                        runtime_dir="dir3")
     with pytest.raises(RuntimeError):
@@ -47,15 +47,15 @@ def check_will_remove_files(node: Node):
 def check_will_not_remove_dotfiles(node: Node):
     # will not remove a dir when there are dot files
     # but non-dotfiles will be removed
-    node.run("mkdir dir4")
-    node.run("touch dir4/file1")
-    node.run("touch dir4/file2")
-    node.run("touch dir4/.file3")
-    node.run("ls dir4")
+    node.run("mkdir dir4"
+             " && touch dir4/file1"
+             " && touch dir4/file2"
+             " && touch dir4/.file3"
+             " && ls dir4")
     remove_runtime_dir(node=node,
                        runtime_dir="dir4")
-    node.run("ls dir4")
-    node.run("ls dir4/.file3")
+    node.run("ls dir4"
+             " && ls dir4/.file3")
     with pytest.raises(RuntimeError):
         node.run("ls dir4/file1")
     with pytest.raises(RuntimeError):
@@ -65,17 +65,17 @@ def check_will_not_remove_dotfiles(node: Node):
 def check_will_not_remove_nested_dirs(node: Node):
     # will not remove nested dirs or their content
     # but regular files will be removed
-    node.run("mkdir dir5")
-    node.run("touch dir5/file1")
-    node.run("touch dir5/file2")
-    node.run("mkdir dir5/subdir1")
-    node.run("touch dir5/subdir1/file3")
-    node.run("ls dir5")
+    node.run("mkdir dir5"
+             " && touch dir5/file1"
+             " && touch dir5/file2"
+             " && mkdir dir5/subdir1"
+             " && touch dir5/subdir1/file3"
+             " && ls dir5")
     remove_runtime_dir(node=node,
                        runtime_dir="dir4")
-    node.run("ls dir5")
-    node.run("ls dir5/subdir1")
-    node.run("ls dir5/subdir1/file3")
+    node.run("ls dir5"
+             " && ls dir5/subdir1"
+             " && ls dir5/subdir1/file3")
     with pytest.raises(RuntimeError):
         node.run("ls dir4/file1")
     with pytest.raises(RuntimeError):
@@ -85,7 +85,7 @@ def check_will_not_remove_nested_dirs(node: Node):
 def test_remove_runtime_dir_test():
     user = USER_15
     with ExitStack() as stack:
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(disable_pytest_stdin())
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
@@ -98,7 +98,7 @@ def test_remove_runtime_dir_test():
         stack.enter_context(cancel_on_exit(nodes))
         node = nodes[0]
         try:
-            nodes.wait(timeout=10)
+            nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
             assert nodes.running()
 
             check_will_remove_empty(node=node)

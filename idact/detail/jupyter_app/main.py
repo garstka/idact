@@ -76,14 +76,18 @@ SNIPPET_SEPARATOR_LENGTH = 10
               nargs=2,
               multiple=True,
               type=str,
+              metavar='ARG VALUE',
               default=[],
-              help="Native arguments for the workload"
-                   " manager. Values are not validated. Supported arguments"
-                   " take precedence over native arguments. Arguments with"
-                   " None as value are treated as flags. Arguments specified"
-                   " later override earlier arguments. [Allocation parameter]."
-                   " Default: No native"
-                   " arguments.")
+              help="Native arguments for the workload manager."
+                   " Flags have value=None, e.g. --native-arg --flag None."
+                   " Can be repeated for multiple native args:"
+                   " --native-arg -arg1 v1 --native-arg -arg2 v2 (...)."
+                   " Values are not validated."
+                   " Supported arguments take precedence over native"
+                   " arguments."
+                   " Arguments specified later override earlier arguments."
+                   " [Allocation parameter]."
+                   " Default: No native arguments.")
 def main(cluster_name: str,
          environment: Optional[str],
          save_defaults: bool,

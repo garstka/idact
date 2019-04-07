@@ -14,6 +14,7 @@ For public API reference see :py:mod:`idact`.
    self
    notebooks
    api/idact
+   contributing
    development_overview
    prometheus
    diagrams

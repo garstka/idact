@@ -5,6 +5,8 @@ import requests
 
 from idact import AuthMethod
 from idact.detail.config.client.client_cluster_config import ClusterConfigImpl
+from idact.detail.helper.get_free_local_port import get_free_local_port
+from idact.detail.helper.ports import PORT_3, PORT_1, PORT_2
 from idact.detail.tunnel.build_tunnel import build_tunnel
 from idact.detail.tunnel.binding import Binding
 from idact.detail.helper.retry import retry
@@ -13,20 +15,24 @@ from tests.helpers.join_on_exit import join_on_exit
 
 from tests.helpers.reset_environment import get_testing_host, get_testing_port
 from tests.helpers.run_dummy_server import start_dummy_server_thread
-from tests.helpers.test_users import USER_3, get_test_user_password
+from tests.helpers.test_users import USER_3, get_test_user_password, USER_60, \
+    USER_59
+from tests.helpers.testing_environment import get_testing_process_count
 
 
-def run_tunnel_test_for_bindings(bindings: List[Binding]):
+def run_tunnel_test_for_bindings(user: str,
+                                 bindings: List[Binding]):
     """Runs a tunneling test for a binding sequence.
 
         Runs a Python server in a separate thread through ssh, then creates
         a multi-hop tunnel, and finally performs a HTTP request to the local
         address.
 
+        :param user: Test user.
+
         :param bindings: Sequence of tunnel bindings.
 
     """
-    user = USER_3
     config = ClusterConfigImpl(host=get_testing_host(),
                                port=get_testing_port(),
                                user=user,
@@ -53,28 +59,31 @@ def run_tunnel_test_for_bindings(bindings: List[Binding]):
                 local_port=local_port))
 
         request = retry(access_dummy_server,
-                        retries=3,
+                        retries=5 * get_testing_process_count(),
                         seconds_between_retries=2)
         assert "text/html" in request.headers['Content-type']
 
 
 def test_tunnel_single_hop():
-    bindings = [Binding("", 2223),
-                Binding("127.0.0.1", 8000)]
-    run_tunnel_test_for_bindings(bindings)
+    user = USER_3
+    bindings = [Binding("", get_free_local_port()),
+                Binding("127.0.0.1", PORT_1)]
+    run_tunnel_test_for_bindings(user=user, bindings=bindings)
 
 
 def test_tunnel_two_hops():
-    bindings = [Binding("", 2223),
+    user = USER_59
+    bindings = [Binding("", get_free_local_port()),
                 Binding("127.0.0.1", 22),
-                Binding("127.0.0.1", 8000)]
-    run_tunnel_test_for_bindings(bindings)
+                Binding("127.0.0.1", PORT_2)]
+    run_tunnel_test_for_bindings(user=user, bindings=bindings)
 
 
 def test_tunnel_multiple_hops():
-    bindings = [Binding("", 2223),
+    user = USER_60
+    bindings = [Binding("", get_free_local_port()),
                 Binding("c1", 22),
                 Binding("c2", 8022),
                 Binding("c3", 8023),
-                Binding("127.0.0.1", 8000)]
-    run_tunnel_test_for_bindings(bindings)
+                Binding("127.0.0.1", PORT_3)]
+    run_tunnel_test_for_bindings(user=user, bindings=bindings)

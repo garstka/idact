@@ -43,10 +43,10 @@ def upload_entry_point(contents: str,
         """Creates the entry point dir and file.
             Fails if it couldn't be created."""
         with capture_fabric_output_to_log():
-            run("mkdir -p {entry_point_location}".format(
-                entry_point_location=entry_point_location))
-            run("chmod 700 {entry_point_location}".format(
-                entry_point_location=entry_point_location))
+            run(
+                "mkdir -p {entry_point_location}"
+                " && chmod 700 {entry_point_location}".format(
+                    entry_point_location=entry_point_location))
 
             file_name = get_random_file_name(
                 length=ENTRY_POINT_FILE_NAME_LENGTH)

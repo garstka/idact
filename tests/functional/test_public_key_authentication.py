@@ -21,7 +21,7 @@ from tests.helpers.reset_environment import reset_environment, \
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import USER_8, get_test_user_password, USER_9, \
     USER_10, USER_11, USER_14, USER_12, USER_21
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, SLURM_WAIT_TIMEOUT
 
 
 def test_able_to_reach_nodes_when_using_password_based_authentication():
@@ -32,7 +32,7 @@ def test_able_to_reach_nodes_when_using_password_based_authentication():
         Password is still used between the client and the access node."""
     user = USER_10
     with ExitStack() as stack:
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user=user,
                                               auth=AuthMethod.ASK))
         stack.enter_context(set_password(get_test_user_password(user)))
@@ -47,7 +47,7 @@ def test_able_to_reach_nodes_when_using_password_based_authentication():
         stack.enter_context(cancel_on_exit(nodes))
         print(nodes)
 
-        nodes.wait(timeout=10)
+        nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
 
         compute_node = nodes[0]
         assert isinstance(compute_node, NodeInternal)
@@ -97,7 +97,7 @@ def check_direct_access_from_access_node_does_not_work(node: Node):
                  " -o LogLevel=ERROR"
                  " -p {port}"
                  " whoami".format(host=node.host,
-                                  port=node.port), timeout=1)
+                                  port=node.port))
 
 
 def check_remote_key_and_node_access(stack: ExitStack, user: str):
@@ -124,7 +124,7 @@ def check_remote_key_and_node_access(stack: ExitStack, user: str):
     stack.enter_context(cancel_on_exit(nodes))
     print(nodes)
 
-    nodes.wait(timeout=10)
+    nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
     node.run(
         "grep '{public_key_value}' ~/.ssh/authorized_keys.idact".format(
             public_key_value=public_key_value))
@@ -139,7 +139,7 @@ def test_generate_and_install_key_on_access_node():
     with ExitStack() as stack:
         user = USER_8
         stack.enter_context(clear_environment(user))
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(disable_pytest_stdin())
 
         with pytest.raises(ValueError):  # No key provided.
@@ -168,7 +168,7 @@ def test_generate_but_do_not_install_key_on_access_node():
     with ExitStack() as stack:
         user = USER_9
         stack.enter_context(clear_environment(user))
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
 
         add_cluster(name=TEST_CLUSTER,
                     user=user,
@@ -192,7 +192,7 @@ def test_install_already_generated_key_on_access_node():
     with ExitStack() as stack:
         user = USER_11
         stack.enter_context(clear_environment(user))
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(disable_pytest_stdin())
 
         key = generate_key(host=get_testing_host(),
@@ -214,7 +214,7 @@ def test_generate_and_install_missing_key_on_access_node():
     with ExitStack() as stack:
         user = USER_12
         stack.enter_context(clear_environment(user))
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(disable_pytest_stdin())
 
         missing_key = os.path.join(os.environ['IDACT_KEY_LOCATION'],
@@ -255,7 +255,7 @@ def test_generate_and_install_key_no_sshd():
     with ExitStack() as stack:
         user = USER_14
         stack.enter_context(clear_environment(user))
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(disable_pytest_stdin())
 
         add_cluster(name=TEST_CLUSTER,
@@ -275,7 +275,7 @@ def test_empty_public_key_causes_runtime_error():
     with ExitStack() as stack:
         user = USER_21
         stack.enter_context(clear_environment(user))
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(disable_pytest_stdin())
 
         key = generate_key(host=get_testing_host(),

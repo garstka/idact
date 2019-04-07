@@ -4,26 +4,32 @@ from typing import List
 
 from idact.core.nodes import Node
 
+# https://unix.stackexchange.com/questions/124127/kill-all-descendant-processes
+LIST_DESCENDANTS = (
+    r'list_descendants () {'
+    r' local children=$(pgrep -P "$1");'
+    r' for pid in $children;'
+    r' do list_descendants "$pid";'
+    r' done;'
+    r' echo "$children"; }')
+
 
 def ptree(pid: int, node: Node) -> List[int]:
-    """Returns a list containing this PID and all its offspring, by running
-        `pgrep` repeatedly.
+    """Returns a list containing this PID and all its descendants.
 
         :param pid: Parent process pid.
 
         :param node: Node to run pgrep on.
 
     """
-    result = node.run("pgrep -P {pid}; exit 0".format(pid=pid))
+    result = node.run(
+        "{list_descendants};"
+        " echo $(list_descendants {pid})".format(
+            list_descendants=LIST_DESCENDANTS,
+            pid=pid))
     if not result:
         return [pid]
-    child_pids = [int(child_pid)
-                  for child_pid in result.splitlines()]
+    descendant_pids = [int(descendant_pid)
+                       for descendant_pid in result.split(' ')]
 
-    rest = [ptree(child_pid, node)
-            for child_pid in child_pids]
-
-    rest_flat = [y for x in rest
-                 for y in x]
-
-    return [pid] + rest_flat
+    return [pid] + descendant_pids

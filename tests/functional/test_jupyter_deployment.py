@@ -6,13 +6,17 @@ from bitmath import MiB
 from idact import show_cluster, Walltime, Nodes
 from idact.detail.auth.set_password import set_password
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
+from idact.detail.helper.get_free_local_port import get_free_local_port
+from idact.detail.helper.retry import retry
 from tests.helpers.check_http_connection import check_local_http_connection
+from tests.helpers.check_no_output import check_no_output
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import get_test_user_password, USER_6, USER_16, \
     USER_58
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, \
+    SLURM_WAIT_TIMEOUT, get_testing_process_count
 
 
 @contextmanager
@@ -20,10 +24,10 @@ def deploy_jupyter(nodes: Nodes):
     ps_jupyter = "ps -u $USER | grep jupyter ; exit 0"
 
     node = nodes[0]
-    nodes.wait(timeout=10)
+    nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
     assert nodes.running()
 
-    local_port = 2223
+    local_port = get_free_local_port()
     deployment = node.deploy_notebook(local_port=local_port)
     with cancel_on_exit(deployment):
         print(deployment)
@@ -39,16 +43,15 @@ def deploy_jupyter(nodes: Nodes):
 
         yield node
 
-    ps_jupyter_lines = node.run(ps_jupyter).splitlines()
-    pprint(ps_jupyter_lines)
-    assert not ps_jupyter_lines
+    retry(lambda: check_no_output(node=node, command=ps_jupyter),
+          retries=5 * get_testing_process_count(), seconds_between_retries=1)
 
 
 def test_jupyter_deployment():
     user = USER_6
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -67,7 +70,7 @@ def test_jupyter_deployment_with_setup_actions():
     user = USER_16
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -88,7 +91,7 @@ def test_jupyter_deployment_not_lab():
     user = USER_58
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 

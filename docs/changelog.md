@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7
+
+ - Documentation improvements.
+ - Use Docker container for testing setup.
+ - Improve `idact-notebook` help message.
+ - Remove unnecessary overheads in functional tests.
+ - Refactor functional tests to support parallel execution.
+
 ## 0.6
 
  - Added support for CentOS 6.

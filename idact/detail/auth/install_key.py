@@ -111,12 +111,12 @@ def install_key(config: ClusterConfig,
         with stage_debug(log, "Creating authorized keys file: %s",
                          authorized_keys_path):
             with capture_fabric_output_to_log():
-                run("mkdir -p ~/.ssh")
-                run("chmod 700 ~/.ssh")
-                run("touch '{authorized_keys_path}'".format(
-                    authorized_keys_path=authorized_keys_path))
-                run("chmod 644 '{authorized_keys_path}'".format(
-                    authorized_keys_path=authorized_keys_path))
+                run(
+                    "mkdir -p ~/.ssh"
+                    " && chmod 700 ~/.ssh"
+                    " && touch '{authorized_keys_path}'"
+                    " && chmod 644 '{authorized_keys_path}'".format(
+                        authorized_keys_path=authorized_keys_path))
 
         with stage_debug(log, "Downloading authorized keys file."):
             with capture_fabric_output_to_log():

@@ -12,8 +12,11 @@ from idact.detail.config.client.client_config import ClientConfig
 from idact.detail.environment.environment_impl import EnvironmentImpl
 from idact.detail.environment.environment_provider import EnvironmentProvider
 from tests.helpers.clear_home import clear_home
-from tests.helpers.testing_environment import TEST_KEY_LOCATION, \
-    get_testing_host, get_testing_port, TEST_CLUSTER
+from tests.helpers.get_default_retries_heavy_load import \
+    get_default_retries_heavy_load
+from tests.helpers.testing_environment import get_testing_host, \
+    get_testing_port, TEST_CLUSTER, get_test_key_location, \
+    get_test_environment_file
 
 
 @contextmanager
@@ -30,15 +33,17 @@ def reset_environment(user: str, auth: AuthMethod = AuthMethod.ASK):
     saved_state = EnvironmentProvider._state
     EnvironmentProvider._state = None
 
-    os.environ['IDACT_KEY_LOCATION'] = TEST_KEY_LOCATION
-    os.environ['IDACT_CONFIG_PATH'] = './idact.test.conf'
+    os.environ['IDACT_KEY_LOCATION'] = get_test_key_location(user=user)
+    os.environ['IDACT_CONFIG_PATH'] = get_test_environment_file(user=user)
 
     cluster = ClusterConfigImpl(
         host=get_testing_host(),
         port=get_testing_port(),
         user=user,
         auth=auth,
-        retries={Retry.PORT_INFO: set_retry(count=0)})
+        retries=get_default_retries_heavy_load())
+    cluster.retries[Retry.PORT_INFO] = set_retry(count=0)
+
     EnvironmentProvider(
         initial_environment=EnvironmentImpl(
             config=ClientConfig(

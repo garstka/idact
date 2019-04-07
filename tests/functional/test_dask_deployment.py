@@ -13,13 +13,16 @@ from idact.core.deploy_dask import deploy_dask
 from idact.detail.auth.set_password import set_password
 from idact.detail.dask.dask_worker_deployment import DaskWorkerDeployment
 from idact.detail.deployment.cancel_on_exit import cancel_on_exit
+from idact.detail.helper.retry import retry
+from tests.helpers.check_no_output import check_no_output
 from tests.helpers.disable_pytest_stdin import disable_pytest_stdin
 from tests.helpers.reset_environment import reset_environment
 from tests.helpers.save_opened_in import save_opened_in
 from tests.helpers.set_up_key_location import set_up_key_location
 from tests.helpers.test_users import get_test_user_password, USER_18, \
     USER_17, USER_20, USER_24, USER_41, USER_42
-from tests.helpers.testing_environment import TEST_CLUSTER
+from tests.helpers.testing_environment import TEST_CLUSTER, \
+    SLURM_WAIT_TIMEOUT, get_testing_process_count
 
 
 def check_submission_works(node: Node, client: dask.distributed.Client):
@@ -35,8 +38,8 @@ def check_submission_works(node: Node, client: dask.distributed.Client):
         "Will try to find out the version"
         " of python executable: {python_executable}".format(
             python_executable=python_executable))
-    print("If this fails, make sure the testing setup was"
-          " created by the same, or close Python version"
+    print("If this fails, make sure the testing setup has"
+          " the same, or close Python version"
           " (major and minor version components must match).")
 
     command = (
@@ -53,8 +56,8 @@ def check_submission_works(node: Node, client: dask.distributed.Client):
         print("Python version mismatch: local {} vs remote {}".format(
             local_version, remote_version))
 
-    print("If the task submission fails, make sure the testing setup was"
-          " created by the same, or close Python version.")
+    print("If the task submission fails, make sure the testing setup has"
+          " the same, or close Python version.")
     print("Update the local Python installation if possible.")
     print("If this still doesn't work, update your Dask library.")
 
@@ -76,8 +79,12 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
     ps_dask_scheduler = "ps -u $USER | grep [d]ask-scheduler ; exit 0"
 
     node = nodes[0]
-    nodes.wait(timeout=10)
+    nodes.wait(timeout=SLURM_WAIT_TIMEOUT)
     assert nodes.running()
+
+    ps_lines = node.run(ps_dask_worker).splitlines()
+    pprint(ps_lines)
+    assert not ps_lines
 
     deployment = deploy_dask(nodes=nodes)
     with cancel_on_exit(deployment):
@@ -90,7 +97,8 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
 
         ps_lines = node.run(ps_dask_worker).splitlines()
         pprint(ps_lines)
-        assert len(ps_lines) == len(nodes)
+        # some workers may have been redeployed
+        assert len(ps_lines) >= len(nodes)
 
         client = deployment.get_client()
         print(client)
@@ -112,20 +120,18 @@ def deploy_dask_on_testing_cluster(nodes: Nodes):
 
         yield node
 
-    ps_lines = node.run(ps_dask_scheduler).splitlines()
-    pprint(ps_lines)
-    assert not ps_lines
+    retry(lambda: check_no_output(node=node, command=ps_dask_scheduler),
+          retries=5 * get_testing_process_count(), seconds_between_retries=1)
 
-    ps_lines = node.run(ps_dask_worker).splitlines()
-    pprint(ps_lines)
-    assert not ps_lines
+    retry(lambda: check_no_output(node=node, command=ps_dask_worker),
+          retries=5 * get_testing_process_count(), seconds_between_retries=1)
 
 
 def test_dask_deployment():
     user = USER_17
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -144,7 +150,7 @@ def test_dask_deployment_with_setup_actions():
     user = USER_18
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -165,7 +171,7 @@ def test_cannot_deploy_dask_on_zero_nodes():
     user = USER_20
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -178,7 +184,7 @@ def test_dask_deployment_with_absolute_scratch_path():
     user = USER_24
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -199,7 +205,7 @@ def test_dask_deployment_with_redeploy_on_validation_failure():
     user = USER_41
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -216,6 +222,7 @@ def test_dask_deployment_with_redeploy_on_validation_failure():
 
         fake_validation_counter = [0]
 
+        # pylint: disable=unused-argument
         def fake_validate_worker(worker: DaskWorkerDeployment):
             current_count = fake_validation_counter[0]
             fake_validation_counter[0] = current_count + 1
@@ -223,8 +230,7 @@ def test_dask_deployment_with_redeploy_on_validation_failure():
             print("Fake worker validation.")
             if current_count == 0:
                 raise RuntimeError("Fake worker validation: First node fail.")
-            print("Defaulting to real worker validation.")
-            stored_validate_worker(worker=worker)
+            print("Deciding the worker is valid.")
 
         try:
             idact.detail.dask.deploy_dask_impl.validate_worker = \
@@ -244,7 +250,7 @@ def test_dask_deployment_with_redeploy_failure():
     user = USER_42
     with ExitStack() as stack:
         stack.enter_context(disable_pytest_stdin())
-        stack.enter_context(set_up_key_location())
+        stack.enter_context(set_up_key_location(user))
         stack.enter_context(reset_environment(user))
         stack.enter_context(set_password(get_test_user_password(user)))
 
@@ -259,7 +265,7 @@ def test_dask_deployment_with_redeploy_failure():
         stored_validate_worker = \
             idact.detail.dask.deploy_dask_impl.validate_worker
 
-        def fake_validate_worker(_: DaskWorkerDeployment):
+        def fake_validate_worker(worker: DaskWorkerDeployment):
             print("Fake worker validation.")
             raise ValueError("Fake worker validation fail.")
 
