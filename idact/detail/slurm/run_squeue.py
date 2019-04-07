@@ -43,7 +43,7 @@ def extract_squeue_format_L(now: datetime.datetime,
 
     value = value.replace('-', ':')
     colons = value.count(':')
-    if colons > 3:
+    if colons not in range(1, 4):
         raise ValueError('Unexpected format.')
     value = '0:' * (3 - colons) + value
     days, hours, minutes, seconds = value.split(':')

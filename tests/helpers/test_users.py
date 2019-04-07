@@ -68,6 +68,9 @@ USER_58 = 'user-58'
 USER_59 = 'user-59'
 USER_60 = 'user-60'
 USER_61 = 'user-61'
+USER_62 = 'user-62'
+USER_63 = 'user-63'
+USER_64 = 'user-64'
 
 
 def get_test_user_password(user: str) -> str:
